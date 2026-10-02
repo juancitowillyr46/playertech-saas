@@ -1,629 +1,322 @@
-# PlayerTech Constitution (Versión completa)
+# PlayerTech Constitution
 
 ## Propósito
 
-Esta Constitución define los principios fundamentales que gobiernan el desarrollo y evolución de PlayerTech.
+Define los principios fundamentales e irrevocables que gobiernan PlayerTech.
 
-Las especificaciones, decisiones arquitectónicas e implementaciones deben respetar estos principios.
-
-Los detalles técnicos y procedimientos se mantienen en la documentación especializada del proyecto.
-
-Esta Constitución es el documento de referencia para:
-- Decisiones arquitectónicas (ADRs)
-- Estándares de ingeniería
-- Procesos de desarrollo
-- GitHub Spec Kit
+Cada especificación, decisión arquitectónica e implementación debe respetar estos principios.
 
 ---
 
-## I. Desarrollo guiado por especificaciones
+## Principios Fundamentales
 
-Las funcionalidades significativas deben desarrollarse mediante un proceso Spec-Driven Development (SDD).
+### I. Spec-Driven Development
 
-```text
-Historia de Usuario (Backlog)
-        ↓
-Especificación Funcional (spec.md)
-        ↓
-Plan Técnico (plan.md)
-        ↓
-Tareas de Implementación (tasks.md)
-        ↓
-Implementación (código)
-        ↓
-Pruebas (unitarias + integración)
+**OBLIGATORIO:**
+- Toda funcionalidad significativa comienza con una Historia de Usuario
+- Antes de implementar, escribir especificación (spec.md)
+- Especificación define criterios de aceptación en formato BDD (Given/When/Then)
+- Especificación referencia ADRs aplicables
+
+**FLUJO:**
+```
+Historia de Usuario → Especificación → Plan Técnico → Tareas → Implementación → Pruebas
 ```
 
-### Principios SDD
+**PERMITIDO:**
+- Features muy pequeñas (< 20 líneas) con documentación mínima
+- Refactors internos sin cambio de comportamiento
 
-**Cada funcionalidad significativa debe:**
-- Tener una Historia de Usuario clara en el backlog
-- Contar con una especificación que defina comportamiento esperado
-- Incluir un plan técnico con decisiones arquitectónicas
-- Listar tareas concretas para implementación
-- Estar completamente testeada
-
-**La especificación es fuente de verdad:**
-- Antes de implementar, escribir spec
-- Spec define criterios de aceptación (BDD format)
-- Spec referencia Historia de Usuario e ADRs aplicables
-- Implementación no debe desviarse de spec sin justificación documentada
+**PROHIBIDO:**
+- Implementar sin especificación previa
+- Especificación sin criterios de aceptación claros
+- Código sin trazabilidad a Historia de Usuario
 
 ---
 
-## II. Simplicidad
+### II. Simplicidad
 
-La solución debe implementar la complejidad necesaria para resolver la necesidad actual del producto.
+**OBLIGATORIO:**
+- Implementar solo lo necesario para resolver la necesidad actual
+- Usar librerías y patrones ya adoptados antes de crear propios
+- Evitar abstracciones sin caso de uso presente
 
-No se debe introducir complejidad, abstracciones o infraestructura únicamente por necesidades hipotéticas futuras.
+**PERMITIDO:**
+- Refactorizar cuando complejidad obstaculiza desarrollo
+- Duplicación hasta 2 ocurrencias
 
-### Aplicación práctica
-
-**En el MVP:**
-- Usar Supabase, no backend propio
-- PrimeNG out-of-the-box, no componentes custom innecesarios
-- Repository Pattern simple, no Domain-Driven Design completo
-- 60-80% test coverage, no 100% obsesionante
-
-**Refactorizar cuando:**
-- Complejidad obstaculiza desarrollo
-- Patrón se repite en 3+ lugares
-- Cambio requiere modificar múltiples archivos
-- Código supera 30 líneas / 5 responsabilidades
-
-**No refactorizar por:**
-- "Buena práctica teórica"
-- "Podría necesitarse en futuro"
-- "Es más elegante"
+**PROHIBIDO:**
+- Introducir complejidad por necesidades hipotéticas
+- Patrones "porque es good practice"
+- Abstracciones prematuras
 
 ---
 
-## III. Separación de responsabilidades
+### III. Separación de Responsabilidades
 
-La solución debe mantener separadas las responsabilidades de:
+**OBLIGATORIO:**
+- Componentes: renderizar UI + capturar input (SIN lógica de negocio)
+- Servicios: orquestar datos + aplicar reglas de negocio (SIN acceso directo a BD)
+- Repositorios: comunicar con backend (SIN lógica de negocio)
+- Infraestructura: Supabase, HTTP, Config (SIN lógica de aplicación)
 
-- **Presentación** (Components): renderizar, capturar input, mostrar datos
-- **Lógica de Aplicación** (Services): orquestar datos, aplicar reglas negocio
-- **Acceso a Datos** (Repositories): comunicar con backend (Supabase/API)
-- **Infraestructura** (HTTP, Supabase, Config): detalles técnicos
-
-Las dependencias entre capas deben ser explícitas y controladas.
-
-### Arquitectura de capas
-
+**ARQUITECTURA:**
 ```
-┌─────────────────────────────────────────┐
-│   Presentación (Components)             │
-│   - Renderizar UI                       │
-│   - Capturar eventos                    │
-│   - Llamar servicios                    │
-└─────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────┐
-│   Lógica de Aplicación (Services)       │
-│   - Orquestar datos                     │
-│   - Reglas de negocio                   │
-│   - Manejo de estado                    │
-└─────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────┐
-│   Acceso a Datos (Repositories)         │
-│   - Interfaz abstracta                  │
-│   - Implementación Supabase/HTTP        │
-│   - Transformaciones de datos           │
-└─────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────┐
-│   Infraestructura                       │
-│   - Supabase Client (MVP)               │
-│   - HttpClient (futuro)                 │
-│   - Configuración                       │
-└─────────────────────────────────────────┘
+Presentación → Lógica de Aplicación → Acceso a Datos → Infraestructura
 ```
 
-### Violaciones prohibidas
+**PERMITIDO:**
+- Lógica simple en componentes si es trivial
+- Transformación de datos en componentes si es menor a 5 líneas
 
-❌ **Query directo en component a Supabase**
-```typescript
-// MAL
-ngOnInit() {
-  this.supabase.from('players').select().then(...);
-}
-```
-
-❌ **Lógica de presentación en servicio**
-```typescript
-// MAL
-playerService.createAndFormatUIAndShowNotification() { ... }
-```
-
-❌ **Validaciones de negocio solo en UI**
-```typescript
-// MAL: validación solo en FormValidator
-// BIEN: validación en Service/Model, también en UI
-```
+**PROHIBIDO:**
+- Query directo a Supabase desde componente
+- Lógica de negocio en componentes
+- Acceso a datos sin pasar por Repository
 
 ---
 
-## IV. Reutilización
+### IV. Reutilización Controlada
 
-Antes de crear una nueva solución, se debe evaluar si existe una solución reutilizable dentro de:
+**OBLIGATORIO:**
+- Antes de crear nuevo, buscar solución existente
+- Documentar por qué no se reutiliza, si aplica
 
-- La arquitectura existente
-- Componentes compartidos (shared/)
-- Librerías adoptadas (PrimeNG, Angular, RxJS)
-- Patrones establecidos en el proyecto
+**REGLA DEL 2-3:**
+- 1ª ocurrencia: permitida duplicación
+- 2ª ocurrencia: considerar extracción
+- 3ª ocurrencia: extracción OBLIGATORIA
 
-La reutilización **no debe justificar abstracciones prematuras**.
+**PERMITIDO:**
+- Duplicación bajo regla 2-3
+- Servicios pequeños especializados
 
-### Regla del 2-3
-
-- **1ª ocurrencia:** dejar como está (permitida duplicación)
-- **2ª ocurrencia:** considerar extracción
-- **3ª ocurrencia:** extracción OBLIGATORIA
-
-### Dónde reutilizar
-
-| Tipo | Ubicación |
-|------|-----------|
-| Componentes visuales | `shared/components/` |
-| Modelos compartidos | `shared/models/` |
-| Utilidades | `shared/utils/` |
-| Servicios globales | `core/services/` |
-| Pipes/Directives | `shared/pipes/`, `shared/directives/` |
+**PROHIBIDO:**
+- Componentes/servicios genéricos sin uso presente
+- "Preparar para reutilización futura"
 
 ---
 
-## V. Evolución
+### V. Arquitectura Evolutiva
 
-El MVP debe permitir la evolución del producto sin requerir reconstrucciones innecesarias.
+**OBLIGATORIO:**
+- Diseño debe permitir migración de Supabase → API Symfony + MySQL
+- Todas las tablas incluyen `academy_id` (preparación multi-tenancy)
+- Repository Pattern implementado (abstracción de datos)
+- Row Level Security (RLS) en tablas sensibles
 
-Las decisiones actuales deben evitar acoplamientos que dificulten la evolución hacia:
+**PERMITIDO:**
+- Funcionalidad acoplada a Supabase en MVP
+- Decisiones post-MVP no implementadas
 
-- **APIs REST**: migrar de Supabase a backend propio
-- **Backend Symfony + MySQL**: tecnología elegida para post-MVP
-- **Multi-tenancy completo**: múltiples academias en plataforma
-- **Soporte multi-sport**: fútbol, vóley, básquet, etc.
-
-Las necesidades futuras **no deben convertirse en funcionalidades prematuras**.
-
-### Decisiones preparadas para evolución
-
-✅ **Repository Pattern** → permite cambiar Supabase por API sin afectar features
-
-✅ **academy_id en todas las tablas** → preparado para multi-tenant
-
-✅ **Modelos independientes de UI** → lógica reusable en futuro backend
-
-✅ **RLS en Supabase** → aislamiento de datos listo para multi-tenant
-
-### Lo que SÍ hacemos en MVP
-
-- Repository abstract
-- Foreign keys academy_id
-- RLS policies configuradas
-- Modelos de negocio claros
-
-### Lo que NO hacemos en MVP
-
-- ❌ Multi-tenant completo (administración multi-org)
-- ❌ Sistema de roles/permisos avanzado
-- ❌ Caché distribuido
-- ❌ Eventos de dominio
-- ❌ CQRS o Event Sourcing
+**PROHIBIDO:**
+- Decisiones que impidan evolución
+- Queries SQL directas en frontend
+- Lógica multi-tenancy en MVP (solo estructura)
 
 ---
 
-## VI. Trazabilidad
+### VI. Trazabilidad Completa
 
-Las decisiones de desarrollo deben mantener una relación verificable entre:
+**OBLIGATORIO:**
+- Cada Historia de Usuario en backlog
+- Cada Historia tiene especificación (spec.md)
+- Cada spec referencia ADRs aplicables
+- Cada commit referencia Historia de Usuario
+- Tests validan criterios de aceptación
 
-```text
-Producto (Visión)
-   ↓
-Historia de Usuario (Backlog)
-   ↓
-Especificación (SDD - spec.md)
-   ↓
-Arquitectura (ADRs)
-   ↓
-Implementación (Código + Tests)
-   ↓
-Commits Git
+**FLUJO TRAZABLE:**
+```
+Backlog (HU) → Spec → ADRs → Código → Tests → Commit
 ```
 
-### Cada nivel complementa sin duplicar
+**PERMITIDO:**
+- Features pequeñas con documentación mínima
+- Refactors sin Historia de Usuario
 
-| Nivel | Fuente de verdad | No duplica |
-|-------|------------------|-----------|
-| Producto | `docs/product/` | visión general |
-| Backlog | `docs/backlog/` | QUÉ hacer (historias + AC) |
-| Especificación | `specs/<feature>/spec.md` | funcionalidad detallada |
-| Arquitectura | `docs/architecture/` + ADRs | decisiones técnicas |
-| Implementación | Código + tests | HOW (cómo se codifica) |
-| Control | Git commits | trazabilidad temporal |
-
-### Trazabilidad en práctica
-
-```
-HU-002: Registrar jugador
-    ↓ (referencia en)
-specs/players/spec.md
-    ↓ (utiliza arquitectura de)
-ADR-002: Repository Pattern
-ADR-003: PrimeNG para UI
-    ↓ (implementado mediante)
-features/players/services/player.service.ts
-features/players/repositories/player.repository.ts
-features/players/components/player-form/...
-    ↓ (validado por)
-player.service.spec.ts
-    ↓ (commit)
-feat: HU-002 add player registration
-```
+**PROHIBIDO:**
+- Código sin referencia a Historia de Usuario
+- Cambios arquitectónicos sin ADR
+- Tests sin criterios de aceptación
 
 ---
 
-## VII. Autenticación y Autorización
+### VII. Autenticación y Autorización
 
-PlayerTech utiliza **Supabase Auth** para autenticación y **Row Level Security (RLS)** para autorización.
+**AUTENTICACIÓN (MVP):**
+- OBLIGATORIO: Supabase Auth (email + password)
+- PROHIBIDO: Sistema de autenticación propio
+- PROHIBIDO: API keys en código
+- OBLIGATORIO: Variables de entorno (.env.local)
 
-### Autenticación
+**AUTORIZACIÓN (MVP):**
+- OBLIGATORIO: Row Level Security (RLS) habilitado
+- OBLIGATORIO: Validaciones de negocio en Service (no solo UI)
+- PROHIBIDO: Confiar solo en validaciones frontend
+- PROHIBIDO: Acceso directo a datos sin RLS
 
-**MVP v1:**
-- ✅ Email + contraseña (Supabase Auth)
-- ✅ Gestión de sesiones (Supabase)
-- ❌ Recuperación de contraseña (fuera de alcance)
-- ❌ Multi-factor authentication (fuera de alcance)
-- ❌ Proveedores externos (fuera de alcance)
+**TABLAS CON RLS OBLIGATORIO:**
+- players, groups, activities, call_ups, responses
 
-**Responsabilidades:**
-
-| Componente | Responsabilidad |
-|-----------|------------------|
-| Supabase Auth | Validar credenciales, gestionar tokens, sesiones |
-| Frontend Auth Guard | Proteger rutas privadas |
-| Frontend Interceptor | Adjuntar token a requests |
-| Database RLS | Filtrar datos por usuario/academy |
-
-### Autorización
-
-**MVP v1: Modelo simple**
-
-Un admin por academia. El admin puede:
-- Ver todos los datos de su academia
-- Crear/actualizar/eliminar jugadores, actividades, convocatorias
-- Ver respuestas de tutores
-
-Los tutores:
-- Acceden sin autenticación (token temporal)
-- Solo pueden responder convocatorias
-- Una respuesta es inmutable
-
-**Modelo futuro:** Roles y permisos avanzados (fuera de MVP)
-
-### Row Level Security (RLS)
-
-Todas las tablas sensibles tienen RLS habilitado:
-
-```sql
--- Ejemplo: admin solo ve sus jugadores
-ALTER TABLE players ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "admin_view_own_players"
-ON players FOR SELECT
-TO authenticated
-USING (academy_id = auth.uid());
-```
-
-**RLS es OBLIGATORIO en:**
-- ✅ `players`
-- ✅ `groups`
-- ✅ `activities`
-- ✅ `call_ups` (parcial: admin autenticado, tutor por token)
-- ✅ `responses`
-
-**Validación en capas:**
-
-```
-Frontend validation (UX)
-    +
-RLS en base de datos (Seguridad)
-    ↓
-Datos filtrados automáticamente
-```
-
-### Seguridad de datos sensibles
-
-**Prohibido:**
-- ❌ API keys en código
-- ❌ Service role keys en frontend
-- ❌ Almacenar contraseñas propias (usar Supabase Auth)
-- ❌ Confiar solo en validaciones frontend
-
-**Requerido:**
-- ✅ Usar variables de entorno (.env.local)
-- ✅ RLS policies bien definidas
-- ✅ Validaciones en backend (vía RLS)
-- ✅ Contraseñas hasheadas (Supabase lo hace)
+**PERMITIDO:**
+- Acceso público por token temporal (call_ups para tutores)
+- Bypassear RLS con justificación documentada
 
 ---
 
-## VIII. Multi-tenancy (Preparación)
+### VIII. Multi-tenancy (Preparación)
 
-PlayerTech está **preparado arquitectónicamente** para multi-tenancy, pero **solo una academia activa en MVP v1**.
+**MVP: SINGLE-TENANT operativo**
 
-### MVP v1: Single-tenant operativo
+**OBLIGATORIO:**
+- `academy_id` en todas las tablas con datos de usuario
+- RLS filtra por `academy_id = auth.uid()`
+- Cada admin gestiona UNA academia
 
-```
-┌─────────────────┐
-│ Admin A         │
-├─────────────────┤
-│ Academia A      │
-│ - Jugadores     │
-│ - Actividades   │
-│ - Convocatorias │
-└─────────────────┘
-```
+**PERMITIDO:**
+- Post-MVP: múltiples academias por plataforma
+- Post-MVP: múltiples admins por academia
 
-### Estructura preparada para multi-tenant
+**PROHIBIDO:**
+- Sistema de invitaciones en MVP
+- Gestor centralizado de usuarios en MVP
+- Facturación multi-tenant en MVP
 
-```
-Cada tabla tiene academy_id:
-
-players.academy_id
-groups.academy_id
-activities.academy_id
-call_ups.activity_id → activities.academy_id
-```
-
-### Evolución a multi-tenant (Post-MVP)
-
-**Fase 1: Administración multi-academia**
-- Tabla `users` (múltiples admins posibles)
-- Tabla `user_academy` (relación N:N)
-- RLS: verificar `user_academy` en lugar de solo `auth.uid()`
-
-**Fase 2: Portal SaaS**
-- Onboarding de nuevas academias
-- Gestión de suscripciones
-- Configuración por academia
-
-**Fase 3: Datos completamente aislados**
-- Backup por academy
-- Cumplimiento de GDPR (cada academy controla sus datos)
-
-### Decisiones de MVP que facilitan multi-tenant
-
-✅ `academy_id` en todas las tablas
-✅ RLS policies por academy
-✅ Repository pattern (no acoplamiento a Supabase)
-✅ Modelos de negocio agnósticos
-
-### Decisiones que NO hacemos en MVP
-
-❌ Sistema de invitaciones para múltiples admins
-❌ Gestión centralizada de usuarios
-❌ Facturación multi-tenant
-❌ Configuración por academy
+**PREPARADO PERO NO IMPLEMENTADO:**
+- Tabla `users` (en MVP: solo auth.uid)
+- Rol-based access control (en MVP: admin único)
 
 ---
 
-## IX. Calidad
+### IX. Calidad y Testing
 
-La calidad debe evaluarse principalmente mediante **comportamiento verificable**.
+**OBLIGATORIO:**
+- Services: tests unitarios (cobertura 80%+ en lógica crítica)
+- Componentes críticos (formularios, validaciones): tests
+- Cada Historia de Usuario tiene casos de prueba
+- Flujos principales validados (manual o E2E)
 
-Las funcionalidades deben contar con criterios de aceptación claros y pruebas apropiadas para su nivel de riesgo.
+**PERMITIDO:**
+- 60-80% code coverage en MVP
+- Componentes simples sin tests
+- QA manual para features de bajo riesgo
 
-### Estándar de calidad para MVP
-
-**Services (Business Logic):**
-- ✅ Tests unitarios obligatorios
-- ✅ Coverage 80%+ en lógica crítica
-- ✅ Casos edge testados
-
-**Componentes (UI):**
-- ✅ Componentes críticos (formularios, validaciones): tests
-- ✅ Componentes simples: QA manual
-- ✅ No es necesario 100% coverage
-
-**Flujos principales (E2E):**
-- ✅ Login → crear jugador → crear actividad → convocatoria → respuesta
-- ✅ Pruebas manuales o automated
-
-**Código general:**
-- ✅ Clean Code aplicado
-- ✅ Nombres descriptivos
-- ✅ Métodos pequeños (<30 líneas)
-- ✅ Sin lógica muerta
-
-### No es necesario en MVP
-
-❌ 100% code coverage
-❌ Tests de cada getter/setter
-❌ Tests de componentes visuales triviales
-❌ Performance tunning exhaustivo
-
-### Criterios de aceptación (BDD)
-
-Cada Historia de Usuario tiene criterios en formato Given/When/Then:
-
-```gherkin
-Given que el administrador tiene credenciales válidas,
-When intenta iniciar sesión,
-Then el sistema lo autentica y lo redirige al dashboard.
-```
+**PROHIBIDO:**
+- Funcionalidad sin test de algún tipo
+- Criterios de aceptación sin prueba asociada
+- Validaciones de negocio sin test
 
 ---
 
-## X. Documentación como fuente de conocimiento
+### X. Documentación de Fuente Única
 
-La información del proyecto debe mantenerse en la documentación correspondiente.
+**OBLIGATORIO:**
+- Cada concepto documentado en EXACTAMENTE UN lugar
+- Referencias cruzadas a documentación, no duplicación
+- Cada documento referencia sus dependencias
 
-**No se debe duplicar información cuando pueda existir una única fuente de verdad.**
+**FUENTES ÚNICAS:**
+| Información | Ubicación | NO repetir |
+|-------------|-----------|-----------|
+| Visión del producto | docs/product/vision.md | README, specs, etc |
+| Decisiones técnicas | docs/architecture/decisions.md | código, comentarios |
+| Modelo de datos | docs/architecture/database-schema.md | código frontend |
+| Estándares de código | docs/engineering/ | checklists, PRs |
+| Histórico de cambios | Constitution + Changelog | documentos viejos |
 
-### Estructura de documentación
+**PERMITIDO:**
+- Referencias a documentación oficial
+- Ejemplos en documentación técnica
 
-| Documento | Propósito | Ubicación |
-|-----------|-----------|-----------|
-| **Constitution** | Principios fundamentales | `docs/constitution-daft.md` |
-| **Visión** | Qué es PlayerTech | `docs/product/vision.md` |
-| **Alcance** | Qué entra en MVP v1 | `docs/product/scope.md` |
-| **Glosario** | Vocabulario compartido | `docs/product/glossary.md` |
-| **Roadmap** | Evolución del producto | `docs/product/roadmap.md` |
-| **Backlog** | Épicas + Historias de Usuario | `docs/backlog/` |
-| **Architecture** | Decisiones técnicas (ADRs) | `docs/architecture/decisions.md` |
-| **Database** | Schema y modelo de datos | `docs/architecture/database-schema.md` |
-| **Engineering** | Estándares de código | `docs/engineering/` |
-| **Specifications** | Funcionalidades concretas | `specs/<feature>/` |
-
-### Cómo referenciar
-
-**Cada documento referencia sus dependencias:**
-
-```markdown
-# HU-002: Registrar jugador
-
-**Épica:** EP-02 Gestión de jugadores
-**Alcance:** docs/product/scope.md
-**Glosario:** docs/product/glossary.md (Player, Academy)
-**Arquitectura:** docs/architecture/decisions.md (ADR-002, ADR-004)
-**Database:** docs/architecture/database-schema.md (tabla players)
-**Estándares:** docs/engineering/frontend-clean-architecture.md
-```
-
-### Single Source of Truth
-
-| Información | Fuente única | No repetir |
-|-------------|--------------|-----------|
-| Visión del producto | `docs/product/vision.md` | No en README, specs, etc |
-| Decisiones técnicas | ADRs en `decisions.md` | No en código/comentarios |
-| Modelos de datos | `database-schema.md` | No en código frontend |
-| Estándares de código | `docs/engineering/` | No en PRs/checklists |
+**PROHIBIDO:**
+- Duplicar información entre docs
+- Documentación desactualizada
 
 ---
 
-## XI. Convención para GitHub Spec Kit
+### XI. Convención para GitHub Spec Kit
 
-PlayerTech utiliza **GitHub Spec Kit** para orquestar SDD.
-
-### Estructura de especificaciones
+**ESTRUCTURA OBLIGATORIA:**
 
 ```
-specs/
-├── auth/
-│   ├── spec.md           # QUÉ: funcionalidad
-│   ├── plan.md           # CÓMO: decisiones técnicas
-│   └── tasks.md          # TAREAS: pasos de implementación
-├── players/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks.md
-└── call-ups/
-    ├── spec.md
-    ├── plan.md
-    └── tasks.md
+specs/<feature>/
+├── spec.md          (QUÉ: funcionalidad)
+├── plan.md          (CÓMO: decisiones técnicas)
+└── tasks.md         (TAREAS: pasos de implementación)
 ```
 
-### Contenido esperado en cada archivo
-
-**spec.md:**
-- Referencia a Historia de Usuario (HU-XXX)
-- Descripción funcional
+**spec.md DEBE CONTENER:**
+- Referencia: Historia de Usuario (HU-XXX)
 - Criterios de aceptación (Given/When/Then)
 - Reglas de negocio
-- Casos de uso
 - Fuera de alcance
 
-**plan.md:**
-- Decisiones arquitectónicas aplicables (ADRs)
+**plan.md DEBE CONTENER:**
+- ADRs aplicables
 - Componentes a crear
-- Servicios necesarios
-- Modelos de datos
-- Cambios en BD (migraciones)
+- Cambios en BD
 - Flujos técnicos
 
-**tasks.md:**
+**tasks.md DEBE CONTENER:**
 - Pasos concretos
 - Checklist de implementación
-- Pruebas a escribir
-- Commits esperados
 - Criterios de compleción
 
-### Trazabilidad en Spec Kit
+**TRAZABILIDAD:**
+```
+Backlog (HU) → spec.md → plan.md (ADRs) → tasks.md → Commits
+```
 
-```
-Backlog (HU-002)
-    ↓ (referencia)
-specs/players/spec.md
-    ↓ (implementa)
-specs/players/plan.md (Architecture + ADRs)
-    ↓ (ejecuta)
-specs/players/tasks.md (Pasos concretos)
-    ↓ (evidencia)
-Commits en Git + PRs + Tests
-```
+**PROHIBIDO:**
+- Specs sin Historia de Usuario
+- Specs sin criterios de aceptación
+- Plan sin referencias a ADRs
+- Tasks sin checklist
 
 ---
 
-## XII. Excepciones
+### XII. Excepciones Controladas
 
-Cuando una implementación necesite apartarse de un principio de esta Constitución, la excepción debe estar **explícitamente justificada y documentada**.
+**PERMITIDO:**
+- Apartarse de principio SI está explícitamente justificado
+- Documentar: principio violado + justificación + fecha
 
-Una excepción no modifica automáticamente la Constitución.
-
-### Cómo documentar una excepción
-
-**En un commit o PR:**
-
+**FORMATO DE EXCEPCIÓN:**
 ```markdown
 ## Excepción a Constitución
 
-**Principio:** Separación de responsabilidades (Sección III)
-
-**Violación:** Lógica de negocio directa en component
-
-**Justificación:**
-- Feature pequeña (50 líneas)
-- Temporal: refactor después en próximo sprint
-- No afecta otras features
-
-**Documento:** PR #42, fecha 2024-10-15
-
-**Próxima revisión:** Sprint 3
+Principio: [Sección N]
+Violación: [Qué se hizo]
+Justificación: [Por qué fue necesario]
+Documento: [PR #X, commit Y]
+Revisión: [Fecha para evaluar si aplica aún]
 ```
 
-### Tipos de excepciones válidas
+**PERMITIDO:**
+- Excepciones temporales ("refactor después")
+- Excepciones por restricción técnica
 
-✅ **Temporales:** "refactor después"
-✅ **Costo-beneficio:** "simple feature, cost de refactor no justificado"
-✅ **Restricción técnica:** "Supabase no permite, implementar workaround"
-❌ **Teoría:** "la teoría lo exige, pero aquí no"
-
----
-
-## Documentación relacionada
-
-Los detalles de implementación y las prácticas específicas se encuentran en:
-
-- `docs/architecture/decisions.md` — Architecture Decision Records (ADRs)
-- `docs/architecture/database-schema.md` — Modelo de datos
-- `docs/architecture/supabase-migrations-guide.md` — Versionado de BD
-- `docs/engineering/frontend-clean-architecture.md` — Estructura Angular pragmática
-- `docs/engineering/coding-standards.md` — Estándares de código
-- `docs/engineering/git.md` — Workflow Git
-- `docs/engineering/testing.md` — Estrategia de pruebas
-- `docs/engineering/security.md` — Prácticas de seguridad
-- `docs/product/` — Visión, alcance, glosario, roadmap
-- `docs/backlog/` — Épicas e historias de usuario
-- `specs/` — Especificaciones por feature (Spec Kit)
+**PROHIBIDO:**
+- Excepciones "porque sí"
+- Excepciones por conveniencia sin documentación
+- Excepciones que se conviertan en norma sin actualizar Constitution
 
 ---
 
-## Versión y cambios
+## Referencias
 
-| Versión | Fecha | Cambios |
-|---------|-------|---------|
-| 1.0 | 2024-10-02 | Creación inicial |
-| 1.1 | 2024-10-02 | Agregar Auth/Authz, Multi-tenancy, Spec Kit |
+- **ADRs**: docs/architecture/decisions.md
+- **Database**: docs/architecture/database-schema.md
+- **Engineering**: docs/engineering/
+- **Product**: docs/product/
+- **Backlog**: docs/backlog/
+- **Specs**: specs/
 
+---
+
+## Cambios a la Constitución
+
+| Versión | Fecha | Cambio |
+|---------|-------|--------|
+| 1.0 | 2024-10-02 | Creación (versión extensa) |
+| 2.0 | 2024-10-02 | Refactor: declarativa, normativa, clara |
