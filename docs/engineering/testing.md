@@ -112,6 +112,9 @@ Para el MVP se priorizarán pruebas sobre:
 - convocatorias;
 - respuestas;
 - reglas de negocio críticas.
+- aislamiento entre academias y acceso no autorizado a datos de otro tenant.
+
+Para cada entidad protegida por tenant, las pruebas de integración o de RLS deben verificar, como mínimo, que un usuario con membresía en la Academia A puede acceder a sus datos y no puede acceder ni modificar los de la Academia B.
 
 ## Calidad
 

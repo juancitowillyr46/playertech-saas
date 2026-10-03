@@ -46,7 +46,7 @@ La plataforma deberá poder evolucionar para atender:
 
 ## Visión a largo plazo
 
-PlayerTech busca convertirse en una **plataforma SaaS multi-tenant para la gestión integral de academias deportivas**, centralizando progresivamente procesos como:
+PlayerTech utiliza una arquitectura **SaaS multi-tenant desde el MVP** para gestionar academias deportivas. A largo plazo, busca ampliar progresivamente las capacidades de la plataforma mediante procesos como:
 
 - Jugadores.
 - Acudientes o tutores.
@@ -76,7 +76,7 @@ La plataforma debe permitir que diferentes personas participen en la operación 
 
 ### Evolución
 
-El producto debe poder crecer desde un MVP inicial hacia una plataforma SaaS multi-tenant y multidisciplinaria.
+El producto debe poder crecer desde el MVP hacia una plataforma multidisciplinaria y con capacidades SaaS avanzadas, preservando el aislamiento entre academias existente desde el inicio.
 
 ### Simplicidad
 

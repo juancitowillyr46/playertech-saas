@@ -1,672 +1,921 @@
 # Guía de Migraciones en Supabase
 
-Cómo versionamos, organizamos y ejecutamos cambios en la base de datos de PlayerTech.
+Define cómo versionamos, organizamos, ejecutamos y verificamos los cambios de base de datos de PlayerTech.
+
+Las migraciones forman parte del código fuente del proyecto y constituyen la fuente reproducible de evolución del esquema de PostgreSQL, incluyendo tablas, relaciones, restricciones, índices, RLS y políticas de seguridad.
 
 ---
 
 ## 1. ¿Qué es una migración?
 
-Una migración es un archivo SQL que describe un cambio en la estructura o configuración de la base de datos.
+Una migración es un archivo SQL versionado que describe un cambio controlado en la estructura o configuración de la base de datos.
 
-**Ejemplos:**
-- Crear tabla `players`
-- Agregar columna `email` a `players`
-- Crear políticas de Row Level Security
-- Agregar índices para performance
+Ejemplos:
+
+- crear una tabla;
+- agregar una columna;
+- crear una relación entre tablas;
+- agregar una restricción;
+- crear un índice;
+- habilitar Row Level Security;
+- crear o modificar una política RLS;
+- crear una función o trigger necesario para el modelo.
 
 ### ¿Por qué versionar migraciones?
 
-```
-❌ Malo: editar tablas manualmente en Supabase dashboard
-   → Cambios no quedan documentados
-   → Otros devs no saben qué pasó
-   → Imposible reproducir en otro ambiente
+```text
+❌ Cambiar manualmente la base de datos
+   ↓
+Cambios difíciles de rastrear
+Cambios difíciles de reproducir
+Diferencias entre ambientes
 
-✅ Bien: cada cambio es un archivo SQL versionado
-   → Historial completo
-   → Reproducible en cualquier ambiente
-   → Trazable en Git
+✅ Migración versionada
+   ↓
+Cambio documentado
+Cambio reproducible
+Historial en Git
+Trazabilidad con el producto
 ```
+
+La base de datos debe evolucionar mediante migraciones versionadas y no mediante cambios manuales como mecanismo principal de desarrollo.
 
 ---
 
 ## 2. Estructura de carpetas
 
-```
+La estructura propuesta es:
+
+```text
 playertech-saas/
 ├── supabase/
 │   ├── migrations/
 │   │   ├── 001_initial_schema.sql
-│   ���   ├── 002_players_table.sql
-│   │   ├── 003_groups_table.sql
-│   │   ├── 004_activities_table.sql
-│   │   ├── 005_call_ups_table.sql
-│   │   ├── 006_responses_table.sql
-│   │   ├── 007_rls_policies.sql
-│   │   └── 008_indexes_and_constraints.sql
+│   │   ├── 002_academies.sql
+│   │   ├── 003_academy_members.sql
+│   │   ├── 004_players.sql
+│   │   ├── 005_groups.sql
+│   │   ├── 006_player_groups.sql
+│   │   ├── 007_activities.sql
+│   │   ├── 008_call_ups.sql
+│   │   ├── 009_responses.sql
+│   │   └── ...
 │   ├── seed/
 │   │   └── development.sql
-│   ├── config.json
+│   ├── config.toml
 │   └── README.md
+```
+
+La estructura exacta puede evolucionar según las necesidades del proyecto.
+
+La documentación arquitectónica se mantiene en:
+
+```text
+docs/architecture/supabase.md
+docs/architecture/supabase-migrations-guide.md
 ```
 
 ---
 
 ## 3. Convención de nombres
 
-```
-NNN_descripcion_corto.sql
+Se utilizará una convención basada en timestamp para las migraciones generadas por Supabase CLI.
+
+Ejemplo:
+
+```text
+YYYYMMDDHHMMSS_descripcion.sql
 ```
 
-- `NNN`: número secuencial (001, 002, 003...)
-- `_`: separador
-- `descripcion_corto`: qué hace la migración en snake_case
+Por ejemplo:
 
-**Ejemplos:**
+```text
+20261003090000_create_academies.sql
+20261003091000_create_academy_members.sql
+20261003092000_create_players.sql
+20261003093000_create_player_rls.sql
 ```
-001_initial_schema.sql           ← Estructura base
-002_players_table.sql            ← Crear tabla players
-003_add_email_to_players.sql     ← Modificar tabla existente
-004_create_rls_policies.sql      ← Políticas de seguridad
-005_add_indexes.sql              ← Performance
-```
+
+La descripción debe:
+
+- utilizar `snake_case`;
+- describir claramente el cambio;
+- evitar nombres genéricos como `update.sql`;
+- representar un cambio coherente.
+
+> No se debe renombrar una migración que ya haya sido aplicada en un ambiente compartido.
 
 ---
 
-## 4. Estructura de una migración
+## 4. Principios de las migraciones
 
-### Migración simple: crear tabla
+Las migraciones deben ser:
 
-**Archivo: `002_players_table.sql`**
+- versionadas;
+- reproducibles;
+- trazables;
+- pequeñas y coherentes;
+- ordenadas según dependencias;
+- revisables mediante Git.
+
+Una migración debe representar una unidad lógica de cambio.
+
+No se deben acumular cambios no relacionados en una única migración únicamente para reducir el número de archivos.
+
+---
+
+## 5. Orden de creación del modelo Multi-Tenant
+
+PlayerTech utiliza multi-tenancy desde el MVP.
+
+Por lo tanto, las dependencias fundamentales deben respetar el siguiente orden conceptual:
+
+```text
+Supabase / PostgreSQL
+        │
+        ▼
+Academies
+        │
+        ▼
+Academy Members
+        │
+        ├───────────────┐
+        ▼               ▼
+     Players         Groups
+        │
+        ▼
+   Player Groups
+        │
+        ▼
+    Activities
+        │
+        ▼
+     Call-ups
+        │
+        ▼
+     Responses
+```
+
+Las relaciones de pertenencia al tenant deben existir antes de crear las entidades que dependen de ellas.
+
+---
+
+## 6. Modelo base de Multi-Tenancy
+
+### Academies
+
+La academia representa el tenant de PlayerTech.
+
+Ejemplo conceptual:
 
 ```sql
--- Crear tabla players
-CREATE TABLE IF NOT EXISTS players (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  academy_id UUID NOT NULL,
-  name TEXT NOT NULL,
-  email TEXT,
-  birth_date DATE,
-  position TEXT,
-  jersey_number INT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_academy FOREIGN KEY (academy_id) REFERENCES academies(id) ON DELETE CASCADE
+CREATE TABLE academies (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-
--- Índices para búsquedas frecuentes
-CREATE INDEX idx_players_academy_id ON players(academy_id);
-CREATE INDEX idx_players_name ON players(name);
-
--- Habilitar RLS
-ALTER TABLE players ENABLE ROW LEVEL SECURITY;
-
--- Política: admin puede ver jugadores de su academia
-CREATE POLICY "admin_view_players"
-ON players FOR SELECT
-TO authenticated
-USING (academy_id = auth.uid());
 ```
 
-### Migración con cambio estructural
+No se debe utilizar `auth.uid()` como `academy_id`.
 
-**Archivo: `003_add_email_to_players.sql`**
+`auth.uid()` representa al usuario autenticado.
 
-```sql
--- Agregar columna si no existe
-ALTER TABLE players
-ADD COLUMN IF NOT EXISTS email TEXT UNIQUE;
-
--- Comentario para documentación
-COMMENT ON COLUMN players.email IS 'Email del jugador, requerido para contacto';
-```
-
-### Migración de RLS (seguridad)
-
-**Archivo: `007_rls_policies.sql`**
-
-```sql
--- Tabla: activities
-ALTER TABLE activities ENABLE ROW LEVEL SECURITY;
-
--- Política 1: Admin puede ver actividades de su academia
-CREATE POLICY "admin_view_activities"
-ON activities FOR SELECT
-TO authenticated
-USING (academy_id = auth.uid());
-
--- Política 2: Admin puede crear actividades
-CREATE POLICY "admin_create_activities"
-ON activities FOR INSERT
-TO authenticated
-WITH CHECK (academy_id = auth.uid());
-
--- Política 3: Admin puede actualizar sus actividades
-CREATE POLICY "admin_update_activities"
-ON activities FOR UPDATE
-TO authenticated
-USING (academy_id = auth.uid())
-WITH CHECK (academy_id = auth.uid());
-
--- Tabla: call_ups
-ALTER TABLE call_ups ENABLE ROW LEVEL SECURITY;
-
--- El enlace de convocatoria es público (sin RLS)
--- Tutor accede sin autenticación mediante token temporal
-```
+`academies.id` representa a la academia.
 
 ---
 
-## 5. Flujo de trabajo con migraciones
+### Academy Members
 
-### Paso 1: Identificar cambio necesario
+La pertenencia de un usuario a una academia se representa mediante una tabla de relación.
 
+```sql
+CREATE TABLE academy_members (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    academy_id UUID NOT NULL REFERENCES academies(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    role TEXT NOT NULL DEFAULT 'admin',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    UNIQUE (academy_id, user_id)
+);
 ```
-HU-002: Registrar jugador
+
+Conceptualmente:
+
+```text
+auth.users
+    │
+    │ user_id
+    ▼
+academy_members
+    │
+    │ academy_id
+    ▼
+academies
+```
+
+Esto permite que la identidad del usuario y la identidad del tenant permanezcan separadas.
+
+El modelo también permite evolucionar posteriormente hacia usuarios con pertenencia a múltiples academias.
+
+---
+
+## 7. Entidades de negocio
+
+Las entidades que pertenecen a una academia deben mantener una referencia al tenant.
+
+Ejemplo:
+
+```sql
+CREATE TABLE players (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    academy_id UUID NOT NULL REFERENCES academies(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    email TEXT,
+    birth_date DATE,
+    position TEXT,
+    jersey_number INTEGER,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+```
+
+El mismo principio aplica a:
+
+```text
+players
+groups
+activities
+```
+
+Mientras que otras entidades pueden obtener la academia a través de sus relaciones.
+
+Por ejemplo:
+
+```text
+call_up
+   ↓
+activity
+   ↓
+academy
+```
+
+La decisión de si una tabla debe almacenar directamente `academy_id` o resolver el tenant mediante una relación debe definirse según el modelo de datos y las necesidades de seguridad y consulta.
+
+---
+
+## 8. Índices y restricciones
+
+Las columnas utilizadas frecuentemente para aislamiento, relaciones o búsqueda deben contar con los índices correspondientes cuando sea necesario.
+
+Por ejemplo:
+
+```sql
+CREATE INDEX idx_players_academy_id
+    ON players(academy_id);
+```
+
+Las relaciones críticas deben utilizar foreign keys.
+
+Las restricciones de unicidad deben considerar el tenant cuando corresponda.
+
+Por ejemplo, si el nombre de un grupo puede repetirse entre academias:
+
+```sql
+UNIQUE (academy_id, name)
+```
+
+en lugar de:
+
+```sql
+UNIQUE (name)
+```
+
+Las restricciones deben reflejar las reglas reales del dominio.
+
+---
+
+## 9. Row Level Security
+
+Las tablas que contienen datos protegidos deben tener RLS habilitado.
+
+Ejemplo:
+
+```sql
+ALTER TABLE players ENABLE ROW LEVEL SECURITY;
+```
+
+La política no debe asumir:
+
+```sql
+academy_id = auth.uid()
+```
+
+La autorización debe determinarse mediante la pertenencia del usuario a la academia.
+
+Conceptualmente:
+
+```text
+auth.uid()
+    │
+    ▼
+academy_members
+    │
+    ▼
+academy_id
+    │
+    ▼
+registro
+```
+
+Ejemplo conceptual de política:
+
+```sql
+CREATE POLICY "players_select_by_academy"
+ON players
+FOR SELECT
+TO authenticated
+USING (
+    EXISTS (
+        SELECT 1
+        FROM academy_members am
+        WHERE am.academy_id = players.academy_id
+          AND am.user_id = auth.uid()
+    )
+);
+```
+
+Para `INSERT`, la condición debe validar que el registro que se intenta crear pertenece a una academia a la que el usuario tiene acceso:
+
+```sql
+CREATE POLICY "players_insert_by_academy"
+ON players
+FOR INSERT
+TO authenticated
+WITH CHECK (
+    EXISTS (
+        SELECT 1
+        FROM academy_members am
+        WHERE am.academy_id = players.academy_id
+          AND am.user_id = auth.uid()
+    )
+);
+```
+
+Las políticas de `UPDATE` deben proteger tanto el registro existente como el nuevo valor de `academy_id`:
+
+```sql
+CREATE POLICY "players_update_by_academy"
+ON players
+FOR UPDATE
+TO authenticated
+USING (
+    EXISTS (
+        SELECT 1
+        FROM academy_members am
+        WHERE am.academy_id = players.academy_id
+          AND am.user_id = auth.uid()
+    )
+)
+WITH CHECK (
+    EXISTS (
+        SELECT 1
+        FROM academy_members am
+        WHERE am.academy_id = players.academy_id
+          AND am.user_id = auth.uid()
+    )
+);
+```
+
+La misma estrategia debe aplicarse a las demás entidades protegidas.
+
+---
+
+## 10. RLS y relaciones entre entidades
+
+No todas las tablas necesitan obtener `academy_id` directamente.
+
+Por ejemplo:
+
+```text
+responses
+   ↓
+call_ups
+   ↓
+activities
+   ↓
+academies
+```
+
+Una política puede resolver el tenant mediante las relaciones existentes.
+
+Conceptualmente:
+
+```sql
+EXISTS (
+    SELECT 1
+    FROM call_ups cu
+    JOIN activities a
+      ON a.id = cu.activity_id
+    JOIN academy_members am
+      ON am.academy_id = a.academy_id
+    WHERE cu.id = responses.call_up_id
+      AND am.user_id = auth.uid()
+)
+```
+
+Las políticas deben diseñarse de acuerdo con el modelo de datos real y no mediante una regla genérica aplicada indiscriminadamente a todas las tablas.
+
+---
+
+## 11. Datos públicos mediante Call-ups
+
+Las convocatorias contienen un caso especial del MVP.
+
+El tutor podrá acceder mediante un enlace temporal sin autenticación tradicional.
+
+Por lo tanto, el acceso público a una convocatoria **no debe interpretarse como ausencia de seguridad**.
+
+El modelo deberá proteger:
+
+- el token;
+- su expiración;
+- la información accesible;
+- las operaciones permitidas;
+- la posibilidad de modificar una convocatoria;
+- el acceso a datos de otras convocatorias.
+
+El diseño concreto del acceso público mediante token debe definirse antes de habilitar políticas anónimas sobre estas tablas.
+
+No se debe simplemente eliminar RLS de `call_ups` para permitir el acceso público.
+
+Cuando sea necesario, se podrá utilizar una función controlada o una capa backend/API futura para exponer únicamente la información autorizada mediante el token.
+
+---
+
+## 12. Seed de desarrollo
+
+Los datos de desarrollo deben ser reproducibles.
+
+El seed debe respetar el modelo multi-tenant:
+
+```text
+Academy
+   ↓
+Academy Member
+   ↓
+Players
+   ↓
+Groups
+   ↓
+Activities
+   ↓
+Call-ups
+   ↓
+Responses
+```
+
+No se debe depender de:
+
+```sql
+auth.uid()
+```
+
+en un seed ejecutado fuera de un contexto de autenticación.
+
+Para datos de desarrollo se deben utilizar usuarios y UUIDs controlados por el entorno de desarrollo.
+
+Ejemplo conceptual:
+
+```sql
+INSERT INTO academies (id, name)
+VALUES (
+    '11111111-1111-1111-1111-111111111111',
+    'Academia Test'
+);
+```
+
+Posteriormente se establece la relación correspondiente en `academy_members`.
+
+El seed debe poder reconstruir un escenario completo de prueba de manera reproducible.
+
+---
+
+## 13. Flujo de trabajo con una nueva migración
+
+### Paso 1 — Identificar la necesidad
+
+Ejemplo:
+
+```text
+HU-002 — Registrar jugador
 
 Necesita:
-- Tabla players con campos: name, email, birth_date, position, jersey_number
-- Relación con academy
-- RLS para que admin vea solo sus jugadores
-```
 
-### Paso 2: Crear archivo de migración
-
-```bash
-# En tu editor favorito, crear:
-supabase/migrations/002_players_table.sql
-
-# Copiar template de arriba y adaptar
-```
-
-### Paso 3: Escribir SQL
-
-```sql
-CREATE TABLE IF NOT EXISTS players (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  academy_id UUID NOT NULL,
-  name TEXT NOT NULL,
-  email TEXT UNIQUE,
-  birth_date DATE,
-  position TEXT,
-  jersey_number INT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-ALTER TABLE players ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "players_academy_isolation"
-ON players FOR SELECT
-TO authenticated
-USING (academy_id = auth.uid());
-```
-
-### Paso 4: Ejecutar en ambiente local (si usas Supabase CLI)
-
-```bash
-# Opción A: Con Supabase CLI (recomendado para desarrollo)
-supabase migration up
-
-# Opción B: Manual en Supabase Dashboard
-# 1. Ir a SQL Editor
-# 2. Copiar y pegar contenido del archivo
-# 3. Ejecutar
-```
-
-### Paso 5: Verificar en Supabase Dashboard
-
-1. Ir a **Database** → **Tables**
-2. Confirmar que tabla `players` existe
-3. Ir a **Authentication** → **Row Level Security**
-4. Confirmar que política está activa
-
-### Paso 6: Commitear en Git
-
-```bash
-git add supabase/migrations/002_players_table.sql
-git commit -m "database: create players table with RLS policies"
-git push
-```
-
-### Paso 7: Documentar en archivo de seguimiento
-
-```
-# En supabase/migrations/README.md o docs/architecture/supabase.md
-
-## Migraciones aplicadas
-
-| # | Nombre | Descripción | Estado |
-|---|--------|-------------|--------|
-| 001 | initial_schema | Tablas base (academies, users) | ✅ Aplicada |
-| 002 | players_table | Tabla de jugadores con RLS | ✅ Aplicada |
+- tabla players;
+- relación con academy;
+- reglas de aislamiento;
+- índices necesarios;
+- RLS;
+- repositorio;
+- pruebas.
 ```
 
 ---
 
-## 6. Estructura de tablas recomendada para MVP
+### Paso 2 — Determinar dependencias
+
+Antes de crear la migración se debe comprobar:
+
+```text
+players
+   ↓
+depende de academies
+```
+
+y:
+
+```text
+RLS players
+   ↓
+depende de academy_members
+```
+
+Por lo tanto, el orden debe respetar esas dependencias.
+
+---
+
+### Paso 3 — Crear la migración
+
+Ejemplo:
+
+```text
+supabase/migrations/
+└── 20261003092000_create_players.sql
+```
+
+---
+
+### Paso 4 — Implementar el cambio
+
+La migración debe contener únicamente los cambios correspondientes a su propósito.
+
+Ejemplo:
 
 ```sql
--- TABLA 1: academies (multi-tenant futuro)
-CREATE TABLE academies (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  owner_id UUID NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- TABLA 2: players
 CREATE TABLE players (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  academy_id UUID NOT NULL REFERENCES academies(id),
-  name TEXT NOT NULL,
-  email TEXT,
-  birth_date DATE,
-  position TEXT,
-  jersey_number INT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    academy_id UUID NOT NULL REFERENCES academies(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- TABLA 3: groups (categorías/grupos)
-CREATE TABLE groups (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  academy_id UUID NOT NULL REFERENCES academies(id),
-  name TEXT NOT NULL,
-  description TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- TABLA 4: player_groups (relación N:N)
-CREATE TABLE player_groups (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  player_id UUID NOT NULL REFERENCES players(id) ON DELETE CASCADE,
-  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(player_id, group_id)
-);
-
--- TABLA 5: activities
-CREATE TABLE activities (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  academy_id UUID NOT NULL REFERENCES academies(id),
-  name TEXT NOT NULL,
-  type TEXT NOT NULL, -- 'training' o 'competition'
-  description TEXT,
-  scheduled_at TIMESTAMP NOT NULL,
-  location TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- TABLA 6: call_ups
-CREATE TABLE call_ups (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  activity_id UUID NOT NULL REFERENCES activities(id),
-  player_id UUID NOT NULL REFERENCES players(id),
-  token TEXT UNIQUE NOT NULL, -- enlace público único
-  token_expires_at TIMESTAMP,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- TABLA 7: responses
-CREATE TABLE responses (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  call_up_id UUID NOT NULL REFERENCES call_ups(id) UNIQUE,
-  status TEXT NOT NULL, -- 'confirmed' o 'rejected'
-  reason TEXT, -- motivo si fue rechazado
-  responded_at TIMESTAMP NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+CREATE INDEX idx_players_academy_id
+    ON players(academy_id);
 ```
 
 ---
 
-## 7. RLS (Row Level Security) - Ejemplo completo
+### Paso 5 — Crear o actualizar seguridad
+
+Si la nueva entidad requiere protección mediante RLS:
 
 ```sql
--- ========================
--- TABLA: players
--- ========================
-
 ALTER TABLE players ENABLE ROW LEVEL SECURITY;
+```
 
--- Admin solo ve jugadores de su academia
-CREATE POLICY "players_admin_isolation"
-ON players FOR SELECT
-TO authenticated
-USING (academy_id = auth.uid());
+y se crean las políticas correspondientes.
 
--- Admin solo crea jugadores en su academia
-CREATE POLICY "players_admin_insert"
-ON players FOR INSERT
-TO authenticated
-WITH CHECK (academy_id = auth.uid());
+Las políticas deben comprobar la pertenencia del usuario a la academia mediante `academy_members`.
 
--- Admin solo actualiza sus jugadores
-CREATE POLICY "players_admin_update"
-ON players FOR UPDATE
-TO authenticated
-USING (academy_id = auth.uid())
-WITH CHECK (academy_id = auth.uid());
+---
 
--- Admin solo borra sus jugadores
-CREATE POLICY "players_admin_delete"
-ON players FOR DELETE
-TO authenticated
-USING (academy_id = auth.uid());
+### Paso 6 — Ejecutar localmente
 
--- ========================
--- TABLA: activities
--- ========================
+Las migraciones deben probarse primero en el entorno local cuando sea posible.
 
-ALTER TABLE activities ENABLE ROW LEVEL SECURITY;
+El procedimiento exacto depende de la configuración de Supabase CLI del proyecto.
 
--- Similar a players
-CREATE POLICY "activities_admin_isolation"
-ON activities FOR SELECT
-TO authenticated
-USING (academy_id = auth.uid());
+No se debe utilizar el Dashboard como mecanismo principal de evolución del esquema.
 
-CREATE POLICY "activities_admin_insert"
-ON activities FOR INSERT
-TO authenticated
-WITH CHECK (academy_id = auth.uid());
+---
 
--- ========================
--- TABLA: call_ups (acceso público por token)
--- ========================
+### Paso 7 — Verificar
 
-ALTER TABLE call_ups ENABLE ROW LEVEL SECURITY;
+La verificación debe incluir:
 
--- Admin ve sus convocatorias
-CREATE POLICY "call_ups_admin_view"
-ON call_ups FOR SELECT
-TO authenticated
-USING (
-  activity_id IN (
-    SELECT id FROM activities 
-    WHERE academy_id = auth.uid()
-  )
-);
+- estructura de la tabla;
+- foreign keys;
+- índices;
+- RLS habilitado;
+- políticas;
+- comportamiento esperado;
+- aislamiento entre academias;
+- pruebas de acceso autorizado;
+- pruebas de acceso no autorizado.
 
--- Público: acceso por token válido
--- Nota: Esto requiere función en Supabase o control en API
--- Por ahora: backend valida token antes de retornar datos
+Para una entidad multi-tenant, como mínimo debe probarse:
 
--- ========================
--- TABLA: responses
--- ========================
-
-ALTER TABLE responses ENABLE ROW LEVEL SECURITY;
-
--- Admin ve respuestas de sus convocatorias
-CREATE POLICY "responses_admin_view"
-ON responses FOR SELECT
-TO authenticated
-USING (
-  call_up_id IN (
-    SELECT id FROM call_ups
-    WHERE activity_id IN (
-      SELECT id FROM activities
-      WHERE academy_id = auth.uid()
-    )
-  )
-);
-
--- Tutor crea respuesta con token válido
--- Validación: backend verifica token antes de INSERT
+```text
+Usuario de Academy A
+       │
+       ├── puede acceder a datos de A
+       │
+       └── NO puede acceder a datos de B
 ```
 
 ---
 
-## 8. Seed (datos de prueba)
+### Paso 8 — Commit
 
-Para desarrollo y testing, crear datos iniciales:
+El cambio debe quedar registrado en Git junto con la implementación relacionada.
 
-**Archivo: `supabase/seed/development.sql`**
-
-```sql
--- Limpiar datos existentes (solo en desarrollo)
-TRUNCATE TABLE responses CASCADE;
-TRUNCATE TABLE call_ups CASCADE;
-TRUNCATE TABLE player_groups CASCADE;
-TRUNCATE TABLE activities CASCADE;
-TRUNCATE TABLE groups CASCADE;
-TRUNCATE TABLE players CASCADE;
-TRUNCATE TABLE academies CASCADE;
-
--- Insertar academia de prueba
-INSERT INTO academies (id, name, owner_id)
-VALUES ('11111111-1111-1111-1111-111111111111', 'Academia Test', auth.uid())
-RETURNING id;
-
--- Insertar jugadores
-INSERT INTO players (academy_id, name, email, birth_date, position, jersey_number)
-VALUES 
-  ('11111111-1111-1111-1111-111111111111', 'Juan Pérez', 'juan@test.com', '2010-05-15', 'forward', 9),
-  ('11111111-1111-1111-1111-111111111111', 'Carlos López', 'carlos@test.com', '2011-03-22', 'midfielder', 5),
-  ('11111111-1111-1111-1111-111111111111', 'Diego Martínez', 'diego@test.com', '2009-08-10', 'defender', 3);
-
--- Insertar grupos
-INSERT INTO groups (academy_id, name, description)
-VALUES 
-  ('11111111-1111-1111-1111-111111111111', 'Sub-12', 'Categoría sub-12'),
-  ('11111111-1111-1111-1111-111111111111', 'Sub-14', 'Categoría sub-14');
-
--- Insertar actividades
-INSERT INTO activities (academy_id, name, type, description, scheduled_at, location)
-VALUES 
-  ('11111111-1111-1111-1111-111111111111', 'Entrenamiento Martes', 'training', 'Entrenamiento técnico', NOW() + INTERVAL '2 days', 'Cancha 1'),
-  ('11111111-1111-1111-1111-111111111111', 'Torneo Regional', 'competition', 'Torneo amistoso regional', NOW() + INTERVAL '7 days', 'Estadio Municipal');
-```
-
-### Ejecutar seed
+Ejemplo:
 
 ```bash
-# Opción A: Con Supabase CLI
-supabase db seed
-
-# Opción B: Manual
-# 1. SQL Editor en Dashboard
-# 2. Copiar contenido de development.sql
-# 3. Ejecutar
+git add supabase/migrations/
+git commit -m "feat(db): add player persistence with tenant isolation"
 ```
+
+Cuando corresponda, el cambio debe mantener trazabilidad hacia la Historia de Usuario.
 
 ---
 
-## 9. Flujo real de trabajo: HU-002 (Registrar jugador)
+## 14. Ejemplo de repositorio
 
-### Paso 1: Crear migración
-
-```
-supabase/migrations/002_players_table.sql
-
--- Tabla players con RLS
--- Índices
--- Políticas
-```
-
-### Paso 2: Ejecutar migración
-
-```bash
-supabase migration up
-```
-
-### Paso 3: Verificar en dashboard
-
-```
-Dashboard → Tables → players ✅
-Dashboard → RLS → Políticas activadas ✅
-```
-
-### Paso 4: Crear spec de feature
-
-```
-specs/players/spec.md
-
-Referencia: HU-002
-Requiere: tabla players, RLS configurado
-Casos de uso: crear, listar, actualizar
-```
-
-### Paso 5: Implementar en Angular
+El frontend debe utilizar el repositorio como abstracción de acceso a datos:
 
 ```typescript
-// features/players/repositories/player.repository.ts
-
-interface IPlayerRepository {
-  getAll(): Observable<Player[]>;      // SELECT * FROM players
-  create(player: Player): Observable<Player>; // INSERT INTO players
+interface PlayerRepository {
+    getAll(): Observable<Player[]>;
+    getById(id: string): Observable<Player>;
+    create(player: Player): Observable<Player>;
 }
+```
 
+La implementación concreta puede utilizar Supabase:
+
+```typescript
 @Injectable()
-export class SupabasePlayerRepository implements IPlayerRepository {
-  constructor(private supabase: SupabaseClient) {}
-  
-  getAll() {
-    return from(
-      this.supabase
-        .from('players')
-        .select('*')
-    );
-  }
-  
-  create(player: Player) {
-    return from(
-      this.supabase
-        .from('players')
-        .insert([player])
-        .select()
-    );
-  }
+export class SupabasePlayerRepository implements PlayerRepository {
+    constructor(private supabase: SupabaseClient) {}
+
+    getAll() {
+        return from(
+            this.supabase
+                .from('players')
+                .select('*')
+        );
+    }
+
+    create(player: Player) {
+        return from(
+            this.supabase
+                .from('players')
+                .insert(player)
+                .select()
+        );
+    }
 }
 ```
 
-### Paso 6: Commit
+El repositorio no debe implementar por sí mismo la seguridad del tenant como única barrera.
 
-```bash
-git add supabase/migrations/002_players_table.sql
-git commit -m "database: create players table with RLS
+El aislamiento debe estar respaldado por PostgreSQL/RLS.
 
-- Tabla players con campos: name, email, birth_date, position
-- Relaciones: academy_id (foreign key)
-- RLS: admin solo ve sus propios jugadores
-- Índices: academy_id, name para búsquedas frecuentes"
+El cliente puede utilizar el contexto de academia para operaciones de aplicación, filtrado o experiencia de usuario, pero **no debe considerarse confiable para autorización**.
+
+---
+
+## 15. Idempotencia y migraciones
+
+No todas las migraciones deben utilizar indiscriminadamente:
+
+```sql
+IF NOT EXISTS
+```
+
+Una migración versionada representa una transición específica del esquema.
+
+Agregar `IF NOT EXISTS` puede ocultar errores en los que el estado real de la base de datos no coincide con el estado esperado por la migración.
+
+Por lo tanto:
+
+> Las migraciones deben diseñarse para ejecutarse mediante el mecanismo de migraciones versionadas y respetar el historial de aplicación del proyecto.
+
+La idempotencia puede utilizarse cuando exista una razón técnica concreta, pero no constituye una regla obligatoria para todas las migraciones.
+
+---
+
+## 16. Cambios de esquema existentes
+
+Una vez que una migración haya sido aplicada en un ambiente compartido, no se debe editar su contenido para modificar el comportamiento histórico.
+
+En su lugar:
+
+```text
+Migración existente
+        ↓
+Nueva necesidad
+        ↓
+Nueva migración
+```
+
+Ejemplo:
+
+```text
+20261003090000_create_players.sql
+20261003100000_add_player_position.sql
+```
+
+Esto permite conservar la historia completa de evolución del esquema.
+
+---
+
+## 17. Checklist para una nueva migración
+
+```text
+□ La migración tiene un propósito claro
+□ El nombre sigue la convención del proyecto
+□ Se revisaron las dependencias con otras tablas
+□ Las foreign keys son correctas
+□ Los índices necesarios fueron evaluados
+□ Las restricciones representan reglas reales del dominio
+□ RLS está habilitado cuando corresponde
+□ Las políticas verifican la pertenencia al tenant
+□ No se utiliza academy_id = auth.uid()
+□ Se evaluaron SELECT / INSERT / UPDATE / DELETE
+□ Se verificó el aislamiento entre academias
+□ Los cambios fueron probados localmente
+□ El seed fue actualizado cuando corresponde
+□ La migración mantiene trazabilidad con el cambio funcional
+□ El cambio fue registrado en Git
 ```
 
 ---
 
-## 10. Checklist para nueva migración
+## 18. Errores comunes
 
+### ❌ Utilizar `academy_id = auth.uid()`
+
+Incorrecto cuando `academy_id` representa una academia:
+
+```sql
+USING (academy_id = auth.uid())
 ```
-□ Archivo creado: supabase/migrations/NNN_descripcion.sql
-□ SQL sintácticamente válido (probado en editor)
-□ Usa IF NOT EXISTS para idempotencia
-□ Comentarios explicando qué hace
-□ Índices creados donde sea necesario
-□ RLS habilitado en tablas sensibles
-□ Políticas documentadas
-□ Ejecutado localmente ✓
-□ Verificado en dashboard ✓
-□ Commitado en Git
-□ Referencia en docs o spec si es necesario
-□ Seed.sql actualizado si afecta tests
 
+`auth.uid()` representa al usuario.
+
+La autorización debe utilizar la relación:
+
+```text
+auth.users
+    ↓
+academy_members
+    ↓
+academies
 ```
 
 ---
 
-## 11. Errores comunes y soluciones
+### ❌ Confiar en `academy_id` enviado por el frontend
 
-### ❌ "Syntax error"
+Incorrecto:
 
-**Causa:** SQL mal escrito
-
-**Solución:**
-```sql
--- ❌ Mal
-CREATE TABLE players
-  id UUID,
-  name TEXT
-
--- ✅ Bien
-CREATE TABLE players (
-  id UUID PRIMARY KEY,
-  name TEXT NOT NULL
-);
+```text
+Frontend
+   ↓
+academy_id = "Academy B"
+   ↓
+Supabase
 ```
 
-### ❌ "Violación de constraint"
+El valor enviado por el cliente no constituye autorización.
 
-**Causa:** Foreign key referencia tabla que no existe
-
-**Solución:**
-- Migración 001: crear `academies`
-- Migración 002: crear `players` (referencia academies)
-
-### ❌ "RLS policy not applied"
-
-**Causa:** `ALTER TABLE ENABLE ROW LEVEL SECURITY` sin política
-
-**Solución:**
-```sql
-ALTER TABLE players ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "player_policy"
-ON players FOR SELECT
-TO authenticated
-USING (academy_id = auth.uid());
-```
-
-### ❌ "Token expires but I need persistent link"
-
-**Causa:** Enlace temporal para tutor expira
-
-**Solución:**
-```sql
--- Generar token único y largo
-INSERT INTO call_ups (activity_id, player_id, token, token_expires_at)
-VALUES (
-  '...',
-  '...',
-  gen_random_uuid()::text || md5(random()::text),
-  NOW() + INTERVAL '7 days'  -- expira en 7 días, no inmediato
-);
-```
+La política RLS debe comprobar que el usuario tiene acceso a esa academia.
 
 ---
 
-## 12. Documentación de cambios
+### ❌ Eliminar RLS para resolver problemas de desarrollo
 
-Para cada migración importante, documentar en `docs/architecture/supabase.md`:
+Desactivar RLS puede ocultar errores de diseño de seguridad.
 
-```markdown
-### Migración 002: Tabla players
+Los problemas de acceso deben resolverse mediante políticas correctamente diseñadas.
 
-**Requisito:** HU-002 Registrar jugador
+---
 
-**Cambios:**
-- Tabla `players` con campos: name, email, birth_date, position, jersey_number
-- Foreign key: academy_id → academies
-- RLS: admin solo ve jugadores de su academia
-- Índices: academy_id (búsqueda frecuente)
+### ❌ Modificar manualmente una tabla y no crear una migración
 
-**Fecha:** 2024-10-15
-**Estado:** ✅ Aplicada en producción
+Esto genera diferencias entre ambientes y rompe la trazabilidad.
+
+El cambio debe convertirse en una migración versionada.
+
+---
+
+### ❌ Editar una migración ya aplicada
+
+Si el esquema necesita evolucionar:
+
+```text
+Nueva necesidad
+      ↓
+Nueva migración
 ```
+
+No se debe modificar silenciosamente la historia.
+
+---
+
+### ❌ Crear políticas públicas demasiado amplias
+
+Especialmente para:
+
+```text
+call_ups
+responses
+```
+
+El acceso mediante token debe limitarse al recurso y operación correspondientes.
+
+---
+
+## 19. Trazabilidad
+
+Los cambios de datos deben poder relacionarse con el producto:
+
+```text
+Producto
+   ↓
+Historia de Usuario
+   ↓
+Spec
+   ↓
+Modelo de datos
+   ↓
+Migración
+   ↓
+RLS / Policies
+   ↓
+Repository
+   ↓
+Tests
+```
+
+Ejemplo:
+
+```text
+HU-002 — Registrar jugador
+        ↓
+specs/002-player-registration/
+        ↓
+players
+        ↓
+migration
+        ↓
+RLS
+        ↓
+PlayerRepository
+        ↓
+Tests
+```
+
+La migración no sustituye a la especificación ni a la documentación arquitectónica.
+
+Cada artefacto debe mantener su responsabilidad.
+
+---
+
+## 20. Documentación de cambios
+
+Los cambios arquitectónicamente relevantes deben documentarse en:
+
+```text
+docs/architecture/supabase.md
+```
+
+La migración contiene el cambio ejecutable.
+
+La documentación contiene el contexto y la decisión arquitectónica.
+
+No se debe copiar el SQL completo en la documentación arquitectónica salvo que exista una razón específica.
 
 ---
 
 ## Resumen
 
-| Paso | Cómo | Resultado |
-|------|------|-----------|
-| 1. Crear archivo | `supabase/migrations/NNN_descripcion.sql` | Archivo SQL versionado |
-| 2. Escribir SQL | Tablas, índices, RLS | Schema definido |
-| 3. Ejecutar | `supabase migration up` o dashboard | Cambios en BD |
-| 4. Verificar | Dashboard → Tables, RLS | Confirmar ✓ |
-| 5. Commit | `git add` + `git commit` | Histórico en Git |
-| 6. Implementar | Repository en Angular | Features funcionales |
-| 7. Documentar | Actualizar docs | Otros entienden |
+| Paso | Resultado |
+|---|---|
+| Identificar necesidad | Cambio relacionado con producto |
+| Revisar modelo | Entidades y dependencias definidas |
+| Crear migración | Cambio SQL versionado |
+| Crear RLS | Aislamiento y autorización |
+| Ejecutar | Esquema actualizado |
+| Verificar | Integridad y aislamiento comprobados |
+| Probar | Comportamiento validado |
+| Commit | Cambio registrado en Git |
+| Documentar | Arquitectura y trazabilidad actualizadas |
 
+La regla fundamental es:
+
+> **La base de datos de PlayerTech evoluciona mediante migraciones versionadas, y todo dato perteneciente a una academia debe quedar protegido por el modelo multi-tenant y sus políticas de autorización.**

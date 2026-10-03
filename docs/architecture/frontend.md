@@ -34,6 +34,7 @@ Ejemplos:
 ```text
 core/
 ├── auth/
+├── academy-context/
 ├── guards/
 ├── interceptors/
 ├── config/
@@ -41,6 +42,8 @@ core/
 ```
 
 No debe utilizarse `core` como contenedor general de cualquier código reutilizable.
+
+El contexto de academia, cuando sea necesario para una operación de aplicación o experiencia de usuario, debe centralizarse en una capacidad transversal. No debe construirse agregando manualmente un `academy_id` desde cada componente, ni debe considerarse una frontera de autorización.
 
 ## Shared
 
@@ -138,6 +141,8 @@ Supabase
 ```
 
 Esto mantiene la lógica de acceso a datos separada de la interfaz.
+
+Los repositorios y servicios pueden operar dentro de un contexto de academia, pero PostgreSQL/RLS debe validar siempre que el usuario autenticado pertenece a la academia correspondiente.
 
 ## Principio
 

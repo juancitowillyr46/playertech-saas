@@ -6,7 +6,7 @@ El **MVP v1 de PlayerTech** tiene como objetivo validar un primer flujo digital 
 
 El MVP se centra inicialmente en **una academia de fútbol** y prioriza la gestión de jugadores, grupos y actividades, junto con la convocatoria y confirmación de participación por parte de los tutores.
 
-La implementación debe sentar las bases para una futura evolución hacia una plataforma **SaaS multi-tenant**, sin que la gestión multi-tenant completa forme parte del alcance funcional del MVP v1.
+El MVP utiliza una arquitectura **SaaS multi-tenant desde el inicio**: cada academia constituye un tenant y sus datos deben permanecer aislados. La administración SaaS avanzada no forma parte del alcance funcional del MVP v1.
 
 ---
 
@@ -213,30 +213,22 @@ Si una convocatoria necesita ser modificada, el administrador deberá gestionar 
 
 ## 6. Multi-tenancy
 
-El MVP v1 está orientado a **una única academia operativa**, pero la solución debe diseñarse considerando su futura evolución hacia un modelo SaaS multi-tenant.
+El escenario inicial del MVP v1 está orientado a **una academia operativa**, pero su arquitectura es multi-tenant desde el inicio. Cada academia constituye un tenant independiente y el aislamiento de datos forma parte del MVP.
 
 Por tanto:
 
 ```text
-MVP v1
-└── Una academia
-    ├── Jugadores
-    ├── Tutores
-    ├── Grupos
-    ├── Actividades
-    └── Convocatorias
-
-Evolución
-└── Múltiples academias
-    ├── Academia A
-    ├── Academia B
-    ├── Academia C
-    └── ...
+MVP v1 — arquitectura
+├── Academia A / Tenant A
+│   ├── Jugadores, grupos, actividades y convocatorias
+│   └── Datos aislados de otros tenants
+└── Escenario funcional inicial
+    └── Una academia de fútbol operativa
 ```
 
-La existencia de una única academia durante el MVP **no debe generar decisiones que impidan posteriormente separar los datos y operaciones por academia**.
+El escenario inicial de una sola academia no modifica el requisito arquitectónico de aislamiento entre tenants.
 
-La implementación de onboarding multi-tenant, administración de múltiples organizaciones, aislamiento completo de tenants y funcionalidades SaaS avanzadas quedan fuera del MVP v1.
+La implementación de onboarding multi-tenant, administración avanzada de múltiples organizaciones, facturación y otras funcionalidades SaaS avanzadas quedan fuera del MVP v1. El aislamiento completo entre tenants no queda fuera de alcance.
 
 ---
 
@@ -264,5 +256,5 @@ Las funcionalidades futuras podrán ampliar progresivamente la plataforma hacia:
 - Asistencia.
 - Reportes y estadísticas.
 - Comunicación integrada.
-- Multi-tenancy completo.
+- Administración SaaS avanzada de múltiples academias.
 - Soporte para otras disciplinas deportivas.

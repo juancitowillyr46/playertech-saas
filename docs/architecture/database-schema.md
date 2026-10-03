@@ -17,7 +17,6 @@ Diagrama de entidades y relaciones en formato texto.
                               ├──────────────┤
                               │ id (PK)      │
                               │ name         │
-                              │ owner_id     │
                               │ created_at   │
                               └──────────────┘
                                      ▲
@@ -66,38 +65,67 @@ Diagrama de entidades y relaciones en formato texto.
                               └──────────────┘
 ```
 
+La pertenencia de usuarios al tenant se modela de forma independiente:
+
+```text
+auth.users
+   │
+   │ user_id
+   ▼
+academy_members
+   │
+   │ academy_id
+   ▼
+academies
+```
+
 ---
 
 ## Descripción de Tablas
 
 ### 1. academies
-**Propósito:** Entidad principal (multi-tenant futura)
+**Propósito:** Entidad principal del tenant multi-tenant del MVP.
 
 | Campo | Tipo | Restricciones | Descripción |
 |-------|------|---------------|-------------|
 | `id` | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Identificador único |
 | `name` | TEXT | NOT NULL | Nombre de la academia |
-| `owner_id` | UUID | NOT NULL | Usuario propietario (admin) |
 | `created_at` | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Fecha de creación |
 
 **Relaciones:**
 - 1:N con `players`
 - 1:N con `groups`
 - 1:N con `activities`
+- 1:N con `academy_members`
 
 **Índices:**
 - PRIMARY KEY: `id`
-- UNIQUE: `owner_id` (por ahora, 1 academia por admin)
-
 **RLS:**
 ```
-SELECT: admin solo ve su academy
-INSERT/UPDATE/DELETE: solo propietario
+Las políticas deben comprobar la membresía del usuario autenticado.
 ```
 
 ---
 
-### 2. players
+### 2. academy_members
+**Propósito:** Representar la pertenencia de un usuario autenticado a una academia.
+
+| Campo | Tipo | Restricciones | Descripción |
+|-------|------|---------------|-------------|
+| `id` | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Identificador único |
+| `academy_id` | UUID | NOT NULL, FOREIGN KEY (academies) | Tenant al que pertenece el usuario |
+| `user_id` | UUID | NOT NULL, FOREIGN KEY (auth.users) | Usuario autenticado |
+| `role` | TEXT | NOT NULL, DEFAULT 'admin' | Rol de membresía durante el MVP |
+| `created_at` | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Fecha de creación |
+
+**Restricciones:**
+- UNIQUE: `(academy_id, user_id)`
+
+La relación permite que identidad de usuario y tenant permanezcan separadas. El MVP puede operar inicialmente con un único contexto de academia, pero el modelo no debe impedir múltiples membresías.
+
+---
+
+### 3. players
 **Propósito:** Jugadores registrados en una academia
 
 | Campo | Tipo | Restricciones | Descripción |
@@ -105,7 +133,7 @@ INSERT/UPDATE/DELETE: solo propietario
 | `id` | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Identificador único |
 | `academy_id` | UUID | NOT NULL, FOREIGN KEY (academies) | Academia a la que pertenece |
 | `name` | TEXT | NOT NULL | Nombre del jugador |
-| `email` | TEXT | UNIQUE, NULL | Email del jugador (opcional) |
+| `email` | TEXT | NULL | Email del jugador (opcional) |
 | `birth_date` | DATE | NULL | Fecha de nacimiento |
 | `position` | TEXT | NULL | Posición deportiva (forward, midfielder, defender...) |
 | `jersey_number` | INT | NULL | Número de dorsal |
@@ -122,19 +150,16 @@ INSERT/UPDATE/DELETE: solo propietario
 - FOREIGN KEY: `academy_id`
 - INDEX: `academy_id` (búsquedas frecuentes)
 - INDEX: `name` (búsquedas por nombre)
-- UNIQUE: `email` (si se usa como identificador)
+- UNIQUE: `(academy_id, email)` si se usa como identificador dentro de una academia
 
 **RLS:**
 ```
-SELECT: admin solo ve jugadores de su academy_id
-INSERT: admin solo puede crear en su academy_id
-UPDATE: admin solo de sus jugadores
-DELETE: admin solo de sus jugadores
+SELECT/INSERT/UPDATE/DELETE: la política verifica que el usuario autenticado pertenece a `academy_id` mediante `academy_members`.
 ```
 
 ---
 
-### 3. groups
+### 4. groups
 **Propósito:** Categorías o grupos de jugadores (sub-12, sub-14, primera, etc.)
 
 | Campo | Tipo | Restricciones | Descripción |
@@ -156,15 +181,14 @@ DELETE: admin solo de sus jugadores
 
 **RLS:**
 ```
-SELECT: admin solo ve grupos de su academy_id
-INSERT/UPDATE/DELETE: admin solo de su academy_id
+SELECT/INSERT/UPDATE/DELETE: la política verifica la membresía del usuario en la academia del grupo.
 ```
 
 **Nota:** Un jugador puede pertenecer a múltiples grupos (ej: Sub-12 y reservas).
 
 ---
 
-### 4. player_groups
+### 5. player_groups
 **Propósito:** Relación N:N entre jugadores y grupos
 
 | Campo | Tipo | Restricciones | Descripción |
@@ -188,16 +212,19 @@ INSERT/UPDATE/DELETE: admin solo de su academy_id
 
 **RLS:**
 ```
-Heredado de players y groups
+La política resuelve la academia mediante players y groups y verifica la membresía del usuario.
 ```
 
 **Cascade:**
 - ON DELETE CASCADE: si borra player, se borra relación
 - ON DELETE CASCADE: si borra group, se borra relación
 
+**Validación:**
+- El jugador y el grupo asociados deben pertenecer a la misma academia.
+
 ---
 
-### 5. activities
+### 6. activities
 **Propósito:** Entrenamientos o competencias programadas
 
 | Campo | Tipo | Restricciones | Descripción |
@@ -225,8 +252,7 @@ Heredado de players y groups
 
 **RLS:**
 ```
-SELECT: admin solo ve actividades de su academy_id
-INSERT/UPDATE/DELETE: admin solo de su academy_id
+SELECT/INSERT/UPDATE/DELETE: la política verifica la membresía del usuario en la academia de la actividad.
 ```
 
 **Validación:**
@@ -235,7 +261,7 @@ INSERT/UPDATE/DELETE: admin solo de su academy_id
 
 ---
 
-### 6. call_ups
+### 7. call_ups
 **Propósito:** Convocatoria de un jugador específico a una actividad
 
 | Campo | Tipo | Restricciones | Descripción |
@@ -262,15 +288,16 @@ INSERT/UPDATE/DELETE: admin solo de su academy_id
 
 **RLS:**
 ```
-SELECT: admin ve sus convocatorias
-Público: sin autenticación, buscar por token
-INSERT/UPDATE/DELETE: solo admin de su academy
+SELECT: el administrador accede mediante la membresía de la academia de la actividad asociada
+Público: acceso limitado mediante token válido y mecanismo controlado; no mediante una política anónima amplia
+INSERT/UPDATE/DELETE: la política verifica la membresía de la academia de la actividad asociada
 ```
 
 **Validación:**
 - El token debe ser único y suficientemente largo
 - `token_expires_at` debe ser mayor a `created_at` si se define
 - Un jugador no debe tener dos convocatorias para la misma actividad
+- El jugador y la actividad asociados deben pertenecer a la misma academia
 
 **Generación de token:**
 ```sql
@@ -286,7 +313,7 @@ encode(gen_random_bytes(24), 'base64')
 
 ---
 
-### 7. responses
+### 8. responses
 **Propósito:** Respuesta del tutor a una convocatoria
 
 | Campo | Tipo | Restricciones | Descripción |
@@ -309,8 +336,8 @@ encode(gen_random_bytes(24), 'base64')
 
 **RLS:**
 ```
-SELECT: admin ve respuestas de sus convocatorias
-INSERT: público (mediante token válido)
+SELECT: el administrador accede mediante la membresía de la academia de la convocatoria asociada
+INSERT: acceso público limitado mediante token válido y mecanismo controlado
 UPDATE/DELETE: no permitidas (respuesta es inmutable)
 ```
 
@@ -332,7 +359,7 @@ UPDATE/DELETE: no permitidas (respuesta es inmutable)
 ┌─────────────────────────────────────────────────────────────────┐
 │ HU-001: Admin Login                                             │
 │ ↓                                                               │
-│ Usa: academies (verificar propietario)                          │
+│ Usa: academy_members (resolver pertenencia a academia)          │
 │ Usa: Supabase Auth (login)                                      │
 └─────────────────────────────────────────────────────────────────┘
                              ↓
@@ -432,7 +459,7 @@ call_ups (1) ──── (1) responses
 
 | Tabla | Validación | Quién verifica |
 |-------|------------|----------------|
-| `players` | Email único por academy | Database UNIQUE + RLS |
+| `players` | Email único por academy cuando se use como identificador | Database UNIQUE (`academy_id`, `email`) + RLS |
 | `players` | Nombre no vacío | Database NOT NULL |
 | `activities` | Type es 'training' o 'competition' | Database CHECK constraint |
 | `activities` | scheduled_at es válido | Frontend + Backend |
@@ -503,8 +530,12 @@ CREATE INDEX idx_responses_status ON responses(status);
 
 ```sql
 -- Academy
-INSERT INTO academies (id, name, owner_id)
-VALUES ('11111111-1111-1111-1111-111111111111', 'Academia FC', 'admin-user-id');
+INSERT INTO academies (id, name)
+VALUES ('11111111-1111-1111-1111-111111111111', 'Academia FC');
+
+-- Academy membership
+INSERT INTO academy_members (academy_id, user_id, role)
+VALUES ('11111111-1111-1111-1111-111111111111', 'admin-user-id', 'admin');
 
 -- Players
 INSERT INTO players (academy_id, name, email, birth_date, position, jersey_number)
@@ -557,23 +588,21 @@ VALUES (
 
 ## Notas de Implementación
 
-### Multi-tenancy (futuro)
+### Multi-tenancy
 
-Actualmente todas las tablas tienen `academy_id` para preparar multi-tenancy.
-En el MVP:
-- 1 admin = 1 academy
-- `owner_id` en `academies` = admin autenticado
-- RLS filtra por `academy_id = auth.uid()`
+El modelo es multi-tenant desde el MVP:
 
-Para migrar a múltiples academias:
-- Agregar `user_id` a `academies`
-- Cambiar RLS para verificar `academies.user_id`
-- No se necesitan cambios en otras tablas
+- `academies` representa el tenant;
+- `academy_members` relaciona usuarios autenticados con academias;
+- las entidades de negocio mantienen `academy_id` cuando pertenecen directamente a una academia, o resuelven el tenant mediante sus relaciones;
+- RLS valida la membresía del usuario autenticado; no compara `academy_id` con `auth.uid()`.
+
+El escenario inicial puede usar un único contexto de academia por usuario, sin impedir que el modelo soporte múltiples membresías posteriormente.
 
 ### Seguridad
 
 - Todas las tablas sensibles tienen RLS habilitado
-- Admin solo ve datos de su academy
+- El usuario solo ve datos de academias a las que pertenece mediante `academy_members`
 - Tutor accede sin autenticación (solo con token válido)
 - Respuesta es inmutable (solo INSERT, no UPDATE/DELETE)
 

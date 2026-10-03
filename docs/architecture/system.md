@@ -6,7 +6,7 @@ Define la arquitectura general de PlayerTech y la relación entre sus principale
 
 ## Contexto
 
-PlayerTech se implementará inicialmente como una aplicación web para la gestión de una academia deportiva.
+PlayerTech se implementará inicialmente como una aplicación web multi-tenant para la gestión de academias deportivas. El escenario funcional inicial puede operar con una academia de fútbol, sin que ello elimine el aislamiento arquitectónico entre academias.
 
 Durante el MVP se utilizará Supabase como plataforma de datos y servicios backend administrados.
 
@@ -66,7 +66,7 @@ Data Abstraction
    ▼
 Supabase
    │
-   ├── PostgreSQL
+   ├── PostgreSQL / Academy Memberships
    ├── Auth
    └── RLS
 ```
@@ -120,6 +120,9 @@ Ejemplos:
 - configuración;
 - servicios globales;
 - manejo de sesión.
+- contexto de academia cuando corresponda.
+
+El contexto de academia representa el tenant dentro del cual opera la aplicación. No reemplaza la autorización: la pertenencia del usuario y el aislamiento de datos deben validarse en PostgreSQL/RLS.
 
 ### Supabase
 
@@ -155,3 +158,5 @@ Database
 ```
 
 El objetivo es que las features no tengan que conocer directamente cuál de estas implementaciones está proporcionando los datos.
+
+La evolución debe preservar el modelo `Usuario → Membresía → Academia/Tenant → Datos de negocio`, trasladando los mecanismos de autorización al backend propio cuando corresponda.

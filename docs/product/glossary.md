@@ -7,8 +7,9 @@ Este documento define los términos utilizados en PlayerTech para mantener un le
 | Término | Definición |
 |---|---|
 | **PlayerTech** | Plataforma SaaS para la gestión de academias deportivas. |
-| **Academia** | Organización deportiva que utiliza PlayerTech para gestionar sus operaciones. En el MVP v1 corresponde a una academia de fútbol. |
-| **Tenant** | Organización o academia aislada dentro de la futura arquitectura multi-tenant de PlayerTech. |
+| **Academia** | Organización deportiva que utiliza PlayerTech para gestionar sus operaciones. Representa un tenant de la plataforma desde el MVP. El escenario inicial corresponde a una academia de fútbol. |
+| **Tenant** | Organización o academia aislada dentro de la arquitectura multi-tenant de PlayerTech. |
+| **Membresía de academia** | Relación que vincula a un usuario autenticado con una academia y determina su pertenencia al tenant. |
 | **Administrador** | Usuario responsable de gestionar la información y operación de la academia dentro de la plataforma. |
 | **Entrenador** | Persona responsable de dirigir actividades deportivas y trabajar con los jugadores. |
 | **Tutor / Padre** | Persona responsable de uno o más jugadores y que puede responder convocatorias en su representación. |

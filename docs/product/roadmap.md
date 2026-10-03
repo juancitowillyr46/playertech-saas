@@ -27,7 +27,7 @@ La evolución se plantea de forma incremental, partiendo de un MVP funcional y a
 
 **Contexto:** una academia de fútbol.
 
-**Arquitectura:** sentar las bases para una futura solución multi-tenant.
+**Arquitectura:** multi-tenant desde el inicio, con aislamiento de datos por academia mediante el modelo de pertenencia y RLS.
 
 ---
 
@@ -63,15 +63,14 @@ Capacidades previstas:
 
 ---
 
-## Etapa 4 — Plataforma SaaS multi-tenant
+## Etapa 4 — Administración SaaS avanzada
 
-**Objetivo:** evolucionar PlayerTech desde una solución para una academia hacia una plataforma SaaS para múltiples organizaciones.
+**Objetivo:** ampliar las capacidades de administración de una plataforma que ya opera con arquitectura multi-tenant.
 
 Capacidades previstas:
 
 - Alta de academias.
 - Administración de organizaciones.
-- Aislamiento de información por academia.
 - Administración de usuarios y roles.
 - Configuración por academia.
 - Gestión centralizada de la plataforma.
@@ -107,7 +106,7 @@ La evolución deberá identificar qué conceptos son comunes a diferentes deport
              Gestión administrativa
                         │
                         ▼
-             SaaS Multi-Tenant
+      Administración SaaS avanzada
                         │
                         ▼
           Plataforma Multideportiva

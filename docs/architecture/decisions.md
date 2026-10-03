@@ -435,7 +435,14 @@ supabase/migrations/
 CREATE POLICY "admin_see_own_players"
 ON players FOR SELECT
 TO authenticated
-USING (academy_id = auth.uid());
+USING (
+  EXISTS (
+    SELECT 1
+    FROM academy_members am
+    WHERE am.academy_id = players.academy_id
+      AND am.user_id = auth.uid()
+  )
+);
 ```
 
 ### Implicaciones
@@ -570,7 +577,7 @@ Focus en MVP funcional. Arquitectura ya está preparada.
 ## ADR-011: Constitution como norte
 
 ### Decisión
-La Constitution (`docs/constitution-daft.md`) define principios.
+La Constitution (`docs/constitution-v3.md`) define principios.
 Los ADRs definen decisiones específicas que respetan la Constitution.
 
 ### Relación
@@ -625,4 +632,4 @@ Si un ADR necesita ser violado (raro, pero puede pasar):
 - `docs/architecture/frontend.md` — Estructura Angular
 - `docs/architecture/data.md` — Data flow general
 - `docs/engineering/frontend-clean-architecture.md` — Implementación práctica
-- `docs/constitution-daft.md` — Principios generales
+- `docs/constitution-v3.md` — Principios generales

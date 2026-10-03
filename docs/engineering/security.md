@@ -33,7 +33,19 @@ La autorización determina qué datos y operaciones puede realizar.
 
 Durante el MVP se mantendrá un modelo simple centrado en el administrador de la academia.
 
-La evolución hacia roles y permisos avanzados queda fuera del alcance actual.
+La autorización debe determinarse mediante la pertenencia del usuario a una academia. La identidad autenticada (`auth.uid()`) identifica al usuario; no identifica a la academia ni reemplaza la membresía.
+
+```text
+auth.users
+   ↓ user_id
+academy_members
+   ↓ academy_id
+academies / tenants
+   ↓
+business data
+```
+
+El MVP puede mantener un modelo de roles reducido, pero el aislamiento entre academias es obligatorio desde el inicio. La evolución hacia roles y permisos avanzados queda fuera del alcance actual.
 
 ## Row Level Security
 
@@ -48,6 +60,8 @@ Supabase RLS
         ↓
 Data protection
 ```
+
+Las políticas RLS deben validar la pertenencia del usuario a la academia para las operaciones `SELECT`, `INSERT`, `UPDATE` y `DELETE` que correspondan. Un `academy_id` enviado por el cliente no constituye autorización.
 
 ## Datos sensibles
 
@@ -90,6 +104,8 @@ Los enlaces utilizados para las convocatorias deben respetar las reglas definida
 - no permitir modificaciones después de registrar la respuesta.
 
 Los detalles técnicos de implementación deberán definirse en la especificación de la funcionalidad correspondiente.
+
+El acceso público mediante token debe limitarse a la convocatoria y operación autorizadas; no debe deshabilitarse RLS ni permitir acceso a datos de otras academias.
 
 ## Validación
 
