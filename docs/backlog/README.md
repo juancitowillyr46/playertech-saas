@@ -45,6 +45,7 @@ Estados de una HU: **Pendiente** → **Definida** (lista para especificar) → *
 | Orden | Épica | HU | Prioridad |
 |---|---|---|---|
 | 0 | [T-00 Fundación técnica del SaaS](enablers/T-00-saas-foundation.md) (Supabase, tenancy, RLS, seed, pruebas de aislamiento, esqueleto) | — | MVP |
+| 0 | [T-01 Sistema de diseño PlayerTech](enablers/T-01-design-system.md) (brief, dirección visual, tokens, chasis, pantallas modelo) — en paralelo con T-00 | — | MVP |
 | 1 | [EP-00 Alta de academia](epics/EP-00-academy-onboarding.md) | HU-014 | MVP |
 | 2 | [EP-01 Acceso y sesión](epics/EP-01-access-and-session.md) | HU-001, HU-015, HU-016 | MVP |
 | 3 | [EP-09 Gestión de la academia](epics/EP-09-academy-management.md) | HU-032, HU-017 · HU-018 (MVP+) | MVP |
