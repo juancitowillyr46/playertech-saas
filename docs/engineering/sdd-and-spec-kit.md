@@ -194,7 +194,7 @@ playertech-saas/
 │
 ├── docs/
 │   │
-│   ├── constitution-v3.md
+│   ├── constitution.md
 │   │
 │   ├── product/
 │   │   └── ...

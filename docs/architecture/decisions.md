@@ -577,7 +577,7 @@ Focus en MVP funcional. Arquitectura ya está preparada.
 ## ADR-011: Constitution como norte
 
 ### Decisión
-La Constitution (`docs/constitution-v3.md`) define principios.
+La Constitution (`docs/constitution.md`) define principios.
 Los ADRs definen decisiones específicas que respetan la Constitution.
 
 ### Relación
@@ -812,4 +812,4 @@ El detalle está en `docs/architecture/frontend.md`, `docs/architecture/ui.md` y
 - `docs/architecture/data.md` — Data flow general
 - `docs/architecture/database-schema.md` — Modelo de datos (Fase 1 vigente)
 - `docs/architecture/supabase.md` — Persistencia, autenticación y RLS
-- `docs/constitution-v3.md` — Principios generales
+- `docs/constitution.md` — Principios generales
