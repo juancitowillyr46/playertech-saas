@@ -174,7 +174,7 @@ Sedes: oficinas o lugares de entrenamiento (DEC-04).
 | `is_primary` | boolean | NOT NULL DEFAULT false | Sede principal |
 | `is_active` | boolean | NOT NULL DEFAULT true | Desactivación reversible (DEC-26) |
 | `deleted_at` | timestamptz | NULL | Borrado lógico (DEC-27) |
-| `created_by` | uuid | NOT NULL, FK → `auth.users` | |
+| `created_by` | uuid | NOT NULL DEFAULT `auth.uid()`, FK → `auth.users` | Siempre el usuario autenticado (lo exige RLS) |
 | `created_at`, `updated_at` | timestamptz | NOT NULL | |
 
 Restricciones:
@@ -201,9 +201,13 @@ Registro de archivos con almacenamiento portable (ADR-013).
 | `mime_type` | text | NOT NULL | |
 | `size_bytes` | bigint | NOT NULL | |
 | `checksum_sha256` | text | NULL | Verificación de integridad y de migraciones |
-| `created_by` | uuid | NOT NULL, FK → `auth.users` | |
+| `created_by` | uuid | NOT NULL DEFAULT `auth.uid()`, FK → `auth.users` | Siempre el usuario autenticado (lo exige RLS) |
 | `created_at` | timestamptz | NOT NULL | |
 | `deleted_at` | timestamptz | NULL | Borrado lógico |
+
+Restricciones:
+- `UNIQUE (academy_id, id)`.
+- La clave pertenece a la academia de la fila: CHECK (`storage_key LIKE academy_id::text || '/%'`). Impide que un miembro de una academia ocupe la clave de otra.
 
 ## Auditoría legal
 
@@ -237,7 +241,8 @@ Las funciones de autorización usan `SECURITY DEFINER` con `search_path` fijo, p
 
 | Tabla | SELECT | INSERT | UPDATE | DELETE |
 |---|---|---|---|---|
-| `plans`, `legal_documents` | Usuarios autenticados | ❌ | ❌ | ❌ |
+| `plans` | Usuarios autenticados | ❌ | ❌ | ❌ |
+| `legal_documents` | Cualquiera (`anon` y `authenticated`): son públicos y el registro los necesita antes de iniciar sesión | ❌ | ❌ | ❌ |
 | `profiles` | El propio usuario | Solo el registro | El propio usuario | ❌ |
 | `academies` | Miembros | Solo el registro | Owner (excepto `status`, `slug`, `country_code`, `timezone`) | ❌ |
 | `subscriptions` | Miembros | Solo el registro | ❌ | ❌ |

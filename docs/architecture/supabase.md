@@ -309,10 +309,13 @@ Ejemplo:
 
 ```text
 supabase/
+├── config.toml
 ├── migrations/
-├── seed/
-└── scripts/
+├── seed.sql
+└── tests/database/
 ```
+
+La estructura vigente está definida en `specs/001-database-foundation/plan.md`.
 
 Los scripts deben ser reproducibles y mantenerse versionados.
 
@@ -327,7 +330,7 @@ Cuando sea necesario disponer de datos iniciales para desarrollo o pruebas, esto
 Ejemplo:
 
 ```text
-supabase/seed/development.sql
+supabase/seed.sql
 ```
 
 Los datos de seed deben respetar el modelo multi-tenant.

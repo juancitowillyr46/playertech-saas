@@ -668,7 +668,7 @@ El aislamiento físico es **pool**: esquema compartido + `academy_id` + RLS. El 
 | DEC-26 | **Desactivar** una sede es reversible y conserva su historial. La sede principal no puede desactivarse |
 | DEC-27 | **Borrado lógico** (`deleted_at`) como convención para las tablas de negocio. Lo eliminado desaparece de la UI y no se borra físicamente |
 | DEC-28 | Cierre de sesión tras 60 minutos sin interacción (ver ADR-014) |
-| DEC-29 | La captura de IP en las aceptaciones legales y el proveedor de SMTP se deciden en el plan técnico |
+| DEC-29 | En el MVP **no se capturan la IP ni el navegador** en las aceptaciones legales; se registran documento, versión y hora del servidor (spec 001, R4). Si la asesoría legal lo exige, se añadirá una Edge Function de registro. El proveedor de SMTP se decide al configurar el entorno en la nube |
 
 ### Implicaciones
 - Toda tabla de negocio incorpora `academy_id`, auditoría (`created_by`, `created_at`, `updated_at`) y `deleted_at`.
@@ -748,7 +748,7 @@ Ninguna. Ningún componente debe construir URLs de almacenamiento ni llamar dire
 
 ### Pendiente para el plan técnico
 - Proveedor de SMTP (por ejemplo Resend o Brevo).
-- Captura de IP en las aceptaciones legales: el registro directo con Supabase Auth no tiene acceso a la IP real; capturarla exige registrar mediante una Edge Function.
+- ~~Captura de IP en las aceptaciones legales~~: resuelta en DEC-29 (no se captura en el MVP).
 
 ---
 
