@@ -613,6 +613,185 @@ Si un ADR necesita ser violado (raro, pero puede pasar):
 
 ---
 
+## ADR-012: Fundación multi-tenant del SaaS
+
+**Estado:** Aceptada · **Fecha:** 2026-10-15 · **Fase:** 1 — Fundación SaaS
+
+### Decisión
+PlayerTech se construye primero como plataforma SaaS multi-tenant (Fase 1) y después incorpora las funcionalidades de negocio (Fase 2). El modelo de tenant se organiza en cinco capas:
+
+```text
+PLATAFORMA (global)   plans, legal_documents
+IDENTIDAD (global)    auth.users, profiles
+TENANT                academies, subscriptions
+MEMBRESÍA             academy_members
+ORGANIZACIÓN          venues
+NEGOCIO (Fase 2)      todas las tablas con academy_id
+```
+
+El aislamiento físico es **pool**: esquema compartido + `academy_id` + RLS. El modelo detallado está en `docs/architecture/database-schema.md`.
+
+### Justificación
+- Si el tenant queda bien resuelto desde el inicio, cada módulo de negocio solo tiene que colgarse de `academy_id` y de las funciones de autorización existentes.
+- El modelo pool es el adecuado para el volumen de un MVP: una sola migración por cambio, bajo costo y escalable a miles de tenants.
+- Los campos de estado, rol y plan cuestan poco ahora y evitan migraciones sobre datos productivos más adelante.
+
+### Registro de decisiones de la ideación
+
+| ID | Decisión |
+|---|---|
+| DEC-01 | Alta de academia **autoservicio**. Una operación atómica crea academia, owner, suscripción free, sede principal y aceptaciones legales |
+| DEC-02 | Una persona pertenece a **una sola academia** (`academy_members.user_id` UNIQUE). Se puede relajar sin rediseño |
+| DEC-03 | El MVP funciona **solo con el rol Owner**. El modelo admite más roles a futuro (admin, entrenador…) |
+| DEC-04 | **Sede = lugar** (oficina o lugar de entrenamiento). No separa datos ni permisos |
+| DEC-05 | Cada academia tiene **exactamente una sede principal**, creada en el registro |
+| DEC-06 | El jugador tiene una sede habitual (por defecto la principal), pero asiste a actividades en cualquier sede *(Fase 2)* |
+| DEC-07 | Planes **Free, Pro y Advanced**. El MVP usa solo Free, **sin límites**; el mecanismo de límites queda preparado |
+| DEC-08 | El registro solicita nombre de la academia, nombre del owner, correo, contraseña y aceptaciones legales. El país no se solicita |
+| DEC-09 | Las aceptaciones legales se registran con datos de auditoría: documento, versión y fecha y hora del servidor |
+| DEC-10 | Verificación de correo obligatoria, con el mecanismo nativo de Supabase, encapsulada para poder cambiar de estrategia (ver ADR-014) |
+| DEC-11 | Contraseña de mínimo 8 caracteres, con campo de confirmación |
+| DEC-12 | Mensajes genéricos que no revelan si un correo está registrado |
+| DEC-13 | Sin captcha en el MVP; se reevalúa si aparece abuso |
+| DEC-14 | Se permiten nombres de academia duplicados; el `slug` se genera único automáticamente |
+| DEC-15 | País **Colombia (CO)** y zona horaria **America/Bogota**, internos y no visibles en la UI por ahora |
+| DEC-16 | Recuperación de contraseña nativa de Supabase (ver ADR-014) |
+| DEC-17 | Tras iniciar sesión se muestra un inicio propio de PlayerTech, no el dashboard de demostración de SakaiNG |
+| DEC-18 | Estado de academia `active` \| `suspended` en el modelo, sin UI. Una academia suspendida no puede operar y conserva sus datos |
+| DEC-19 | Dos aceptaciones obligatorias: Términos y Condiciones y Política de Tratamiento de Datos Personales (Ley 1581 de 2012), versionadas |
+| DEC-20 | La academia se crea en el mismo momento del registro, de forma atómica. La limpieza de registros no confirmados queda para el MVP+ |
+| DEC-21 | Campos editables de la academia: nombre, logo, teléfono, correo de contacto, dirección y ciudad. Solo el nombre es obligatorio. El correo de contacto se inicializa con el correo del registro y es editable sin afectar al correo de inicio de sesión |
+| DEC-22 | El logo es JPG o PNG de hasta 1 MB, almacenado de forma portable (ver ADR-013) |
+| DEC-23 | Campos de sede: nombre, tipo, dirección, ciudad y referencia o indicaciones. Sin enlace de mapas |
+| DEC-24 | La sede principal se crea como "Sede principal", de tipo lugar de entrenamiento |
+| DEC-25 | Se puede cambiar la sede principal; la anterior deja de serlo |
+| DEC-26 | **Desactivar** una sede es reversible y conserva su historial. La sede principal no puede desactivarse |
+| DEC-27 | **Borrado lógico** (`deleted_at`) como convención para las tablas de negocio. Lo eliminado desaparece de la UI y no se borra físicamente |
+| DEC-28 | Cierre de sesión tras 60 minutos sin interacción (ver ADR-014) |
+| DEC-29 | La captura de IP en las aceptaciones legales y el proveedor de SMTP se deciden en el plan técnico |
+
+### Implicaciones
+- Toda tabla de negocio incorpora `academy_id`, auditoría (`created_by`, `created_at`, `updated_at`) y `deleted_at`.
+- La autorización se centraliza en funciones de base de datos (`is_academy_member`, `has_academy_role`, `current_academy_id`). Las políticas RLS no repiten la lógica de membresía.
+- `is_academy_member` exige una membresía activa **y** una academia `active`, de modo que DEC-18 se aplica sin código adicional.
+- El frontend nunca envía `academy_id` como autorización; el contexto de academia se resuelve desde la membresía.
+- Las tablas creadas por el registro (`academies`, `academy_members`, `subscriptions`, `legal_acceptances`) no aceptan inserciones directas del cliente; solo las crea la función de registro.
+
+### Fuera de esta decisión (MVP+)
+Invitaciones y roles adicionales, cambio de plan y cobro, límites de plan, sedes como división con permisos, pertenencia a varias academias y limpieza de registros no confirmados.
+
+---
+
+## ADR-013: Almacenamiento de archivos portable entre proveedores
+
+**Estado:** Aceptada · **Fecha:** 2026-10-15 · **Fase:** 1 — Fundación SaaS
+
+### Decisión
+Los archivos se almacenan en Supabase Storage durante el MVP, con una estructura que permite migrar a otro proveedor (S3, Azure Blob, GCS o una API propia) sin modificar la base de datos ni las funcionalidades.
+
+1. **La base de datos no guarda URLs**, solo una clave relativa (`storage_key`). La URL se genera al momento de mostrar el archivo.
+2. **Cada archivo tiene un registro en la tabla `files`.** Las tablas de negocio referencian `file_id` (por ejemplo, `academies.logo_file_id`).
+3. **La clave empieza por la academia**, lo que permite aplicar aislamiento, exportación y baja de un tenant por prefijo.
+4. **El nombre físico es el UUID del archivo**, nunca el nombre original.
+5. **El acceso pasa por la abstracción `FileStorageRepository`** (`upload`, `getUrl`, `remove`), igual que el acceso a datos (ADR-002).
+
+### Convención de la clave
+
+```text
+{bucket lógico}/{academy_id}/{módulo}/{entity_id}/{file_id}.{ext}
+
+public-assets/7f3a…c21/academy/7f3a…c21/9b1e…44d.png
+```
+
+| Bucket lógico | Lectura | Escritura | Uso |
+|---|---|---|---|
+| `public-assets` | Pública | Miembros de la academia del prefijo | Logos (se mostrarán en páginas públicas en la Fase 2) |
+| `private-files` | Miembros, mediante URL firmada con caducidad | Miembros de la academia del prefijo | Archivos sensibles futuros |
+
+### Justificación
+- La portabilidad entre proveedores es un requisito explícito.
+- La clave relativa con el tenant al inicio está soportada por todos los proveedores de almacenamiento de objetos.
+- Usar el UUID como nombre evita colisiones, no expone datos personales e invalida la caché al reemplazar un archivo.
+
+### Implicaciones
+- El tipo y el tamaño se validan también en el servidor: el bucket define tipos MIME permitidos y un tamaño máximo.
+- Al reemplazar un archivo se crea un registro nuevo y el anterior recibe `deleted_at`. La eliminación física queda para una tarea de limpieza en el MVP+.
+- Migrar de proveedor consiste en copiar los objetos conservando sus claves, verificar con `checksum_sha256` y cambiar la implementación del repositorio.
+- Las políticas de Storage autorizan la escritura con `is_academy_member()` aplicado al segmento `academy_id` de la ruta.
+
+### Excepción
+Ninguna. Ningún componente debe construir URLs de almacenamiento ni llamar directamente al SDK de Storage.
+
+---
+
+## ADR-014: Autenticación, verificación y sesión
+
+**Estado:** Aceptada · **Fecha:** 2026-10-15 · **Fase:** 1 — Fundación SaaS
+
+### Decisión
+- **Verificación de correo obligatoria** antes del primer acceso, con el mecanismo nativo de Supabase Auth.
+- **Recuperación de contraseña** nativa de Supabase: enlace por correo hacia una página propia de PlayerTech, que debe estar en la lista de redirecciones permitidas de cada entorno.
+- **JWT de 1 hora** (valor por defecto recomendado por Supabase).
+- **Cierre por inactividad de 60 minutos** mediante un temporizador en el frontend que detecta la interacción del usuario.
+- **SMTP propio obligatorio** en todos los entornos donde se registren usuarios reales.
+
+### Justificación
+- El servicio de correo incluido en Supabase solo envía a miembros del equipo del proyecto y está limitado a 2 correos por hora; no sirve para registrar academias reales. Con SMTP propio, el límite por defecto es de 30 correos por hora y es configurable.
+- El *inactivity timeout* y el *time-box* de sesión de Supabase solo existen en el plan Pro. Además, Supabase mide la inactividad por renovación del token, y el cliente lo renueva automáticamente mientras la pestaña está abierta. Por eso una pestaña abierta sin uso nunca se consideraría inactiva, y la detección de inactividad del usuario debe hacerse en el frontend.
+- La recuperación nativa no revela si una cuenta existe, lo que cumple DEC-12.
+
+### Implicaciones
+- La verificación, la recuperación y la sesión quedan encapsuladas en el repositorio de autenticación, para poder cambiar de estrategia sin afectar a las funcionalidades.
+- En desarrollo local la confirmación de correo viene desactivada por defecto; debe activarse en `supabase/config.toml` para que los entornos se comporten igual.
+- La longitud mínima de contraseña (8) se configura también en Supabase Auth, no solo en el formulario.
+- Al pasar a Supabase Pro se evaluará activar como refuerzo en el servidor un *inactivity timeout* de 1 hora, un *time-box* de sesión y la protección contra contraseñas filtradas.
+
+### Pendiente para el plan técnico
+- Proveedor de SMTP (por ejemplo Resend o Brevo).
+- Captura de IP en las aceptaciones legales: el registro directo con Supabase Auth no tiene acceso a la IP real; capturarla exige registrar mediante una Edge Function.
+
+---
+
+## ADR-015: Arquitectura y experiencia base del frontend
+
+**Estado:** Aceptada · **Fecha:** 2026-10-16 · **Fase:** 1 — Fundación SaaS
+
+### Decisión
+
+| ID | Decisión |
+|---|---|
+| FE-01 | El layout de SakaiNG (`layout/`) se **adopta como código propio** con cambios mínimos: el menú se define en `core/navigation` y la marca es configurable |
+| FE-02 | Las demos de SakaiNG solo se registran en desarrollo, bajo `/dev` |
+| FE-03 | Configuración por entorno con archivos `environment.ts`, solo con valores públicos |
+| FE-04 | URLs y código en inglés; interfaz en español (`es-CO`) |
+| FE-05 | El configurador de temas no se muestra; solo existe un botón de modo claro/oscuro |
+| FE-06 | Tema Aura, color primario `rgb(59, 130, 246)`, surface por defecto y menú estático |
+| FE-07 | ESLint se rehace con `angular-eslint` (formato de ESLint 9) |
+| FE-08 | Estado con signals; Reactive Forms tipados; repositorios como clases abstractas inyectables |
+| FE-09 | Supabase Auth con flujo PKCE y ruta `/auth/callback` |
+| FE-10 | Pruebas con Vitest (frontend) y pgTAP (base de datos); Playwright cuando exista el flujo de negocio |
+| FE-11 | Pantallas de autenticación propias con un layout compartido; no se reutilizan las demos de SakaiNG y no existe la opción "Recordarme" |
+| FE-12 | Patrón de página de gestión basado en `pages/crud`, con drawer lateral para crear y editar |
+| FE-13 | La configuración de la academia (perfil y sedes) se ubica en el menú lateral, bajo **Configuración**; la cuenta personal, en el menú de usuario del topbar |
+| FE-14 | Tras el registro, el inicio muestra una tarjeta "Completa tu academia" en lugar de un asistente |
+
+El detalle está en `docs/architecture/frontend.md`, `docs/architecture/ui.md` y `docs/engineering/testing.md`.
+
+### Justificación
+- Signals y componentes standalone son el modelo actual de Angular y encajan con la detección de cambios sin zone.js ya configurada.
+- Las clases abstractas permiten sustituir Supabase por una API propia registrando otra implementación (ADR-002).
+- Separar configuración de la academia y cuenta personal prepara la incorporación de roles sin reorganizar la navegación.
+- Un patrón de gestión único da consistencia y acelera la Fase 2.
+
+### Excepción controlada (principio V de la Constitución)
+- **Principio afectado:** V — las piezas de SakaiNG no se modifican para implementar producto.
+- **Motivo:** el menú, la marca y el topbar deben representar a PlayerTech.
+- **Alcance:** solo los archivos de `layout/`, con cambios mínimos.
+- **Mitigación:** el menú vive en `core/navigation`; las actualizaciones de SakaiNG siguen `docs/engineering/sakai-upstream.md`.
+- **Revisión:** en cada actualización de SakaiNG.
+
+---
+
 ## Referencia rápida
 
 | Decisión | Válida | Reconsiderar |
@@ -631,5 +810,6 @@ Si un ADR necesita ser violado (raro, pero puede pasar):
 
 - `docs/architecture/frontend.md` — Estructura Angular
 - `docs/architecture/data.md` — Data flow general
-- `docs/engineering/frontend-clean-architecture.md` — Implementación práctica
+- `docs/architecture/database-schema.md` — Modelo de datos (Fase 1 vigente)
+- `docs/architecture/supabase.md` — Persistencia, autenticación y RLS
 - `docs/constitution-v3.md` — Principios generales

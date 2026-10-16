@@ -6,11 +6,19 @@ La evolución se plantea de forma incremental, partiendo de un MVP funcional y a
 
 ## Etapa 1 — MVP v1
 
-**Objetivo:** validar el flujo básico de gestión de actividades y convocatorias.
+**Objetivo:** validar el flujo básico de gestión de actividades y convocatorias sobre una plataforma SaaS multi-tenant real.
 
-### Capacidades
+### Fase 1 — Fundación SaaS
 
-- Acceso del administrador.
+- Alta autoservicio de academia y owner, con verificación de correo y aceptaciones legales.
+- Inicio y cierre de sesión, cierre por inactividad y recuperación de contraseña.
+- Gestión del perfil de la academia.
+- Gestión de sedes y sede principal.
+- Plan Free asignado automáticamente, sin límites.
+
+### Fase 2 — Negocio
+
+- Gestión de acudientes.
 - Gestión de jugadores.
 - Gestión de grupos/categorías.
 - Creación de actividades.
@@ -67,14 +75,15 @@ Capacidades previstas:
 
 **Objetivo:** ampliar las capacidades de administración de una plataforma que ya opera con arquitectura multi-tenant.
 
+El alta autoservicio de academias, el plan Free y la configuración básica por academia se adelantan al MVP v1 (Fase 1).
+
 Capacidades previstas:
 
-- Alta de academias.
-- Administración de organizaciones.
-- Administración de usuarios y roles.
-- Configuración por academia.
+- Invitaciones y administración de usuarios y roles por academia.
+- Planes Pro y Advanced, límites de plan, cambio de plan y cobro.
+- Administración de organizaciones y suspensión de academias.
 - Gestión centralizada de la plataforma.
-- Suscripciones y capacidades propias de un modelo SaaS.
+- Pertenencia de una persona a varias academias.
 
 ---
 

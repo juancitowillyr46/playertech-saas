@@ -8,19 +8,53 @@ El MVP se centra inicialmente en **una academia de fútbol** y prioriza la gesti
 
 El MVP utiliza una arquitectura **SaaS multi-tenant desde el inicio**: cada academia constituye un tenant y sus datos deben permanecer aislados. La administración SaaS avanzada no forma parte del alcance funcional del MVP v1.
 
+El MVP se construye en dos fases:
+
+| Fase | Objetivo |
+|---|---|
+| **Fase 1 — Fundación SaaS** | Una academia se registra, su owner accede y gestiona la información base de la academia, aislada de las demás |
+| **Fase 2 — Negocio** | Jugadores, acudientes, grupos, actividades, convocatorias y respuestas sobre la base de la Fase 1 |
+
+Las decisiones de la Fase 1 están registradas en ADR-012, ADR-013 y ADR-014 (`docs/architecture/decisions.md`).
+
 ---
 
 ## 2. Alcance funcional
 
-El MVP v1 contempla los siguientes procesos:
+### Fase 1 — Fundación SaaS
 
-### Gestión de acceso
+#### Alta de academia
 
-- Inicio de sesión del administrador mediante correo electrónico y contraseña.
-- Control de acceso a la aplicación.
-- Gestión de la sesión del administrador.
+- Registro autoservicio de una academia y de su owner con nombre de la academia, nombre del owner, correo, contraseña y confirmación.
+- Aceptación obligatoria de Términos y Condiciones y de la Política de Tratamiento de Datos Personales, con registro de auditoría.
+- Verificación del correo antes del primer acceso.
+- Al registrarse, la academia queda creada con el plan Free y una sede principal.
+- País (Colombia) y zona horaria (America/Bogota) se asignan internamente y no se muestran.
 
-El MVP no contempla recuperación de contraseña.
+#### Gestión de acceso
+
+- Inicio de sesión del owner mediante correo electrónico y contraseña.
+- Cierre de sesión manual y cierre automático tras 60 minutos sin interacción.
+- Recuperación de contraseña mediante enlace por correo.
+- Control de acceso a la aplicación: solo usuarios con membresía activa en una academia activa.
+
+#### Gestión de la academia
+
+- Consulta y edición de nombre, logo, teléfono, correo de contacto, dirección y ciudad.
+
+#### Gestión de sedes
+
+- Registro, consulta y edición de sedes (oficinas o lugares de entrenamiento).
+- Cambio de la sede principal.
+- Desactivación reversible y eliminación lógica de sedes, excepto la principal.
+
+#### Plan
+
+- Toda academia tiene el plan **Free sin límites**. No hay cambio de plan ni cobro en el MVP.
+
+### Fase 2 — Negocio
+
+> Esta sección se refinará en la ideación de la Fase 2 (acudientes, sede de la actividad y modelo de convocatoria).
 
 ### Gestión de jugadores
 
@@ -87,12 +121,13 @@ No se contempla una integración directa con la API oficial de WhatsApp.
 
 | Actor | Participación en el MVP |
 |---|---|
-| **Administrador** | Gestiona jugadores, grupos, actividades, convocatorias y consulta respuestas. |
+| **Visitante** | Registra una academia y su cuenta de owner. |
+| **Owner** | Administrador de la academia y único rol del MVP. Gestiona la academia, sus sedes y, en la Fase 2, jugadores, grupos, actividades, convocatorias y respuestas. Otros roles (admin, entrenador) se incorporarán en el MVP+. |
 | **Tutor / Padre** | Accede a una convocatoria y registra la respuesta del jugador. |
 | **Jugador** | Es la persona convocada a una actividad. |
 | **Entrenador** | Forma parte del dominio de la plataforma, pero no tiene un flujo funcional propio dentro del MVP v1. |
 
-El administrador es el actor principal del MVP.
+El owner es el actor principal del MVP. En este documento, "administrador" se refiere al owner de la academia.
 
 ---
 
@@ -181,7 +216,16 @@ La convocatoria y confirmación de participación **no representan asistencia**.
 - Matrices avanzadas de permisos.
 - Flujos diferenciados de autorización.
 
-Aunque existen diferentes actores dentro del dominio, el MVP mantiene un modelo de acceso reducido.
+Aunque existen diferentes actores dentro del dominio, el MVP mantiene un modelo de acceso reducido: un único usuario Owner por academia.
+
+### Administración SaaS avanzada
+
+- Invitaciones y múltiples usuarios por academia.
+- Cambio de plan, límites de plan y cobro.
+- Pertenencia de una persona a varias academias.
+- Panel de administración de la plataforma.
+- Suspensión de academias desde una interfaz (el estado existe en el modelo).
+- Captcha en el registro.
 
 ### Comunicación integrada
 
@@ -228,7 +272,7 @@ MVP v1 — arquitectura
 
 El escenario inicial de una sola academia no modifica el requisito arquitectónico de aislamiento entre tenants.
 
-La implementación de onboarding multi-tenant, administración avanzada de múltiples organizaciones, facturación y otras funcionalidades SaaS avanzadas quedan fuera del MVP v1. El aislamiento completo entre tenants no queda fuera de alcance.
+El **alta autoservicio de academias** forma parte del MVP (Fase 1). La administración avanzada de múltiples organizaciones, la facturación y otras funcionalidades SaaS avanzadas quedan fuera del MVP v1. El aislamiento completo entre tenants no queda fuera de alcance.
 
 ---
 

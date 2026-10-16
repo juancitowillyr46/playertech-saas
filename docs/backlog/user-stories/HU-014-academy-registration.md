@@ -1,0 +1,84 @@
+# HU-014 — Registrar academia y owner
+
+**Épica:** EP-00 — Alta de academia · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
+**Spec:** pendiente
+
+## Historia de usuario
+
+> Como **visitante**, quiero registrar mi academia y mi cuenta de owner, para empezar a gestionar mi academia en PlayerTech.
+
+## Objetivo
+
+Permitir que una academia se registre por su cuenta y quede creada como un tenant aislado, con su owner, su plan Free y su sede principal.
+
+## Criterios de aceptación
+
+### CA-001 — Registro exitoso
+
+**Dado** que el visitante proporciona nombre de la academia, su nombre, correo, contraseña y confirmación de contraseña, y acepta los documentos legales,
+**cuando** confirma el registro,
+**entonces** el sistema crea la academia y su cuenta, envía un correo de verificación y le indica que debe verificar su correo para acceder.
+
+### CA-002 — Campos obligatorios
+
+**Dado** que falta alguno de los datos del registro,
+**cuando** el visitante intenta registrarse,
+**entonces** el sistema indica los campos pendientes y no completa el registro.
+
+### CA-003 — Contraseña
+
+**Dado** que la contraseña tiene menos de 8 caracteres o no coincide con su confirmación,
+**cuando** el visitante intenta registrarse,
+**entonces** el sistema indica el problema y no completa el registro.
+
+### CA-004 — Aceptaciones legales obligatorias
+
+**Dado** que el visitante no aceptó los Términos y Condiciones o la Política de Tratamiento de Datos Personales,
+**cuando** intenta registrarse,
+**entonces** el sistema indica que debe aceptar ambos documentos y no completa el registro.
+
+### CA-005 — Correo ya registrado
+
+**Dado** que el correo ya pertenece a una cuenta existente,
+**cuando** el visitante intenta registrarse,
+**entonces** el sistema muestra el mismo mensaje que en un registro exitoso, sin revelar que el correo existe, y no crea una nueva academia.
+
+### CA-006 — Verificación de correo
+
+**Dado** que el owner recibió el correo de verificación,
+**cuando** accede al enlace de verificación,
+**entonces** su cuenta queda verificada y puede iniciar sesión.
+
+### CA-007 — Academia lista para operar
+
+**Dado** que el owner verificó su correo e inició sesión por primera vez,
+**cuando** consulta su academia,
+**entonces** la academia tiene el nombre registrado, el plan Free, una sede principal y como correo de contacto el correo del registro.
+
+### CA-008 — Registro atómico
+
+**Dado** que ocurre un error durante el registro,
+**cuando** el sistema no puede completarlo,
+**entonces** no queda creado ningún dato parcial (ni cuenta ni academia) y el visitante recibe un mensaje comprensible para reintentar.
+
+## Reglas de negocio
+
+- El registro crea en una sola operación: la cuenta, el perfil, la academia, la membresía de owner, la suscripción Free, la sede principal y las dos aceptaciones legales.
+- Las aceptaciones legales registran el documento, su versión y la fecha y hora del servidor.
+- El nombre de la academia puede repetirse entre academias.
+- La academia se crea con país Colombia y zona horaria America/Bogota, sin mostrarlos.
+- La sede principal se crea con el nombre "Sede principal" y el tipo lugar de entrenamiento.
+- Una persona solo puede pertenecer a una academia.
+- El owner no puede acceder hasta verificar su correo.
+
+## Fuera de alcance
+
+- Captcha.
+- Selección de país o zona horaria.
+- Onboarding guiado posterior al registro.
+- Reenvío del correo de verificación desde la interfaz *(a confirmar en la spec)*.
+- Limpieza de registros no verificados (MVP+).
+
+## Decisiones relacionadas
+
+DEC-01, DEC-02, DEC-05, DEC-07, DEC-08, DEC-09, DEC-10, DEC-11, DEC-12, DEC-13, DEC-14, DEC-15, DEC-19, DEC-20, DEC-21, DEC-24 (ADR-012) y ADR-014.

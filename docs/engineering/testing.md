@@ -82,6 +82,35 @@ Player appears in list
 
 No todos los escenarios requieren E2E.
 
+### Database Tests
+
+Validan la seguridad y las reglas que se aplican en PostgreSQL: políticas RLS, aislamiento entre academias, restricciones y funciones como el registro atómico.
+
+En una aplicación de una sola página, ninguna prueba de frontend demuestra que los datos estén protegidos, porque el frontend puede omitirse. **El aislamiento entre academias solo se demuestra con pruebas de base de datos.**
+
+## Herramientas y prioridad
+
+```text
+            ▲  E2E (pocas)           Playwright — flujos completos en navegador
+           ╱ ╲
+          ╱   ╲ Componentes          Vitest — formularios, validaciones, estados
+         ╱─────╲
+        ╱       ╲ Unitarias          Vitest — services, guards, mapeo de errores
+       ╱─────────╲
+      ╱  Base de   ╲                 pgTAP — RLS, aislamiento A/B, registro atómico
+     ╱    datos     ╲
+    ╱───────────────╲
+```
+
+| Nivel | Herramienta | Cuándo |
+|---|---|---|
+| Base de datos | **pgTAP**, mediante `supabase test db` | Desde la Fase 1 (obligatorio en T-00) |
+| Unitarias | **Vitest** | Desde la Fase 1 |
+| Componentes | **Vitest** + Angular Testing Library | Desde la Fase 1 |
+| End-to-End | **Playwright** | Cuando exista el flujo completo de negocio (Fase 2) |
+
+Vitest sustituye a Karma, que está deprecado y es considerablemente más lento. Angular 21 soporta Vitest de forma oficial.
+
 ## Relación con Acceptance Criteria
 
 Cada Acceptance Criterion relevante debe poder validarse mediante una prueba o validación correspondiente.

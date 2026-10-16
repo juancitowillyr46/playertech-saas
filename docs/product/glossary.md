@@ -10,10 +10,27 @@ Este documento define los términos utilizados en PlayerTech para mantener un le
 | **Academia** | Organización deportiva que utiliza PlayerTech para gestionar sus operaciones. Representa un tenant de la plataforma desde el MVP. El escenario inicial corresponde a una academia de fútbol. |
 | **Tenant** | Organización o academia aislada dentro de la arquitectura multi-tenant de PlayerTech. |
 | **Membresía de academia** | Relación que vincula a un usuario autenticado con una academia y determina su pertenencia al tenant. |
-| **Administrador** | Usuario responsable de gestionar la información y operación de la academia dentro de la plataforma. |
+| **Administrador** | Usuario responsable de gestionar la información y operación de la academia dentro de la plataforma. En el MVP corresponde al Owner. |
+| **Owner** | Rol del usuario que registró la academia. Es el único rol del MVP y tiene control total sobre su academia. Cada academia tiene exactamente un owner. |
+| **Visitante** | Persona sin sesión que puede registrar una nueva academia. |
 | **Entrenador** | Persona responsable de dirigir actividades deportivas y trabajar con los jugadores. |
 | **Tutor / Padre** | Persona responsable de uno o más jugadores y que puede responder convocatorias en su representación. |
 | **Jugador** | Persona que participa en las actividades deportivas de una academia. |
+
+## Plataforma SaaS
+
+| Término | Definición |
+|---|---|
+| **Registro de academia** | Proceso autoservicio mediante el cual un visitante crea una academia y su cuenta de owner. |
+| **Estado de la academia** | Condición que determina si la academia puede operar: `activa` o `suspendida`. Una academia suspendida conserva sus datos, pero no puede operar. |
+| **Plan** | Nivel de servicio de PlayerTech: Free, Pro o Advanced. En el MVP todas las academias usan Free, sin límites. |
+| **Suscripción** | Relación entre una academia y el plan que tiene contratado. |
+| **Aceptación legal** | Registro auditado de que un usuario aceptó una versión concreta de los Términos y Condiciones o de la Política de Tratamiento de Datos Personales. |
+| **Correo de contacto** | Correo público de la academia. Se inicializa con el correo del registro y puede cambiarse sin afectar al correo de inicio de sesión. |
+| **Sede** | Lugar físico de la academia: una oficina o un lugar de entrenamiento. No separa datos ni permisos. |
+| **Sede principal** | Sede de referencia de la academia. Se crea en el registro, siempre está activa y existe exactamente una por academia. |
+| **Desactivar** | Acción reversible que deja un registro fuera de uso sin eliminarlo; sigue visible y puede reactivarse. |
+| **Borrado lógico** | Eliminación de un registro de la interfaz sin borrarlo físicamente de la base de datos; se conserva su historial. |
 
 ## Organización deportiva
 

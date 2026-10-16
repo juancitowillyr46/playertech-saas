@@ -1,9 +1,263 @@
 # Modelo de Base de Datos - PlayerTech MVP
 
 Esquema de base de datos para PlayerTech MVP v1.
-Diagrama de entidades y relaciones en formato texto.
+
+El documento se organiza por fases:
+
+| Sección | Estado |
+|---|---|
+| **Fase 1 — Fundación SaaS** | ✅ Vigente. Decisiones en ADR-012, ADR-013 y ADR-014 (`decisions.md`) |
+| **Fase 2 — Negocio** | ⚠️ Borrador previo, pendiente de rediseño (acudientes, modelo de convocatoria, `academy_id` en todas las tablas, sede de la actividad) |
+
+Ante cualquier diferencia entre ambas secciones, prevalece la Fase 1.
 
 ---
+
+# Fase 1 — Fundación SaaS
+
+## Diagrama
+
+```text
+                         ┌──────────────────┐      ┌──────────────────┐
+  PLATAFORMA (global)    │      plans       │      │ legal_documents  │
+                         └────────┬─────────┘      └────────┬─────────┘
+                                  │                         │
+  IDENTIDAD (global)   ┌──────────┴──┐   1:1   ┌──────────┐ │
+                       │ auth.users  │─────────│ profiles │ │
+                       └──────┬──────┘         └──────────┘ │
+                              │                             │
+  TENANT                      │      ┌──────────────┐       │
+                              │      │  academies   │──┐    │
+                              │      └──┬───┬───┬───┘  │    │
+  MEMBRESÍA    ┌──────────────┴──────┐  │   │   │      │    │
+               │  academy_members    │◄─┘   │   │      │    │
+               └─────────────────────┘      │   │      │    │
+               ┌─────────────────────┐      │   │      │    │
+               │   subscriptions     │◄─────┘   │      │    │
+               └─────────────────────┘          │      │    │
+  ORGANIZACIÓN ┌─────────────────────┐          │      │    │
+               │       venues        │◄─────────┘      │    │
+               └─────────────────────┘                 │    │
+  ARCHIVOS     ┌─────────────────────┐                 │    │
+               │        files        │◄────────────────┘    │
+               └─────────────────────┘                      │
+  AUDITORÍA    ┌─────────────────────┐                      │
+               │  legal_acceptances  │◄─────────────────────┘
+               └─────────────────────┘
+```
+
+## Convenciones
+
+- Claves primarias `uuid` con `gen_random_uuid()`.
+- Fechas en `timestamptz`; `created_at` y `updated_at` se mantienen automáticamente.
+- Los valores enumerados se implementan como `text` con restricción `CHECK`, ampliables mediante migración.
+- Las tablas del tenant incluyen `academy_id` y `UNIQUE (academy_id, id)` para permitir claves foráneas compuestas que impidan relaciones entre academias.
+- Las tablas de negocio usan borrado lógico con `deleted_at` (DEC-27).
+
+## Plataforma (global, sin `academy_id`)
+
+### plans
+
+Catálogo de planes. Las tres filas se cargan en la propia migración.
+
+| Campo | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| `id` | uuid | PK | |
+| `code` | text | NOT NULL, UNIQUE, CHECK (`free`, `pro`, `advanced`) | Código del plan |
+| `name` | text | NOT NULL | Nombre visible |
+| `max_venues` | int | NULL | Límite de sedes; NULL = ilimitado |
+| `max_members` | int | NULL | Límite de usuarios; NULL = ilimitado |
+| `max_players` | int | NULL | Límite de jugadores; NULL = ilimitado |
+| `is_active` | boolean | NOT NULL DEFAULT true | Disponible para nuevas suscripciones |
+| `created_at` | timestamptz | NOT NULL DEFAULT now() | |
+
+En el MVP, `free` tiene todos los límites en NULL (DEC-07).
+
+### legal_documents
+
+Versiones de los documentos legales.
+
+| Campo | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| `id` | uuid | PK | |
+| `type` | text | NOT NULL, CHECK (`terms`, `privacy_policy`) | Tipo de documento |
+| `version` | text | NOT NULL | Ejemplo: `2026-10-v1` |
+| `url` | text | NOT NULL | Dónde se publica el documento |
+| `published_at` | timestamptz | NOT NULL | |
+| `is_current` | boolean | NOT NULL DEFAULT false | Versión vigente |
+
+Restricciones: `UNIQUE (type, version)` y una sola versión vigente por tipo (índice único parcial sobre `type` WHERE `is_current`).
+
+## Identidad (global)
+
+### auth.users
+
+Gestionada por Supabase Auth: correo, contraseña y verificación. No se modifica directamente.
+
+### profiles
+
+Datos de la persona, independientes de la academia.
+
+| Campo | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| `user_id` | uuid | PK, FK → `auth.users` ON DELETE CASCADE | |
+| `full_name` | text | NOT NULL | Nombre capturado en el registro |
+| `created_at`, `updated_at` | timestamptz | NOT NULL | |
+
+## Tenant
+
+### academies
+
+Raíz del aislamiento.
+
+| Campo | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| `id` | uuid | PK | Identificador del tenant |
+| `name` | text | NOT NULL | Puede repetirse entre academias (DEC-14) |
+| `slug` | text | NOT NULL, UNIQUE | Generado automáticamente |
+| `status` | text | NOT NULL DEFAULT `active`, CHECK (`active`, `suspended`) | DEC-18 |
+| `country_code` | char(2) | NOT NULL DEFAULT `CO` | Interno (DEC-15) |
+| `timezone` | text | NOT NULL DEFAULT `America/Bogota` | Interno (DEC-15) |
+| `logo_file_id` | uuid | NULL, FK → `files` | Logo (DEC-22) |
+| `contact_email` | text | NULL | Se inicializa con el correo del registro (DEC-21) |
+| `contact_phone` | text | NULL | |
+| `address` | text | NULL | |
+| `city` | text | NULL | |
+| `created_by` | uuid | NOT NULL, FK → `auth.users` | Owner que la registró |
+| `created_at`, `updated_at` | timestamptz | NOT NULL | |
+
+### subscriptions
+
+| Campo | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| `id` | uuid | PK | |
+| `academy_id` | uuid | NOT NULL, FK → `academies` | |
+| `plan_id` | uuid | NOT NULL, FK → `plans` | `free` al registrarse |
+| `status` | text | NOT NULL, CHECK (`active`, `cancelled`) | |
+| `started_at` | timestamptz | NOT NULL DEFAULT now() | |
+| `ends_at` | timestamptz | NULL | Sin uso en el MVP |
+| `provider_ref` | text | NULL | Referencia de la pasarela de pago futura |
+| `created_at` | timestamptz | NOT NULL | |
+
+Restricción: una sola suscripción `active` por academia (índice único parcial).
+
+## Membresía
+
+### academy_members
+
+| Campo | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| `id` | uuid | PK | |
+| `academy_id` | uuid | NOT NULL, FK → `academies` | |
+| `user_id` | uuid | NOT NULL, **UNIQUE**, FK → `auth.users` | Una academia por persona (DEC-02) |
+| `role` | text | NOT NULL, CHECK (`owner`) | Solo Owner en el MVP (DEC-03) |
+| `status` | text | NOT NULL DEFAULT `active`, CHECK (`active`, `disabled`) | |
+| `created_at` | timestamptz | NOT NULL | |
+
+Restricción: exactamente un `owner` por academia (índice único parcial sobre `academy_id` WHERE `role = 'owner'`).
+
+## Organización
+
+### venues
+
+Sedes: oficinas o lugares de entrenamiento (DEC-04).
+
+| Campo | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| `id` | uuid | PK | |
+| `academy_id` | uuid | NOT NULL, FK → `academies` | |
+| `name` | text | NOT NULL | Único en la academia entre sedes no eliminadas |
+| `type` | text | NOT NULL DEFAULT `training_ground`, CHECK (`office`, `training_ground`) | |
+| `address` | text | NULL | |
+| `city` | text | NULL | |
+| `directions` | text | NULL | Referencia o indicaciones de llegada |
+| `is_primary` | boolean | NOT NULL DEFAULT false | Sede principal |
+| `is_active` | boolean | NOT NULL DEFAULT true | Desactivación reversible (DEC-26) |
+| `deleted_at` | timestamptz | NULL | Borrado lógico (DEC-27) |
+| `created_by` | uuid | NOT NULL, FK → `auth.users` | |
+| `created_at`, `updated_at` | timestamptz | NOT NULL | |
+
+Restricciones:
+- `UNIQUE (academy_id, id)`.
+- Exactamente una sede principal por academia (índice único parcial sobre `academy_id` WHERE `is_primary AND deleted_at IS NULL`).
+- La sede principal siempre está activa y no eliminada: CHECK (`NOT is_primary OR (is_active AND deleted_at IS NULL)`).
+- Nombre único por academia: índice único parcial sobre (`academy_id`, `lower(name)`) WHERE `deleted_at IS NULL`.
+
+## Archivos
+
+### files
+
+Registro de archivos con almacenamiento portable (ADR-013).
+
+| Campo | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| `id` | uuid | PK | También es el nombre físico del archivo |
+| `academy_id` | uuid | NOT NULL, FK → `academies` | Tenant propietario |
+| `bucket` | text | NOT NULL, CHECK (`public-assets`, `private-files`) | Bucket lógico |
+| `storage_key` | text | NOT NULL, UNIQUE | `{academy_id}/{módulo}/{entity_id}/{file_id}.{ext}`, sin dominio ni proveedor |
+| `module` | text | NOT NULL | Ejemplo: `academy` |
+| `entity_id` | uuid | NOT NULL | Entidad a la que pertenece |
+| `original_name` | text | NOT NULL | Solo para mostrar |
+| `mime_type` | text | NOT NULL | |
+| `size_bytes` | bigint | NOT NULL | |
+| `checksum_sha256` | text | NULL | Verificación de integridad y de migraciones |
+| `created_by` | uuid | NOT NULL, FK → `auth.users` | |
+| `created_at` | timestamptz | NOT NULL | |
+| `deleted_at` | timestamptz | NULL | Borrado lógico |
+
+## Auditoría legal
+
+### legal_acceptances
+
+Solo admite inserciones; no se modifica ni se elimina.
+
+| Campo | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| `id` | uuid | PK | |
+| `user_id` | uuid | NOT NULL, FK → `auth.users` | Quién acepta |
+| `academy_id` | uuid | NOT NULL, FK → `academies` | Academia registrada |
+| `legal_document_id` | uuid | NOT NULL, FK → `legal_documents` | Documento y versión aceptados |
+| `accepted_at` | timestamptz | NOT NULL DEFAULT now() | Hora del servidor |
+| `ip_address` | inet | NULL | Ver DEC-29 |
+| `user_agent` | text | NULL | |
+
+## Funciones de base de datos
+
+| Función | Responsabilidad |
+|---|---|
+| `handle_new_user()` | Trigger posterior a la creación del usuario. En una transacción crea el perfil, la academia (con `slug` y `contact_email`), la membresía `owner`, la suscripción `free`, la sede principal y las dos aceptaciones legales. Si algo falla, el registro completo se revierte (DEC-20) |
+| `is_academy_member(academy_id)` | Verdadero si el usuario tiene membresía `active` en una academia `active`. Base de las políticas RLS |
+| `current_academy_id()` | Academia del usuario autenticado; el frontend no la envía |
+| `has_academy_role(academy_id, roles[])` | Comprueba el rol de la membresía; en el MVP siempre `owner` |
+| `set_updated_at()` | Trigger que mantiene `updated_at` |
+
+Las funciones de autorización usan `SECURITY DEFINER` con `search_path` fijo, para evitar la recursión de políticas sobre `academy_members`.
+
+## Políticas de acceso (RLS)
+
+| Tabla | SELECT | INSERT | UPDATE | DELETE |
+|---|---|---|---|---|
+| `plans`, `legal_documents` | Usuarios autenticados | ❌ | ❌ | ❌ |
+| `profiles` | El propio usuario | Solo el registro | El propio usuario | ❌ |
+| `academies` | Miembros | Solo el registro | Owner (excepto `status`, `slug`, `country_code`, `timezone`) | ❌ |
+| `subscriptions` | Miembros | Solo el registro | ❌ | ❌ |
+| `academy_members` | El propio miembro | Solo el registro | ❌ | ❌ |
+| `venues` | Miembros | Owner | Owner | ❌ (borrado lógico) |
+| `files` | Miembros | Miembros | Miembros (solo `deleted_at`) | ❌ |
+| `legal_acceptances` | El propio usuario | Solo el registro | ❌ | ❌ |
+
+## Almacenamiento (Storage)
+
+| Bucket | Lectura | Escritura | Configuración |
+|---|---|---|---|
+| `public-assets` | Pública | `is_academy_member(primer segmento de la ruta)` | Logos: `image/jpeg`, `image/png`; máximo 1 MB |
+| `private-files` | Miembros, con URL firmada | `is_academy_member(primer segmento de la ruta)` | Sin uso en la Fase 1 |
+
+---
+
+# Fase 2 — Negocio (borrador previo, pendiente de rediseño)
+
+> ⚠️ Esta sección es anterior a la ideación de la Fase 1 y se rediseñará. Pendiente: acudientes, convocatoria con cabecera y convocados por jugador, `academy_id` y `deleted_at` en todas las tablas, sede de la actividad y sede habitual del jugador. Las definiciones de `academies` y `academy_members` de esta sección quedan reemplazadas por la Fase 1.
 
 ## Diagrama ER (Entity Relationship)
 
