@@ -577,7 +577,7 @@ Focus en MVP funcional. Arquitectura ya está preparada.
 ## ADR-011: Constitution como norte
 
 ### Decisión
-La Constitution (`docs/constitution.md`) define principios.
+La Constitution (`.specify/memory/constitution.md`, fuente única; `docs/constitution.md` es su puerta de entrada) define principios.
 Los ADRs definen decisiones específicas que respetan la Constitution.
 
 ### Relación
@@ -783,12 +783,10 @@ El detalle está en `docs/architecture/frontend.md`, `docs/architecture/ui.md` y
 - Separar configuración de la academia y cuenta personal prepara la incorporación de roles sin reorganizar la navegación.
 - Un patrón de gestión único da consistencia y acelera la Fase 2.
 
-### Excepción controlada (principio V de la Constitución)
-- **Principio afectado:** V — las piezas de SakaiNG no se modifican para implementar producto.
-- **Motivo:** el menú, la marca y el topbar deben representar a PlayerTech.
-- **Alcance:** solo los archivos de `layout/`, con cambios mínimos.
-- **Mitigación:** el menú vive en `core/navigation`; las actualizaciones de SakaiNG siguen `docs/engineering/sakai-upstream.md`.
-- **Revisión:** en cada actualización de SakaiNG.
+### Relación con la Constitución
+La adopción de `layout/` se registró inicialmente como excepción controlada al principio V. Desde la Constitución 3.1.0, el principio V distingue el **layout adoptado** (código propio de PlayerTech, modificable con cambios mínimos y controlados) de las **demos** de SakaiNG (solo referencia), por lo que ya no se trata de una excepción.
+
+- **Mitigación que se mantiene:** el menú vive en `core/navigation`; las actualizaciones de SakaiNG siguen `docs/engineering/sakai-upstream.md`.
 
 ---
 

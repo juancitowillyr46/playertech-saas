@@ -54,7 +54,7 @@ Su objetivo es servir como guía rápida para entender:
        │ Qué debe hacer  │
        └────────┬────────┘
                 │
-                │ /speckit.clarify
+                │ /speckit-clarify
                 ▼
        ┌─────────────────┐
        │     CLARIFY     │
@@ -133,7 +133,7 @@ TESTS        = VERIFY
                     USER STORY
                            │
                            │
-                    /speckit.specify
+                    /speckit-specify
                            │
                            ▼
                      ┌──────────┐
@@ -148,12 +148,12 @@ TESTS        = VERIFY
                    Sí          No
                     │           │
                     ▼           │
-            /speckit.clarify    │
+            /speckit-clarify    │
                     │           │
                     └─────┬─────┘
                           │
                           ▼
-                     /speckit.plan
+                     /speckit-plan
                           │
                           ▼
                      ┌──────────┐
@@ -161,7 +161,7 @@ TESTS        = VERIFY
                      └────┬─────┘
                           │
                           ▼
-                     /speckit.tasks
+                     /speckit-tasks
                           │
                           ▼
                     ┌───────────┐
@@ -169,7 +169,7 @@ TESTS        = VERIFY
                     └─────┬─────┘
                           │
                           ▼
-                  /speckit.implement
+                  /speckit-implement
                           │
                           ▼
                     ┌───────────┐
@@ -190,11 +190,11 @@ playertech-saas/
 │
 ├── .specify/
 │   └── memory/
-│       └── constitution.md
+│       └── constitution.md      ← Constitución vigente (fuente única)
 │
 ├── docs/
 │   │
-│   ├── constitution.md
+│   ├── constitution.md          ← puerta de entrada, enlaza a la vigente
 │   │
 │   ├── product/
 │   │   └── ...
@@ -579,15 +579,17 @@ En otras palabras:
 
 | Comando | Propósito | Resultado |
 |---|---|---|
-| `/speckit.constitution` | Definir principios | Constitution |
-| `/speckit.specify` | Definir funcionalidad | `spec.md` |
-| `/speckit.clarify` | Resolver ambigüedades | Spec refinada |
-| `/speckit.plan` | Diseñar implementación | `plan.md` |
-| `/speckit.tasks` | Descomponer trabajo | `tasks.md` |
-| `/speckit.implement` | Implementar | Código |
-| `/speckit.analyze` | Revisar consistencia | Hallazgos |
+| `/speckit-constitution` | Definir principios | Constitution |
+| `/speckit-specify` | Definir funcionalidad | `spec.md` |
+| `/speckit-clarify` | Resolver ambigüedades | Spec refinada |
+| `/speckit-plan` | Diseñar implementación | `plan.md` |
+| `/speckit-tasks` | Descomponer trabajo | `tasks.md` |
+| `/speckit-implement` | Implementar | Código |
+| `/speckit-analyze` | Revisar consistencia | Hallazgos |
 
-> Los comandos disponibles pueden variar según la versión/configuración de Spec Kit.
+> En Claude Code los comandos se invocan con guion (`/speckit-specify`). Los comandos disponibles pueden variar según la versión de Spec Kit.
+
+**Origen de una spec:** una Historia de Usuario o un Habilitador técnico (T-xx), según el principio I de la Constitución. La relación entre HU y spec se detalla en `docs/backlog/README.md`.
 
 ---
 
@@ -700,31 +702,31 @@ Si pertenece a una funcionalidad:
                   USER STORY
                         │
                         ▼
-               /speckit.specify
+               /speckit-specify
                         │
                         ▼
                      SPEC.md
                         │
                         ▼
-               /speckit.clarify
+               /speckit-clarify
                         │
                         ▼
                  SPEC REFINADA
                         │
                         ▼
-                 /speckit.plan
+                 /speckit-plan
                         │
                         ▼
                      PLAN.md
                         │
                         ▼
-                 /speckit.tasks
+                 /speckit-tasks
                         │
                         ▼
                     TASKS.md
                         │
                         ▼
-               /speckit.implement
+               /speckit-implement
                         │
                         ▼
                   IMPLEMENTACIÓN
