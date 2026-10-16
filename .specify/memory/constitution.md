@@ -99,7 +99,8 @@ verdad por concepto:
 | `docs/backlog/` | Épicas, historias de usuario y habilitadores técnicos |
 | `specs/` | Especificaciones, planes y tareas de cada funcionalidad |
 | `PRODUCT.md` y `DESIGN.md` | Brief de producto y marca; sistema visual |
-| `CLAUDE.md` | Guía operativa para agentes; NO DEBE establecer principios |
+| `AGENTS.md` | Guía operativa para cualquier agente de IA; NO DEBE establecer principios |
+| `CLAUDE.md` | Adaptador de Claude Code: importa `AGENTS.md` y añade solo lo específico de Claude; NO DEBE establecer principios |
 | `docs/archive/` | Artefactos obsoletos; no son fuente de verdad |
 
 Se DEBE evitar la duplicación: un documento DEBE enlazar a la fuente correspondiente en lugar de
@@ -113,6 +114,13 @@ specs DEBEN ser trazables a su HU o habilitador y a sus criterios de aceptación
 una o varias HU de la misma épica y DEBE referenciar sus criterios de aceptación en lugar de copiarlos.
 Los planes técnicos DEBEN reflejar las decisiones arquitectónicas aplicables. Las tareas DEBEN
 representar trabajo concreto y verificable.
+
+El plan de cada spec DEBE identificar la documentación de `docs/` aplicable, indicando qué se toma de
+cada documento y qué partes no aplican, y la implementación DEBE leerla antes de empezar. Esta
+obligación no depende de la herramienta o agente que se utilice.
+
+*Razón: las herramientas de Spec Kit solo cargan automáticamente la Constitución y los artefactos de
+`specs/`; sin una lista explícita, el conocimiento de `docs/` podría ignorarse al implementar.*
 
 ### XII. Excepciones controladas
 
@@ -165,4 +173,4 @@ de forma material, y PATCH para aclaraciones no semánticas. Las revisiones de s
 cambios relevantes DEBEN verificar el cumplimiento y documentar las excepciones aprobadas
 (principio XII).
 
-**Version**: 3.1.0 | **Ratified**: 2026-10-03 | **Last Amended**: 2026-10-16
+**Version**: 3.2.0 | **Ratified**: 2026-10-03 | **Last Amended**: 2026-10-16

@@ -8,7 +8,7 @@ La Constitución define los principios fundamentales que gobiernan el desarrollo
 
 > **La única versión vigente es [`.specify/memory/constitution.md`](../.specify/memory/constitution.md).**
 >
-> **Versión:** 3.1.0 · **Ratificada:** 2026-10-03 · **Última enmienda:** 2026-10-16
+> **Versión:** 3.2.0 · **Ratificada:** 2026-10-03 · **Última enmienda:** 2026-10-16
 
 Esta página es una puerta de entrada y no repite el texto normativo. La Constitución vive en `.specify/memory/` porque es el archivo que leen las herramientas de GitHub Spec Kit para validar cada especificación, plan y conjunto de tareas. Las enmiendas se realizan con `/speckit-constitution`.
 
@@ -25,8 +25,8 @@ Esta página es una puerta de entrada y no repite el texto normativo. La Constit
 | VII | Trazabilidad | De producto a pruebas, sin duplicación |
 | VIII | Seguridad y control de acceso | La seguridad no depende del frontend; sin secretos en el cliente |
 | IX | Calidad verificable | Criterios de aceptación claros y pruebas proporcionales al riesgo |
-| X | Documentación como fuente de conocimiento | Una única fuente de verdad por concepto |
-| XI | Convención de SDD y GitHub Spec Kit | `spec.md`, `plan.md` y `tasks.md` trazables a su HU o habilitador |
+| X | Documentación como fuente de conocimiento | Una única fuente de verdad por concepto; `AGENTS.md` y `CLAUDE.md` son guías operativas, no principios |
+| XI | Convención de SDD y GitHub Spec Kit | `spec.md`, `plan.md` y `tasks.md` trazables a su HU o habilitador; el plan lista la documentación de `docs/` aplicable y la implementación la lee, sea cual sea el agente |
 | XII | Excepciones controladas | Toda excepción se justifica, documenta y revisa |
 | XIII | Experiencia de usuario | Móvil primero, accesible, consistente y con textos claros; requisito del producto |
 
@@ -37,4 +37,5 @@ Esta página es una puerta de entrada y no repite el texto normativo. La Constit
 - `docs/product/` — Visión, alcance y evolución del producto.
 - `docs/backlog/` — Épicas, historias de usuario y habilitadores técnicos.
 - `specs/` — Especificaciones de funcionalidades.
-- `CLAUDE.md` — Guía operativa para agentes.
+- `AGENTS.md` — Guía operativa para cualquier agente de IA.
+- `CLAUDE.md` — Adaptador de Claude Code (importa `AGENTS.md`).
