@@ -1,0 +1,196 @@
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
+import { PasswordModule } from 'primeng/password';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { AppError } from '../../../core/errors/app-error';
+import { ERROR_MESSAGES } from '../../../core/errors/error-messages';
+import { CurrentLegalDocuments } from '../../../core/legal/models/legal.models';
+import { RegistrationService } from '../services/registration.service';
+import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-match';
+
+/** Registro de una academia, versión básica (Historia 7 de la spec 002, FR-036). HU-014 la completa. */
+@Component({
+    selector: 'app-register-page',
+    imports: [ReactiveFormsModule, RouterLink, ButtonModule, CheckboxModule, InputTextModule, MessageModule, PasswordModule, ProgressSpinnerModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
+        <h1 class="text-3xl font-semibold m-0 mb-2">Crea tu academia</h1>
+        <p class="text-muted-color m-0 mb-8">Registra tu academia y tu cuenta de administrador.</p>
+
+        @if (loadError()) {
+            <p-message severity="error" styleClass="mb-4">{{ loadError() }}</p-message>
+            <p-button label="Reintentar" icon="pi pi-refresh" [outlined]="true" (onClick)="loadLegalDocuments()" />
+        } @else if (!legal()) {
+            <div class="flex justify-center py-10">
+                <p-progressSpinner strokeWidth="4" ariaLabel="Cargando" styleClass="w-12 h-12" />
+            </div>
+        } @else {
+            @if (errorMessage()) {
+                <p-message severity="error" styleClass="mb-6">{{ errorMessage() }}</p-message>
+            }
+
+            <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5" novalidate>
+                <div class="flex flex-col gap-2">
+                    <label for="academyName" class="font-medium">Nombre de la academia</label>
+                    <input pInputText id="academyName" formControlName="academyName" autocomplete="organization" class="w-full" />
+                    @if (showError('academyName', 'required')) {
+                        <p-message severity="error" variant="simple" size="small">Ingresa el nombre de la academia.</p-message>
+                    }
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label for="fullName" class="font-medium">Tu nombre</label>
+                    <input pInputText id="fullName" formControlName="fullName" autocomplete="name" class="w-full" />
+                    @if (showError('fullName', 'required')) {
+                        <p-message severity="error" variant="simple" size="small">Ingresa tu nombre.</p-message>
+                    }
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label for="email" class="font-medium">Correo</label>
+                    <input pInputText id="email" type="email" formControlName="email" autocomplete="email" class="w-full" />
+                    @if (showError('email', 'required')) {
+                        <p-message severity="error" variant="simple" size="small">Ingresa tu correo.</p-message>
+                    } @else if (showError('email', 'email')) {
+                        <p-message severity="error" variant="simple" size="small">Ingresa un correo válido.</p-message>
+                    }
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label for="password" class="font-medium">Contraseña</label>
+                    <p-password inputId="password" formControlName="password" [feedback]="false" [toggleMask]="true" autocomplete="new-password" styleClass="w-full" inputStyleClass="w-full" />
+                    @if (showError('password', 'required') || showError('password', 'minlength')) {
+                        <p-message severity="error" variant="simple" size="small">{{ passwordLengthMessage }}</p-message>
+                    }
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label for="passwordConfirmation" class="font-medium">Confirmar contraseña</label>
+                    <p-password inputId="passwordConfirmation" formControlName="passwordConfirmation" [feedback]="false" [toggleMask]="true" autocomplete="new-password" styleClass="w-full" inputStyleClass="w-full" />
+                    @if (form.controls.passwordConfirmation.touched && form.hasError('passwordsMismatch')) {
+                        <p-message severity="error" variant="simple" size="small">Las contraseñas no coinciden.</p-message>
+                    }
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-start gap-3">
+                        <p-checkbox inputId="acceptTerms" formControlName="acceptTerms" [binary]="true" />
+                        <label for="acceptTerms">
+                            Acepto los
+                            <a [href]="legal()!.terms.url" target="_blank" rel="noopener" class="text-primary font-medium">Términos y Condiciones</a>
+                        </label>
+                    </div>
+                    @if (showError('acceptTerms', 'required')) {
+                        <p-message severity="error" variant="simple" size="small">Debes aceptar los Términos y Condiciones.</p-message>
+                    }
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-start gap-3">
+                        <p-checkbox inputId="acceptPrivacy" formControlName="acceptPrivacy" [binary]="true" />
+                        <label for="acceptPrivacy">
+                            Acepto la
+                            <a [href]="legal()!.privacyPolicy.url" target="_blank" rel="noopener" class="text-primary font-medium">Política de Tratamiento de Datos</a>
+                        </label>
+                    </div>
+                    @if (showError('acceptPrivacy', 'required')) {
+                        <p-message severity="error" variant="simple" size="small">Debes aceptar la Política de Tratamiento de Datos.</p-message>
+                    }
+                </div>
+
+                <p-button type="submit" label="Crear cuenta" [loading]="submitting()" styleClass="w-full" />
+            </form>
+        }
+
+        <p class="text-center mt-8 mb-0">
+            ¿Ya tienes cuenta?
+            <a routerLink="/auth/login" class="text-primary font-medium">Iniciar sesión</a>
+        </p>
+    `
+})
+export class RegisterPage implements OnInit {
+    private readonly registration = inject(RegistrationService);
+    private readonly router = inject(Router);
+
+    protected readonly passwordLengthMessage = ERROR_MESSAGES.weak_password;
+    protected readonly form = inject(FormBuilder).nonNullable.group(
+        {
+            academyName: ['', Validators.required],
+            fullName: ['', Validators.required],
+            email: ['', [Validators.required, Validators.email]],
+            password: ['', [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH)]],
+            passwordConfirmation: [''],
+            acceptTerms: [false, Validators.requiredTrue],
+            acceptPrivacy: [false, Validators.requiredTrue]
+        },
+        { validators: passwordsMatch('password', 'passwordConfirmation') }
+    );
+    protected readonly legal = signal<CurrentLegalDocuments | null>(null);
+    protected readonly loadError = signal<string | null>(null);
+    protected readonly submitting = signal(false);
+    protected readonly errorMessage = signal<string | null>(null);
+
+    ngOnInit(): void {
+        void this.loadLegalDocuments();
+    }
+
+    protected async loadLegalDocuments(): Promise<void> {
+        this.loadError.set(null);
+
+        try {
+            this.legal.set(await this.registration.loadLegalDocuments());
+        } catch (error) {
+            this.loadError.set(toMessage(error));
+        }
+    }
+
+    protected showError(control: keyof typeof this.form.controls, error: string): boolean {
+        const field = this.form.controls[control];
+
+        return field.touched && field.hasError(error);
+    }
+
+    protected async submit(): Promise<void> {
+        const legal = this.legal();
+
+        if (this.submitting() || !legal) {
+            return;
+        }
+
+        this.form.markAllAsTouched();
+
+        if (this.form.invalid) {
+            return;
+        }
+
+        this.submitting.set(true);
+        this.errorMessage.set(null);
+
+        try {
+            const value = this.form.getRawValue();
+            const email = value.email.trim();
+
+            await this.registration.register({
+                email,
+                password: value.password,
+                academyName: value.academyName.trim(),
+                fullName: value.fullName.trim(),
+                legalAcceptances: { terms: legal.terms.version, privacyPolicy: legal.privacyPolicy.version }
+            });
+            await this.router.navigateByUrl(`/auth/verify-email?email=${encodeURIComponent(email)}`);
+        } catch (error) {
+            this.errorMessage.set(toMessage(error));
+        } finally {
+            this.submitting.set(false);
+        }
+    }
+}
+
+function toMessage(error: unknown): string {
+    return error instanceof AppError ? error.message : ERROR_MESSAGES.unknown;
+}

@@ -42,8 +42,9 @@
         justify-content: center;
         align-items: center;
         border-radius: 50%;
-        width: 2.5rem;
-        height: 2.5rem;
+        // 3.25rem ≈ 45 px con la fuente base de 14 px: área táctil mínima (principio XIII).
+        width: 3.25rem;
+        height: 3.25rem;
         color: var(--text-color);
         transition: background-color var(--element-transition-duration);
         cursor: pointer;

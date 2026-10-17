@@ -1,0 +1,105 @@
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
+import { PasswordModule } from 'primeng/password';
+import { AuthService } from '../../../core/auth/auth.service';
+import { AppError } from '../../../core/errors/app-error';
+import { ERROR_MESSAGES } from '../../../core/errors/error-messages';
+
+/** Inicio de sesión, versión básica (Historia 7 de la spec 002). HU-001 la completa. */
+@Component({
+    selector: 'app-login-page',
+    imports: [ReactiveFormsModule, RouterLink, ButtonModule, InputTextModule, MessageModule, PasswordModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
+        <h1 class="text-3xl font-semibold m-0 mb-2">Iniciar sesión</h1>
+        <p class="text-muted-color m-0 mb-8">Entra a la gestión de tu academia.</p>
+
+        @if (errorMessage()) {
+            <p-message severity="error" styleClass="mb-6">{{ errorMessage() }}</p-message>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5" novalidate>
+            <div class="flex flex-col gap-2">
+                <label for="email" class="font-medium">Correo</label>
+                <input pInputText id="email" type="email" formControlName="email" autocomplete="email" class="w-full" />
+                @if (showError('email', 'required')) {
+                    <p-message severity="error" variant="simple" size="small">Ingresa tu correo.</p-message>
+                } @else if (showError('email', 'email')) {
+                    <p-message severity="error" variant="simple" size="small">Ingresa un correo válido.</p-message>
+                }
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label for="password" class="font-medium">Contraseña</label>
+                <p-password inputId="password" formControlName="password" [feedback]="false" [toggleMask]="true" autocomplete="current-password" styleClass="w-full" inputStyleClass="w-full" />
+                @if (showError('password', 'required')) {
+                    <p-message severity="error" variant="simple" size="small">Ingresa tu contraseña.</p-message>
+                }
+            </div>
+
+            <a routerLink="/auth/forgot-password" class="inline-block py-4 text-primary font-medium self-end">¿Olvidaste tu contraseña?</a>
+
+            <p-button type="submit" label="Iniciar sesión" [loading]="submitting()" styleClass="w-full" />
+        </form>
+
+        <p class="text-center mt-8 mb-0">
+            ¿Aún no tienes cuenta?
+            <a routerLink="/auth/register" class="text-primary font-medium">Crear cuenta</a>
+        </p>
+    `
+})
+export class LoginPage {
+    private readonly auth = inject(AuthService);
+    private readonly router = inject(Router);
+    private readonly route = inject(ActivatedRoute);
+
+    protected readonly form = inject(FormBuilder).nonNullable.group({
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', Validators.required]
+    });
+    protected readonly submitting = signal(false);
+    protected readonly errorMessage = signal<string | null>(null);
+
+    protected showError(control: 'email' | 'password', error: string): boolean {
+        const field = this.form.controls[control];
+
+        return field.touched && field.hasError(error);
+    }
+
+    protected async submit(): Promise<void> {
+        if (this.submitting()) {
+            return;
+        }
+
+        this.form.markAllAsTouched();
+
+        if (this.form.invalid) {
+            return;
+        }
+
+        this.submitting.set(true);
+        this.errorMessage.set(null);
+
+        try {
+            const { email, password } = this.form.getRawValue();
+
+            await this.auth.signIn(email.trim(), password);
+            await this.router.navigateByUrl(this.safeReturnUrl());
+        } catch (error) {
+            this.errorMessage.set(error instanceof AppError ? error.message : ERROR_MESSAGES.unknown);
+        } finally {
+            this.submitting.set(false);
+        }
+    }
+
+    /** Solo rutas internas: evita redirecciones abiertas. */
+    private safeReturnUrl(): string {
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+
+        return returnUrl?.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : '/home';
+    }
+}

@@ -1,24 +1,31 @@
-html {
-    height: 100%;
-    font-size: 14px;
-    line-height: 1.2;
-}
+// Orden de capas: la base de Sakai queda por encima del reset de Tailwind (base)
+// y por debajo de sus utilidades, para que las utilidades puedan ajustar títulos y
+// párrafos sin sobrescrituras (AGENTS.md, sitio 3 de estilos).
+@layer theme, base, sakai, components, utilities;
 
-body {
-    font-family: 'Lato', sans-serif;
-    color: var(--text-color);
-    background-color: var(--surface-ground);
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
+@layer sakai {
+    html {
+        height: 100%;
+        font-size: 14px;
+        line-height: 1.2;
+    }
 
-a {
-    text-decoration: none;
-}
+    body {
+        font-family: 'Lato', sans-serif;
+        color: var(--text-color);
+        background-color: var(--surface-ground);
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 
-.layout-wrapper {
-    min-height: 100vh;
+    a {
+        text-decoration: none;
+    }
+
+    .layout-wrapper {
+        min-height: 100vh;
+    }
 }
