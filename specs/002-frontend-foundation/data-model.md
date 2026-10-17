@@ -14,7 +14,9 @@ Esta spec no crea tablas: usa las de la spec 001 (`docs/architecture/database-sc
 | `StoredFile` | `core/storage/models` | `id`, `bucket`, `storageKey`, `mimeType`, `sizeBytes` | Fila de `files` |
 | `UploadFileInput` | `core/storage/models` | `file: File`, `bucket`, `module`, `entityId` | Pantalla que sube (HU-017) |
 | `AppError` | `core/errors` | `code: AppErrorCode`, `message` (es-CO), `cause?` | R10 |
-| `NavigationItem` | `core/navigation` | `label`, `icon`, `routerLink?`, `items?`, `devOnly?` | Configuración estática |
+| `NavigationItem` | `core/navigation` | `label`, `icon`, `routerLink?`, `items?` | Configuración estática. La sección de demos (`DEV_NAVIGATION`) vive en `features/dev/` y solo se incluye fuera de producción, con el mismo condicional de compilación que las rutas |
+| `LegalDocument` | `core/legal/models` | `type: 'terms' \| 'privacy_policy'`, `version`, `url` | Fila vigente de `legal_documents` |
+| `CurrentLegalDocuments` | `core/legal/models` | `terms: LegalDocument`, `privacyPolicy: LegalDocument` | Lectura para el registro (FR-036) |
 
 ## Reglas de transformación
 

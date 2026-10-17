@@ -38,8 +38,8 @@ La regla de importaciones de ESLint y un script sobre el bundle hacen verificabl
 
 **Escala/alcance**:
 - Unas 15 rutas y 3 guards.
-- 3 repositorios abstractos con su implementación.
-- 4 pantallas funcionales (callback, acceso denegado, suspendida, 404) más el inicio de sesión de desarrollo.
+- 4 repositorios abstractos con su implementación (autenticación, contexto de academia, archivos y documentos legales).
+- 5 pantallas de autenticación básicas (inicio de sesión, registro, verificación, recuperación, nueva contraseña) y 5 pantallas completas (callback, acceso denegado, suspendida, 404, error de contexto).
 
 ## Documentación de referencia obligatoria
 
@@ -124,16 +124,18 @@ frontend/
 │       │   ├── academy-context/         # models, data, academy-context.service.ts
 │       │   ├── storage/                 # models, data (abstracto + supabase-file-storage.repository.ts)
 │       │   ├── errors/                  # app-error.ts, supabase-error.mapper.ts, error-messages.ts, global-error-handler.ts
+│       │   ├── legal/                   # models, data (abstracto + supabase-legal-documents.repository.ts)
 │       │   ├── i18n/                    # primeng-es.ts
 │       │   ├── theme/                   # playertech-preset.ts
 │       │   └── navigation/              # navigation.ts
 │       ├── shared/components/           # placeholder-page (marcador reutilizado por varias features)
 │       ├── features/
-│       │   ├── auth/                    # auth-layout, callback, access-denied, suspended, marcadores; auth.routes.ts
+│       │   ├── auth/                    # auth-layout, login, register, verify-email, forgot-password,
+│       │   │                            # reset-password (básicas), callback, access-denied, suspended; auth.routes.ts
 │       │   ├── home/                    # marcador
 │       │   ├── settings/                # academy y venues: marcadores; settings.routes.ts
 │       │   ├── errors/                  # not-found, contexto con error
-│       │   └── dev/                     # dev-login; dev.routes.ts (demos + login)
+│       │   └── dev/                     # Solo registro de demos: dev.routes.ts y dev-navigation.ts (sin pantallas propias)
 │       ├── layout/                      # Adoptado: topbar, menu, footer, layout.service (R12)
 │       └── pages/                       # Demos de SakaiNG, sin cambios
 └── README.md                            # Reescrito
@@ -172,6 +174,9 @@ Tabla completa en [contracts/routes.md](contracts/routes.md).
 | `auth.guard.spec.ts`, `membership.guard.spec.ts`, `guest.guard.spec.ts` | Cada fila de la tabla de guards, con dobles de `AuthService` y `AcademyContextService` |
 | `academy-context.service.spec.ts` | Estados `active`, `suspended`, `none`, `error` y `clear` al cerrar sesión, con un repositorio simulado |
 | `callback.spec.ts` | Éxito con y sin `next`, `next` externo ignorado, `error` en URL, sin código, otro navegador |
+| `supabase-auth.repository.spec.ts` | Metadatos del registro según la spec 001, `emailRedirectTo`, `redirectTo` con `next`, conversión a `other_browser` |
+| `login.spec.ts`, `register.spec.ts`, `forgot-password.spec.ts`, `reset-password.spec.ts` | Validaciones, envío al servicio, mensajes de error, mensaje único de recuperación (DEC-12), navegación |
+| `layout.service.spec.ts` | Modo oscuro persistido y tolerancia a fallos de `localStorage` |
 | `supabase-academy-context.repository.spec.ts` | La tabla de deducción de R6, con el cliente simulado |
 | `navigation.spec.ts` | Entradas del menú y la sección de desarrollo solo fuera de producción |
 | `npm run lint` | Reglas de arquitectura (R2) |
@@ -200,6 +205,12 @@ Ver [research.md](./research.md). Todas las incógnitas quedan resueltas:
 **Cambios en la spec durante el plan:**
 - FR-020 excluye la pantalla de nueva contraseña del `guestGuard`, porque usa la sesión temporal de recuperación.
 - Se añade el caso límite del enlace abierto en otro navegador.
+
+**Cambios tras `/speckit-analyze` (decisión del responsable, 2026-10-16):**
+- Sin inicio de sesión en `/dev`: Historia 7 y FR-035 a FR-037 añaden las pantallas de autenticación básicas en sus rutas reales y prohíben ubicar funcionalidades bajo `/dev` (R17). Se añade `LegalDocumentsRepository`.
+- La sección de demos del menú se elimina en compilación (R13), para que `check:bundle` no detecte falsos positivos.
+- La verificación de producción es estática (R14).
+- El caso límite de la academia suspendida se resuelve al recargar.
 
 ## Verificación de la Constitución tras el diseño
 

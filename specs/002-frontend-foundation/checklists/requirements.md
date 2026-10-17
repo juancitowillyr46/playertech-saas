@@ -32,4 +32,4 @@
 ## Notes
 
 - Es un habilitador técnico: la spec nombra conceptos inevitables (flujo PKCE, tipos generados, análisis estático) y remite las herramientas concretas a ADR-015 y al plan. No fija lenguajes ni librerías.
-- Aclaración resuelta (2026-10-16): inicio de sesión provisional solo en desarrollo en `/dev/login` (opción A), recogido en FR-035 y en el escenario 3 de la Historia 6. Todos los ítems pasan.
+- Aclaración resuelta (2026-10-16): inicialmente se eligió un inicio de sesión provisional en `/dev/login`. Tras `/speckit-analyze`, el responsable lo sustituyó por pantallas de autenticación básicas en sus rutas reales (Historia 7, FR-035 a FR-037); nada de PlayerTech se ubica bajo `/dev`. Todos los ítems pasan.

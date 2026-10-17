@@ -10,7 +10,7 @@
 
 **Input**: Descripción del usuario: "frontend-foundation: Base técnica del frontend y esqueleto de la aplicación PlayerTech. Implementa las áreas 7 y 8 del habilitador técnico T-00 y sus criterios de aceptación técnicos CA-007 (en lo relativo al frontend), CA-008 y CA-009."
 
-> Esta spec proviene de un habilitador técnico (principio I de la Constitución). Sus usuarios son el **equipo de desarrollo**, que construirá las HU de la Fase 1 sobre esta base, y el **owner de la academia**, que recorre la navegación base. La estructura de referencia está en `docs/architecture/frontend.md` y `docs/architecture/ui.md`; las decisiones, en ADR-002, ADR-009, ADR-013, ADR-014, ADR-015 (FE-01 a FE-14) y ADR-016. La base de datos y su contrato provienen de la spec 001 (`specs/001-database-foundation/contracts/`).
+> Esta spec proviene de un habilitador técnico (principio I de la Constitución). Sus usuarios son el **equipo de desarrollo**, que construirá las HU de la Fase 1 sobre esta base, y el **owner de la academia**, que recorre la navegación base y usa las pantallas de autenticación en su versión básica. Esa versión básica adelanta parte de HU-001, HU-014 y HU-016, que la completan después. La estructura de referencia está en `docs/architecture/frontend.md` y `docs/architecture/ui.md`; las decisiones, en ADR-002, ADR-009, ADR-013, ADR-014, ADR-015 (FE-01 a FE-14) y ADR-016. La base de datos y su contrato provienen de la spec 001 (`specs/001-database-foundation/contracts/`).
 
 ## Escenarios de usuario y pruebas *(mandatory)*
 
@@ -117,6 +117,27 @@ Como equipo de desarrollo, necesito contratos de acceso a la autenticación, al 
 
 ---
 
+### Historia 7 - Pantallas básicas de autenticación (Prioridad: P1)
+
+Como owner de una academia, necesito poder registrarme, iniciar sesión y recuperar mi contraseña desde las pantallas reales de la aplicación, aunque todavía sean sencillas, para usar y validar la aplicación de punta a punta sin herramientas provisionales.
+
+**Motivo de prioridad**: Sin ellas no es posible validar las historias 2, 3 y 4 con una sesión real, ni generar los enlaces de correo con el flujo PKCE que exige la Historia 3. Se ubican en sus rutas definitivas; las HU-001, HU-014 y HU-016 las completan después (todos sus criterios de aceptación y la revisión de diseño de T-01).
+
+**Prueba independiente**: Con Supabase local, se registra una cuenta desde `/auth/register`, se verifica con el enlace del correo, se cierra la sesión, se inicia de nuevo desde `/auth/login` y se recupera la contraseña desde `/auth/forgot-password`.
+
+**Referencia**: ADR-014; DEC-08, DEC-11, DEC-12 y DEC-19 de ADR-012; contrato `registration-metadata.md` de la spec 001.
+
+**Escenarios de aceptación**:
+
+1. **Dado** la pantalla de registro, **cuando** el owner ingresa nombre de la academia, su nombre, correo, contraseña de al menos 8 caracteres, la confirmación de la contraseña y acepta los Términos y Condiciones y la Política de Tratamiento de Datos (con enlaces a sus versiones vigentes), **entonces** la cuenta se crea y ve la pantalla "Verifica tu correo".
+2. **Dado** el registro, **cuando** falta un campo, la contraseña es corta, la confirmación no coincide o falta una aceptación, **entonces** el formulario indica el error bajo el campo y no se envía.
+3. **Dado** un owner verificado, **cuando** inicia sesión en `/auth/login` con sus credenciales, **entonces** llega al inicio o a la ruta privada que había solicitado; con credenciales incorrectas o correo sin verificar ve un mensaje claro.
+4. **Dado** `/auth/forgot-password`, **cuando** se ingresa un correo, **entonces** se muestra siempre el mismo mensaje de confirmación, exista o no la cuenta (DEC-12).
+5. **Dado** el enlace de recuperación abierto, **cuando** el owner ingresa y confirma una nueva contraseña en `/auth/reset-password`, **entonces** la contraseña cambia y llega al inicio.
+6. **Dado** cualquiera de estas pantallas, **cuando** se usa en un celular, **entonces** las etiquetas son visibles, la contraseña tiene la opción de mostrarse y el botón principal muestra un estado de carga que impide envíos duplicados (`docs/architecture/ui.md`).
+
+---
+
 ### Historia 6 - Demos de la plantilla solo en desarrollo (Prioridad: P3)
 
 Como equipo de desarrollo, necesito conservar las demos de la plantilla base como catálogo de referencia sin que lleguen a producción, para consultar componentes sin exponerlos a los usuarios.
@@ -130,15 +151,15 @@ Como equipo de desarrollo, necesito conservar las demos de la plantilla base com
 **Escenarios de aceptación**:
 
 1. **Dado** el entorno de desarrollo, **cuando** se abre `/dev`, **entonces** se accede a las demos de la plantilla.
-2. **Dado** la compilación de producción, **cuando** se abre cualquier ruta bajo `/dev`, **entonces** se muestra la página no encontrada y las demos no forman parte de lo que se descarga.
-3. **Dado** el entorno de desarrollo y la base de datos local, **cuando** el equipo abre `/dev/login` e ingresa con un usuario del seed, **entonces** queda con la sesión iniciada y llega al inicio, lo que permite recorrer el esqueleto privado antes de HU-001.
+2. **Dado** la compilación de producción, **cuando** se revisan las rutas y los archivos que se descargan, **entonces** no existen las rutas bajo `/dev` (cualquier ruta bajo `/dev` muestra la página no encontrada) y las demos no forman parte de lo que se descarga. Se verifica sobre la compilación de producción, sin ejecutarla, porque su configuración de conexión se completa al crear el entorno en la nube (ADR-016).
+3. **Dado** cualquier funcionalidad de PlayerTech, **cuando** se registra su ruta, **entonces** no se ubica bajo `/dev`: ese espacio es exclusivo de las demos de la plantilla.
 
 ---
 
 ### Casos límite
 
 - La sesión caduca o se cierra en otra pestaña mientras el owner navega: la siguiente navegación a una ruta privada lo dirige al inicio de sesión.
-- La academia se suspende mientras el owner tiene la aplicación abierta: al recargar o navegar a otra ruta privada, ve la pantalla de academia suspendida.
+- La academia se suspende mientras el owner tiene la aplicación abierta: **al recargar la página**, ve la pantalla de academia suspendida. Mientras no recargue, RLS ya le impide leer o modificar datos; la pantalla solo refleja el estado.
 - La conexión con el proveedor falla al resolver la sesión o el contexto de academia: se muestra un mensaje de error recuperable (reintentar), no una pantalla en blanco ni un bucle de redirecciones.
 - Se abre `/auth/callback` directamente, sin código: se trata como enlace inválido.
 - El enlace del correo se abre en un navegador o dispositivo distinto al que inició el proceso (por ejemplo, registro en el computador y enlace abierto en el celular): el correo puede quedar verificado aunque la sesión no se inicie en ese navegador. Se muestra un mensaje que lo explica: si era una verificación, ya puede iniciar sesión; si era una recuperación, debe solicitar un enlace nuevo desde el navegador donde la pidió.
@@ -177,7 +198,7 @@ Como equipo de desarrollo, necesito conservar las demos de la plantilla base com
 
 **Rutas y protección**
 
-- **FR-017**: La aplicación DEBE registrar las rutas públicas y privadas definidas en `docs/architecture/frontend.md`. Las pantallas que pertenecen a una HU posterior DEBEN mostrar un marcador dentro de su layout.
+- **FR-017**: La aplicación DEBE registrar las rutas públicas y privadas definidas en `docs/architecture/frontend.md`. Las pantallas privadas que pertenecen a una HU posterior (inicio, perfil de la academia, sedes) DEBEN mostrar un marcador dentro de su layout; las de autenticación son funcionales en su versión básica (FR-035).
 - **FR-018**: Las rutas privadas DEBEN exigir una sesión válida; sin ella, DEBEN dirigir al inicio de sesión conservando la ruta solicitada.
 - **FR-019**: Las rutas privadas DEBEN exigir una membresía activa en una academia activa; DEBEN dirigir a acceso denegado si no hay academia y a academia suspendida si está suspendida.
 - **FR-020**: Las pantallas públicas de autenticación DEBEN dirigir al inicio si ya existe una sesión, salvo el retorno de enlaces, la pantalla de nueva contraseña (que usa la sesión temporal de recuperación), acceso denegado y academia suspendida.
@@ -186,7 +207,9 @@ Como equipo de desarrollo, necesito conservar las demos de la plantilla base com
 - **FR-023**: DEBE existir una página propia de "página no encontrada" para cualquier dirección inexistente.
 - **FR-024**: Las demos de la plantilla base DEBEN registrarse solo en desarrollo, bajo `/dev`, y NO DEBEN incluirse en la compilación de producción.
 - **FR-025**: Cada sección DEBE cargarse bajo demanda, para que la primera carga solo incluya lo necesario.
-- **FR-035**: DEBE existir un inicio de sesión provisional solo para desarrollo en `/dev/login` (correo y contraseña), que use el contrato de autenticación de FR-009 y dirija al inicio tras iniciar sesión. Está sujeto a FR-024: NO DEBE existir en la compilación de producción.
+- **FR-035**: Las pantallas de inicio de sesión, registro, verificación de correo, recuperación y nueva contraseña DEBEN ser funcionales en una versión básica, en sus rutas definitivas de `docs/architecture/frontend.md`, usando el contrato de autenticación de FR-009 y el layout de autenticación (Historia 7).
+- **FR-036**: El registro DEBE exigir nombre de la academia, nombre del owner, correo, contraseña de al menos 8 caracteres con confirmación y la aceptación de ambos documentos legales vigentes, cuyas versiones y enlaces se leen de la base de datos antes de mostrar el formulario.
+- **FR-037**: Ninguna funcionalidad de PlayerTech DEBE ubicarse bajo `/dev`; ese espacio es exclusivo de las demos de la plantilla.
 
 **Esqueleto y presentación**
 
@@ -210,6 +233,7 @@ Como equipo de desarrollo, necesito conservar las demos de la plantilla base com
 - **Error de aplicación**: categoría estable de error (credenciales inválidas, correo no confirmado, contraseña débil, enlace inválido, sin conexión, permiso denegado, desconocido) con su mensaje en español.
 - **Archivo almacenado**: clave relativa portable, tipo y tamaño, según el modelo `files` de la spec 001.
 - **Entrada de navegación**: etiqueta, ruta e icono de cada opción del menú.
+- **Documento legal vigente**: tipo (términos o política de datos), versión y enlace, leído de la base de datos para el registro.
 
 ## Criterios de éxito *(mandatory)*
 
@@ -228,9 +252,9 @@ Como equipo de desarrollo, necesito conservar las demos de la plantilla base com
 
 - La base de datos local de la spec 001 está disponible y sus usuarios de prueba (owners A y B) sirven para validar la navegación.
 - Las herramientas concretas (análisis estático, pruebas, cliente del proveedor) son las decididas en ADR-015; el plan técnico fija sus versiones.
-- Las pantallas funcionales de inicio de sesión, registro, verificación, recuperación, nueva contraseña, perfil de la academia, sedes e inicio con tareas pendientes se construyen en sus HU; aquí solo existen sus rutas con un marcador. La pantalla de retorno de enlaces, acceso denegado, academia suspendida y página no encontrada sí se construyen aquí.
+- Las pantallas de autenticación (inicio de sesión, registro, verificación, recuperación, nueva contraseña) se construyen aquí en una **versión básica funcional**; HU-001, HU-014 y HU-016 las completan con todos sus criterios de aceptación y la revisión de diseño de T-01. Perfil de la academia, sedes e inicio con tareas pendientes se construyen en sus HU; aquí solo existen sus rutas con un marcador. La pantalla de retorno de enlaces, acceso denegado, academia suspendida y página no encontrada se construyen completas aquí.
 - El cierre por inactividad pertenece a HU-015 y no se incluye.
 - El aspecto visual es el de la base adoptada con el color primario de ADR-015; la identidad visual propia llega con T-01. Las pantallas de esta spec pasan una revisión básica de experiencia y accesibilidad, no la revisión completa de diseño de T-01.
 - `docs/architecture/frontend.md` todavía describe la adopción del layout como excepción al principio V; desde la Constitución 3.1.0 ya no lo es, y se corregirá en esta spec.
 - La lista de redirecciones permitidas en la configuración local de Auth (spec 001) se ajusta a los retornos reales que use esta spec.
-- Validar la navegación privada exige una sesión iniciada, pero la pantalla de inicio de sesión pertenece a HU-001. **Decisión (2026-10-16):** se crea un inicio de sesión provisional **solo para desarrollo** en `/dev/login`, que usa el contrato de autenticación real con los usuarios del seed; sigue las mismas reglas que las demos (FR-024) y desaparece de la validación cuando exista HU-001.
+- Validar la navegación privada exige una sesión iniciada. **Decisión (2026-10-16, revisada tras `/speckit-analyze`):** no se crea un inicio de sesión provisional en `/dev`; se construyen las pantallas de autenticación básicas en sus rutas reales (Historia 7, FR-035). Nada de lo que desarrolle PlayerTech se ubica bajo `/dev` (FR-037).

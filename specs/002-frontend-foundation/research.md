@@ -141,13 +141,17 @@ Decisiones técnicas que resuelven las incógnitas del contexto técnico de `pla
 
 ## R13 — Rutas y demos solo en desarrollo
 
-**Decisión:** `app.routes.ts` combina rutas comunes y `...(environment.production ? [] : DEV_ROUTES)`. Como `environment.production` es una constante sustituida en compilación, la rama de desarrollo se elimina del bundle de producción y sus fragmentos diferidos (demos, `/dev/login`) no se generan. Se verifica comparando la lista de fragmentos de la compilación de producción.
+**Decisión:** `app.routes.ts` combina rutas comunes y `...(environment.production ? [] : DEV_ROUTES)`. Como `environment.production` es una constante sustituida en compilación, la rama de desarrollo se elimina del bundle de producción y sus fragmentos diferidos (las demos) no se generan. Se verifica comparando la lista de fragmentos de la compilación de producción.
+- `/dev` contiene **solo** las demos de SakaiNG (FR-037). Ninguna pantalla de PlayerTech vive ahí: la validación con sesión real usa las pantallas de autenticación básicas en sus rutas definitivas (R17).
 - `/dev` usa el `AppLayout` sin guards; las demos conservan su código intacto en `src/app/pages/`.
+- La sección "Demos" del menú (`DEV_NAVIGATION`) se define en `features/dev/` y se añade con el mismo condicional `environment.production ? [] : DEV_NAVIGATION`, para que tampoco quede en el bundle de producción. Si el menú recibiera el entorno como parámetro, sus textos y rutas seguirían en el bundle aunque no se mostraran.
 - `**` → página 404 propia (`features/errors/not-found`), en lugar de la demo `notfound`.
 
 ## R14 — Verificación del bundle
 
-**Decisión:** script `frontend/scripts/check-bundle.mjs` (`npm run check:bundle`) que, sobre `dist/`, falla si encuentra patrones de claves privilegiadas (`service_role`, `sb_secret_`, el `JWT_SECRET` local) o fragmentos de las demos. Junto con la regla de importaciones (R2), cubre FR-034, SC-003, SC-004 y SC-005.
+**Decisión:** script `frontend/scripts/check-bundle.mjs` (`npm run check:bundle`) que, sobre `dist/`, falla si encuentra patrones de claves privilegiadas (`service_role`, `sb_secret_`, `SUPABASE_SERVICE`) o rastros de las demos. Para las demos, el script extrae los selectores de los componentes de `src/app/pages/**/*.ts` (por ejemplo `app-formlayout-demo`, `app-dashboard`; hoy son 35) y falla si alguno aparece en `dist/`. Así no hay que mantener una lista, y por eso los componentes de PlayerTech no deben reutilizar esos selectores (`app-error`, `app-access`, `app-empty`, `app-notfound`…). Junto con la regla de importaciones (R2), cubre FR-034, SC-003, SC-004 y SC-005.
+
+La verificación de producción es **estática** (sobre `dist/`): la configuración de producción tiene la conexión vacía hasta crear el entorno en la nube (ADR-016) y la validación de arranque (FR-007) impide ejecutarla, que es el comportamiento buscado.
 
 ## R15 — Renombrado y limpieza
 
@@ -158,6 +162,18 @@ Decisiones técnicas que resuelven las incógnitas del contexto técnico de `pla
 - El `README.md` del frontend se reescribe para PlayerTech.
 - Dependencias que solo usan las demos (`chart.js`, `quill`) se mantienen, porque las demos siguen en desarrollo. `primeclt` se retira si no tiene uso.
 - `vercel.json` se conserva sin cambios: la plataforma de despliegue sigue pendiente (T-00).
+
+## R17 — Pantallas de autenticación básicas
+
+**Decisión (2026-10-16, revisada tras `/speckit-analyze`):** en lugar de un inicio de sesión provisional en `/dev`, se construyen versiones básicas y funcionales de inicio de sesión, registro, verificación, recuperación y nueva contraseña en sus rutas definitivas (`features/auth/`), con formularios reactivos tipados, componentes de PrimeNG y el layout de autenticación.
+
+**Justificación:**
+- Nada de lo que desarrolle PlayerTech queda en una ubicación provisional (FR-037): las HU-001, HU-014 y HU-016 **completan** estas pantallas en lugar de reemplazar una herramienta temporal.
+- El registro y la recuperación desde la app generan el código PKCE en el navegador, el único modo de validar `/auth/callback` de punta a punta (Historia 3). Registrar por la API o con `curl` no produce ese código.
+
+**Alcance de la versión básica:** los campos y validaciones de FR-036, mensajes de `contracts/app-errors.md`, las reglas de formularios de `docs/architecture/ui.md` y pruebas de componentes. **Queda para las HU:** reenvío del correo de verificación, cualquier criterio de aceptación adicional de sus HU y la revisión de diseño de T-01.
+
+**Documentos legales:** `LegalDocumentsRepository.getCurrent()` lee las versiones vigentes y sus enlaces; el registro envía esas versiones en los metadatos (contrato de la spec 001), de modo que siempre coinciden con las que valida el trigger.
 
 ## R16 — Presupuesto del bundle
 

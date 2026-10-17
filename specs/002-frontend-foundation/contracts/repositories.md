@@ -9,13 +9,19 @@ Los modelos están en [data-model.md](../data-model.md).
 | Operación | Firma | Uso | Notas |
 |---|---|---|---|
 | Registrar | `signUp(input: SignUpInput): Promise<void>` | HU-014 | Envía los metadatos de la spec 001 y `emailRedirectTo = {origen}/auth/callback`. Un correo ya registrado no se revela (DEC-12) |
-| Iniciar sesión | `signIn(email: string, password: string): Promise<AuthSession>` | HU-001, `/dev/login` | `email_not_confirmed` e `invalid_credentials` como `AppError` |
+| Iniciar sesión | `signIn(email: string, password: string): Promise<AuthSession>` | `/auth/login` (básica), HU-001 | `email_not_confirmed` e `invalid_credentials` como `AppError` |
 | Cerrar sesión | `signOut(): Promise<void>` | HU-015, menú de usuario | |
 | Pedir recuperación | `requestPasswordReset(email: string): Promise<void>` | HU-016 | `redirectTo = {origen}/auth/callback?next=/auth/reset-password`. Siempre resuelve igual, exista o no la cuenta |
 | Cambiar contraseña | `updatePassword(newPassword: string): Promise<void>` | HU-016 | Requiere la sesión temporal de recuperación |
 | Intercambiar el código | `exchangeCodeForSession(code: string): Promise<AuthSession>` | `/auth/callback` | Falla con `link_invalid` o `other_browser` (R7) |
 | Sesión actual | `getSession(): Promise<AuthSession \| null>` | Inicio de la aplicación | Restaura la sesión persistida |
 | Cambios de sesión | `onSessionChange(listener: (session: AuthSession \| null) => void): () => void` | `AuthService` | Devuelve la función para cancelar la suscripción |
+
+## LegalDocumentsRepository (`core/legal/data`)
+
+| Operación | Firma | Notas |
+|---|---|---|
+| Documentos vigentes | `getCurrent(): Promise<CurrentLegalDocuments>` | Lee `legal_documents` con `is_current = true` (legible sin sesión, spec 001). Rechaza con `AppError` si falta alguno de los dos tipos. Lo usa el registro (FR-036) |
 
 ## AcademyContextRepository (`core/academy-context/data`)
 
