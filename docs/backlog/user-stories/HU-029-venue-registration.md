@@ -1,7 +1,7 @@
 # HU-029 — Registrar sede
 
 **Épica:** EP-12 — Sedes · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
-**Spec:** pendiente
+**Spec:** [`specs/004-venues-management/`](../../../specs/004-venues-management/spec.md) (en especificación)
 
 ## Historia de usuario
 
