@@ -95,9 +95,10 @@ export const PlayerTechPreset = definePreset(Aura, {
             paddingX: '0.875rem',
             paddingY: '0.75rem'
         },
+        // Entradas de menú de unos 44 px de alto (menú de usuario y de cada fila).
         navigation: {
             item: {
-                padding: '0.75rem 1rem'
+                padding: '0.875rem 1rem'
             }
         },
         colorScheme: {
@@ -184,15 +185,22 @@ export const PlayerTechPreset = definePreset(Aura, {
             root: {
                 paddingX: '1.125rem',
                 paddingY: '0.75rem',
+                // Botones solo con icono (acciones de fila, cerrar): 44 px.
+                iconOnlyWidth: '2.75rem',
                 label: {
                     fontWeight: '600'
                 }
             }
         },
+        select: {
+            dropdown: {
+                width: '2.75rem'
+            }
+        },
         checkbox: {
             root: {
-                width: '1.5rem',
-                height: '1.5rem'
+                width: '1.75rem',
+                height: '1.75rem'
             }
         },
         // Estados como sellos: sin relleno; el borde lo pone la plantilla (DESIGN.md).

@@ -208,13 +208,13 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 - [X] T046 [US5] Rediseñar `frontend/src/app/features/auth/register/register.ts` (orden de campos, agrupación, mensajes y aceptación legal) con las observaciones, conservando validaciones y comportamiento. Actualizar `register.spec.ts` solo en los textos consultados
 - [X] T047 [P] [US5] Aplicar la identidad y revisar los textos de `verify-email`, `forgot-password`, `reset-password`, `callback`, `access-denied` y `suspended` en `frontend/src/app/features/auth/`, ajustando sus `*.spec.ts` solo en textos
 - [X] T048 [P] [US5] Aplicar la identidad a `frontend/src/app/features/errors/not-found/not-found.ts` y `context-error/context-error.ts`
-- [ ] T049 [US5] Pasar `/impeccable critique`, `/impeccable audit` y `/impeccable polish` sobre el inicio de sesión y el registro, y corregir los hallazgos
-- [ ] T050 [US5] Pasar `/impeccable audit` y `/impeccable polish` sobre las 8 pantallas de T047 y T048, a 360 px en ambos modos, y corregir los hallazgos (principio XIII)
-- [ ] T051 [US5] ⏸ Decisión: validar SC-006 con una persona que no haya visto la pantalla (el responsable de producto u otra persona que designe), en su celular y sin ayuda, cronometrando desde que abre `/auth/register` hasta que llega al inicio, verificación por Mailpit incluida. Anotar el tiempo en los resultados de `quickstart.md`
+- [X] T049 [US5] Pasar `/impeccable critique`, `/impeccable audit` y `/impeccable polish` sobre el inicio de sesión y el registro, y corregir los hallazgos
+- [X] T050 [US5] Pasar `/impeccable audit` y `/impeccable polish` sobre las 8 pantallas de T047 y T048, a 360 px en ambos modos, y corregir los hallazgos (principio XIII)
+- [X] T051 [US5] ⏸ Decisión: validar SC-006 con una persona que no haya visto la pantalla (el responsable de producto u otra persona que designe), en su celular y sin ayuda, cronometrando desde que abre `/auth/register` hasta que llega al inicio, verificación por Mailpit incluida. Anotar el tiempo en los resultados de `quickstart.md`. *Resultado (2026-10-17): 20 s, sin trabas, hecha por el responsable de producto; se repetirá con otra persona.*
 
 ### Sedes
 
-- [ ] T052 [P] [US5] Escribir `frontend/src/app/features/venues/venues-page/venues-page.spec.ts`. Debe cubrir:
+- [X] T052 [P] [US5] Escribir `frontend/src/app/features/venues/venues-page/venues-page.spec.ts`. Debe cubrir:
   - encabezado con "Nueva sede";
   - las dos vistas (lista de tarjetas y tabla) con los datos del servicio;
   - la marca "Principal" y el estado "Activa"/"Inactiva";
@@ -223,19 +223,19 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
   - drawer con "Guardar" deshabilitado y "Disponible próximamente";
   - al cerrar el drawer con cambios, confirmación "¿Descartar los cambios?"; sin cambios, se cierra sin preguntar;
   - "Desactivar" y "Eliminar" deshabilitados.
-- [ ] T053 [US5] Crear `frontend/src/app/features/venues/venues-page/venues-page.ts` según `contracts/ui-contracts.md`:
+- [X] T053 [US5] Crear `frontend/src/app/features/venues/venues-page/venues-page.ts` según `contracts/ui-contracts.md`:
   - `PageHeader`, buscador y filtro;
   - `p-table` (ordenamiento y paginación de 10) visible desde `md`, y lista de tarjetas por debajo;
   - `p-tag` y `p-menu` por fila;
   - estados de carga, vacío y error.
-- [ ] T054 [US5] Añadir a `venues-page.ts` el drawer de maqueta (FR-018a): `p-drawer` con los campos de HU-029 (vacíos al crear, con los valores actuales al editar), "Cancelar" activo, "Guardar" deshabilitado y `p-message` "Disponible próximamente". Al cerrarlo con cambios sin guardar, `p-confirmdialog` "¿Descartar los cambios?" (`contracts/ui-contracts.md`). Ninguna llamada de escritura. Debe pasar T052
-- [ ] T055 [US5] Crear `frontend/src/app/features/venues/venues.routes.ts` y montarlo desde `frontend/src/app/features/settings/settings.routes.ts` en `venues`, sustituyendo el placeholder (título "Sedes · PlayerTech")
+- [X] T054 [US5] Añadir a `venues-page.ts` el drawer de maqueta (FR-018a): `p-drawer` con los campos de HU-029 (vacíos al crear, con los valores actuales al editar), "Cancelar" activo, "Guardar" deshabilitado y `p-message` "Disponible próximamente". Al cerrarlo con cambios sin guardar, `p-confirmdialog` "¿Descartar los cambios?" (`contracts/ui-contracts.md`). Ninguna llamada de escritura. Debe pasar T052
+- [X] T055 [US5] Crear `frontend/src/app/features/venues/venues.routes.ts` y montarlo desde `frontend/src/app/features/settings/settings.routes.ts` en `venues`, sustituyendo el placeholder (título "Sedes · PlayerTech")
 
 ### Inicio
 
-- [ ] T056 [P] [US5] Escribir `frontend/src/app/features/home/home-page/home-page.spec.ts`: nombre de la academia, iniciales sin logo, plan, sede principal, estado vacío sin sede principal, estado de error con reintento, y tarjeta "Completa tu academia" con tres enlaces y sin contador
-- [ ] T057 [US5] Crear `frontend/src/app/features/home/home-page/home-page.ts` según el patrón de inicio con tareas pendientes de `ui.md`, con `PageHeader`, resumen real y la tarjeta de maqueta, hasta que pase T056
-- [ ] T058 [US5] Sustituir el placeholder en `frontend/src/app/features/home/home.routes.ts` por `HomePage` (título "Inicio · PlayerTech")
+- [X] T056 [P] [US5] Escribir `frontend/src/app/features/home/home-page/home-page.spec.ts`: nombre de la academia, iniciales sin logo, plan, sede principal, estado vacío sin sede principal, estado de error con reintento, y tarjeta "Completa tu academia" con tres enlaces y sin contador
+- [X] T057 [US5] Crear `frontend/src/app/features/home/home-page/home-page.ts` según el patrón de inicio con tareas pendientes de `ui.md`, con `PageHeader`, resumen real y la tarjeta de maqueta, hasta que pase T056
+- [X] T058 [US5] Sustituir el placeholder en `frontend/src/app/features/home/home.routes.ts` por `HomePage` (título "Inicio · PlayerTech")
 
 **Checkpoint**: las cuatro pantallas modelo funcionan con datos reales en el celular.
 
@@ -247,9 +247,9 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 
 **Prueba independiente**: En sedes, a 360 px, listado sin desplazamiento horizontal y drawer a pantalla completa con las acciones visibles.
 
-- [ ] T059 [US6] Ligar `[fullScreen]` del drawer de `venues-page.ts` a una señal de `BreakpointObserver` (`@angular/cdk/layout`) por debajo de `md`. Dejar el pie de acciones siempre visible y añadir el caso al `venues-page.spec.ts` con el observador simulado (research R8)
-- [ ] T060 [US6] Comprobar en las tarjetas los textos largos (recorte con el texto completo accesible), el botón de acciones de 44 px y la ausencia de desplazamiento horizontal. Validar con una sede de 60 caracteres renombrada en local
-- [ ] T061 [US6] Pasar `/impeccable critique`, `/impeccable audit` y `/impeccable polish` sobre sedes e inicio a 360 y 1280 px en ambos modos, y corregir los hallazgos (FR-021)
+- [X] T059 [US6] Ligar `[fullScreen]` del drawer de `venues-page.ts` a una señal de `BreakpointObserver` (`@angular/cdk/layout`) por debajo de `md`. Dejar el pie de acciones siempre visible y añadir el caso al `venues-page.spec.ts` con el observador simulado (research R8)
+- [X] T060 [US6] Comprobar en las tarjetas los textos largos (recorte con el texto completo accesible), el botón de acciones de 44 px y la ausencia de desplazamiento horizontal. Validar con una sede de 60 caracteres renombrada en local
+- [X] T061 [US6] Pasar `/impeccable critique`, `/impeccable audit` y `/impeccable polish` sobre sedes e inicio a 360 y 1280 px en ambos modos, y corregir los hallazgos (FR-021)
 
 **Checkpoint**: patrones móviles validados.
 

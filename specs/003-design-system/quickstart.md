@@ -91,3 +91,7 @@ Por cada pantalla modelo y el chasis:
 ## Resultados
 
 *Se completa al terminar la implementación.*
+
+| Prueba | Fecha | Resultado |
+|---|---|---|
+| SC-006, registro cronometrado en el celular (T051) | 2026-10-17 | 20 s desde abrir el registro hasta llegar al inicio, verificación por Mailpit incluida, sin trabas. La hizo el responsable de producto, que ya conocía la pantalla; se repetirá con una persona que no la haya visto antes del piloto |

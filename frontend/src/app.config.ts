@@ -33,7 +33,8 @@ export const appConfig: ApplicationConfig = {
         provideRouter(appRoutes, withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }), withEnabledBlockingInitialNavigation(), withComponentInputBinding()),
         provideHttpClient(withFetch()),
         provideZonelessChangeDetection(),
-        providePrimeNG({ theme: { preset: PlayerTechPreset, options: { darkModeSelector: '.app-dark' } }, translation: PRIMENG_ES }),
+        // Estilos de PrimeNG en su propia capa, bajo las utilidades de Tailwind (orden en _core.scss).
+        providePrimeNG({ theme: { preset: PlayerTechPreset, options: { darkModeSelector: '.app-dark', cssLayer: { name: 'primeng', order: 'theme, base, sakai, primeng, components, utilities' } } }, translation: PRIMENG_ES }),
         { provide: LOCALE_ID, useValue: 'es-CO' },
         MessageService,
         { provide: ErrorHandler, useClass: GlobalErrorHandler },
