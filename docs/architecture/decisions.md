@@ -747,7 +747,7 @@ Ninguna. Ningún componente debe construir URLs de almacenamiento ni llamar dire
 - Al pasar a Supabase Pro se evaluará activar como refuerzo en el servidor un *inactivity timeout* de 1 hora, un *time-box* de sesión y la protección contra contraseñas filtradas.
 
 ### Pendiente para el plan técnico
-- Proveedor de SMTP (por ejemplo Resend o Brevo).
+- Proveedor de SMTP (por ejemplo Resend o Brevo): ver ADR-016.
 - ~~Captura de IP en las aceptaciones legales~~: resuelta en DEC-29 (no se captura en el MVP).
 
 ---
@@ -787,6 +787,37 @@ El detalle está en `docs/architecture/frontend.md`, `docs/architecture/ui.md` y
 La adopción de `layout/` se registró inicialmente como excepción controlada al principio V. Desde la Constitución 3.1.0, el principio V distingue el **layout adoptado** (código propio de PlayerTech, modificable con cambios mínimos y controlados) de las **demos** de SakaiNG (solo referencia), por lo que ya no se trata de una excepción.
 
 - **Mitigación que se mantiene:** el menú vive en `core/navigation`; las actualizaciones de SakaiNG siguen `docs/engineering/sakai-upstream.md`.
+
+---
+
+## ADR-016: Plan de Supabase durante el MVP
+
+**Estado:** Aceptada · **Fecha:** 2026-10-16 · **Fase:** 1 — Fundación SaaS
+
+### Decisión
+- El desarrollo se hace en **local** (Supabase CLI sobre Docker, spec 001); no depende del plan contratado.
+- El entorno en la nube usa el **plan Free** durante el desarrollo y el piloto.
+- **Antes de cargar datos reales** de academias deben existir: copias de seguridad propias, SMTP propio (ADR-014) y un dominio propio verificado para el envío de correo.
+- Se pasa al **plan Pro** cuando ocurra cualquiera de estas condiciones: hay academias que dependen del producto o pagan por él, se necesitan backups gestionados, o el proyecto se acerca a los límites del plan Free.
+
+### Justificación
+Todo lo que usa la Fase 1 (PostgreSQL, Auth, Storage, RLS, SMTP propio) está disponible en el plan Free, y sus límites (500 MB de base de datos, 1 GB de almacenamiento, 5 GB de transferencia al mes, 50.000 usuarios activos al mes, 2 proyectos activos) superan con margen lo que necesita un piloto. Las funciones exclusivas de Pro que el diseño necesitaba ya tienen alternativa: el cierre por inactividad se hace en el frontend (ADR-014).
+
+### Riesgos y mitigación
+
+| Riesgo del plan Free | Mitigación |
+|---|---|
+| Sin copias de seguridad automáticas | Copia propia periódica con `supabase db dump` (automatizada, por ejemplo con GitHub Actions) y procedimiento de restauración documentado, antes de cargar datos reales |
+| Pausa del proyecto tras 1 semana sin actividad | Aceptable durante el desarrollo (se reactiva desde el panel). Con academias activas no ocurre por el propio uso |
+| Retención de logs de 1 día | Revisar los errores el mismo día; reevaluar al pasar a Pro |
+| Sin protección contra contraseñas filtradas ni cierre por inactividad en el servidor | Se activan al pasar a Pro (ADR-014); mientras tanto, contraseña mínima de 8 y temporizador en el frontend |
+
+Los límites del plan Free pueden cambiar: se confirman en la página de precios de Supabase al crear el proyecto en la nube.
+
+### Pendiente
+- Proveedor de SMTP (recomendación inicial: Resend; alternativa: Brevo).
+- Dominio propio de PlayerTech.
+- Automatización de las copias de seguridad.
 
 ---
 

@@ -16,6 +16,16 @@ La evolución se plantea de forma incremental, partiendo de un MVP funcional y a
 - Gestión de sedes y sede principal.
 - Plan Free asignado automáticamente, sin límites.
 
+### Antes del piloto con academias reales
+
+Requisitos de operación (ADR-014 y ADR-016) que no son funcionalidades, pero deben existir antes de registrar academias reales:
+
+- Proyecto de Supabase en la nube (plan Free) con las migraciones aplicadas.
+- Dominio propio de PlayerTech.
+- SMTP propio verificado con ese dominio (recomendación inicial: Resend).
+- Copias de seguridad propias de la base de datos y procedimiento de restauración.
+- Documentos legales definitivos (Términos y Condiciones y Política de Tratamiento de Datos) publicados en su URL final.
+
 ### Fase 2 — Negocio
 
 - Gestión de acudientes.

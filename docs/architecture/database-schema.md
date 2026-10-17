@@ -233,6 +233,9 @@ Solo admite inserciones; no se modifica ni se elimina.
 | `is_academy_member(academy_id)` | Verdadero si el usuario tiene membresía `active` en una academia `active`. Base de las políticas RLS |
 | `current_academy_id()` | Academia del usuario autenticado; el frontend no la envía |
 | `has_academy_role(academy_id, roles[])` | Comprueba el rol de la membresía; en el MVP siempre `owner` |
+| `set_primary_venue(venue_id)` | Cambia la sede principal en una sola transacción (DEC-25). Solo el owner; la sede debe estar activa y no eliminada |
+| `storage_object_academy_id(name)` | Uso interno de las políticas de Storage: academia del primer segmento de la ruta, o NULL si no es un UUID |
+| `slugify(text)` | Uso interno del registro: genera el `slug` sin tildes ni caracteres especiales |
 | `set_updated_at()` | Trigger que mantiene `updated_at` |
 
 Las funciones de autorización usan `SECURITY DEFINER` con `search_path` fijo, para evitar la recursión de políticas sobre `academy_members`.

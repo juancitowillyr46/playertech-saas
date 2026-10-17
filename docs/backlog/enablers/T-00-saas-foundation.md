@@ -1,7 +1,28 @@
 # T-00 — Fundación técnica del SaaS
 
-**Tipo:** Habilitador técnico (*enabler*) · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definido
-**Spec:** pendiente
+**Tipo:** Habilitador técnico (*enabler*) · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** En desarrollo
+**Specs:** [`specs/001-database-foundation/`](../../../specs/001-database-foundation/spec.md) (áreas 1 a 6, **implementada**) · spec 002 (áreas 7 y 8, pendiente)
+
+## Avance
+
+| Área | Estado | Evidencia |
+|---|---|---|
+| 1. Proyecto y entornos de Supabase | ✅ Local · ⏳ Producción y SMTP | `supabase/config.toml`; el entorno en la nube y el SMTP se configuran al crear la cuenta de Supabase |
+| 2. Modelo de datos | ✅ | 11 migraciones en `supabase/migrations/` |
+| 3. Seguridad y aislamiento | ✅ | RLS, privilegios por columna y políticas de Storage |
+| 4. Registro atómico | ✅ | Trigger `handle_new_user` |
+| 5. Datos de prueba | ✅ | `supabase/seed.sql` (academias A y B) |
+| 6. Pruebas de aislamiento | ✅ | 144 pruebas pgTAP en `supabase/tests/database/` |
+| 7. Base del frontend | ⏳ | Spec 002. Ya existen los tipos generados (`frontend/src/app/core/supabase/database.types.ts`) |
+| 8. Esqueleto de la aplicación | ⏳ | Spec 002 |
+
+| Criterio | Estado |
+|---|---|
+| CA-001 a CA-006 | ✅ Verificados (pgTAP y validación de Auth y Storage, ver `supabase/README.md`) |
+| CA-007 | ✅ En el repositorio (sin secretos ni claves privilegiadas); la configuración del frontend se verifica en la spec 002 |
+| CA-008 y CA-009 | ⏳ Spec 002 (la parte pgTAP de CA-009 ya pasa) |
+
+**Limitación conocida:** el trigger de registro se ejecuta en toda alta de `auth.users` y exige los metadatos del registro de una academia; las altas de otros tipos (invitaciones, futuros roles) fallarán hasta rediseñarlo. Detalle en `supabase/README.md`.
 
 ## Propósito
 
@@ -144,7 +165,7 @@ Pruebas de base de datos que verifiquen, para cada tabla protegida, que:
 ## Decisiones pendientes para el plan técnico
 
 - Proveedor de SMTP (DEC-29).
-- Captura de IP en las aceptaciones legales (DEC-29).
+- ~~Captura de IP en las aceptaciones legales~~: resuelta en DEC-29 (no se captura en el MVP).
 - Plataforma de despliegue del frontend.
 
 ## Decisiones relacionadas

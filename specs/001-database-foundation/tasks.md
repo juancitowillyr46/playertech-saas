@@ -166,8 +166,8 @@ description: "Lista de tareas para implementar la base de datos de la Fundación
 
 ### Implementación de la Historia 6
 
-- [ ] T031 [US6] Configurar en `supabase/config.toml`: `[auth] site_url = "http://localhost:4200"`, `additional_redirect_urls = ["http://localhost:4200/auth/callback"]`, `jwt_expiry = 3600`, `minimum_password_length = 8`, `enable_signup = true`; `[auth.email] enable_signup = true`, `enable_confirmations = true` (research R11)
-- [ ] T032 [US6] Reiniciar el entorno (`npm run db:stop` y `npm run db:start`) y validar manualmente las secciones 3 y 4 de `specs/001-database-foundation/quickstart.md` contra las API locales: registro válido, inicio de sesión rechazado antes de verificar, correo capturado en el visor local, inicio de sesión permitido tras verificar, contraseña de 7 caracteres rechazada, correo de recuperación capturado, claim `exp` del token igual a `iat + 3600`, inicio de sesión con `owner.a@playertech.test` del seed, y subidas a `public-assets` de un archivo no permitido (por ejemplo PDF) y de una imagen mayor de 1 MB rechazadas por la API de Storage (FR-030, FR-034); anotar el resultado en `supabase/README.md`
+- [X] T031 [US6] Configurar en `supabase/config.toml`: `[auth] site_url = "http://localhost:4200"`, `additional_redirect_urls = ["http://localhost:4200/auth/callback"]`, `jwt_expiry = 3600`, `minimum_password_length = 8`, `enable_signup = true`; `[auth.email] enable_signup = true`, `enable_confirmations = true` (research R11)
+- [X] T032 [US6] Reiniciar el entorno (`npm run db:stop` y `npm run db:start`) y validar manualmente las secciones 3 y 4 de `specs/001-database-foundation/quickstart.md` contra las API locales: registro válido, inicio de sesión rechazado antes de verificar, correo capturado en el visor local, inicio de sesión permitido tras verificar, contraseña de 7 caracteres rechazada, correo de recuperación capturado, claim `exp` del token igual a `iat + 3600`, inicio de sesión con `owner.a@playertech.test` del seed, y subidas a `public-assets` de un archivo no permitido (por ejemplo PDF) y de una imagen mayor de 1 MB rechazadas por la API de Storage (FR-030, FR-034); anotar el resultado en `supabase/README.md`
 
 **Punto de control**: Auth local validado.
 
@@ -177,11 +177,11 @@ description: "Lista de tareas para implementar la base de datos de la Fundación
 
 **Propósito**: Tipos para el frontend, seguridad, documentación y validación final.
 
-- [ ] T033 [P] Crear la carpeta `frontend/src/app/core/supabase/` y ejecutar `npm run db:types` para generar `frontend/src/app/core/supabase/database.types.ts`; verificar que contiene las 9 tablas y las 4 funciones (research R14)
-- [ ] T034 [P] Revisar el repositorio en busca de secretos: ninguna `service_role` key, contraseña real ni archivo `.env` versionado; confirmar que la única contraseña presente es la de desarrollo local documentada (SC-006, FR-038)
-- [ ] T035 [P] Completar `supabase/README.md` con el resultado de la validación, la estructura de `supabase/`, el enlace a esta spec y la limitación conocida del registro: el trigger `handle_new_user` se ejecuta en **toda** alta de `auth.users`, así que las altas sin metadatos de registro (invitaciones, usuarios creados desde Studio, futuros roles de la Fase 2) fallarán hasta que se rediseñe para otros roles
-- [ ] T036 Ejecutar de punta a punta `specs/001-database-foundation/quickstart.md` (secciones 1 a 6) y registrar los resultados
-- [ ] T037 Actualizar el estado de T-00 en `docs/backlog/enablers/T-00-saas-foundation.md` (áreas 1 a 6 implementadas, spec `specs/001-database-foundation/`, limitación conocida del trigger de registro) y revisar que `docs/architecture/database-schema.md` refleja cualquier ajuste surgido durante la implementación
+- [X] T033 [P] Crear la carpeta `frontend/src/app/core/supabase/` y ejecutar `npm run db:types` para generar `frontend/src/app/core/supabase/database.types.ts`; verificar que contiene las 9 tablas y las 4 funciones (research R14)
+- [X] T034 [P] Revisar el repositorio en busca de secretos: ninguna `service_role` key, contraseña real ni archivo `.env` versionado; confirmar que la única contraseña presente es la de desarrollo local documentada (SC-006, FR-038)
+- [X] T035 [P] Completar `supabase/README.md` con el resultado de la validación, la estructura de `supabase/`, el enlace a esta spec y la limitación conocida del registro: el trigger `handle_new_user` se ejecuta en **toda** alta de `auth.users`, así que las altas sin metadatos de registro (invitaciones, usuarios creados desde Studio, futuros roles de la Fase 2) fallarán hasta que se rediseñe para otros roles
+- [X] T036 Ejecutar de punta a punta `specs/001-database-foundation/quickstart.md` (secciones 1 a 6) y registrar los resultados
+- [X] T037 Actualizar el estado de T-00 en `docs/backlog/enablers/T-00-saas-foundation.md` (áreas 1 a 6 implementadas, spec `specs/001-database-foundation/`, limitación conocida del trigger de registro) y revisar que `docs/architecture/database-schema.md` refleja cualquier ajuste surgido durante la implementación
 
 ---
 

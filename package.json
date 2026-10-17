@@ -8,7 +8,7 @@
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
-    "db:types": "supabase gen types typescript --local > frontend/src/app/core/supabase/database.types.ts"
+    "db:types": "supabase gen types typescript --local > frontend/src/app/core/supabase/database.types.ts && cd frontend && npx prettier --write src/app/core/supabase/database.types.ts"
   },
   "devDependencies": {
     "supabase": "2.119.0"
