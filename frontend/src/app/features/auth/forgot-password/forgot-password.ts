@@ -6,6 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AppError } from '../../../core/errors/app-error';
+import { FieldA11y, fieldA11y } from '../forms/field-a11y';
 
 /** Errores que sí se muestran: no revelan si la cuenta existe (DEC-12). */
 const VISIBLE_ERRORS = new Set(['rate_limited', 'network']);
@@ -31,11 +32,11 @@ const VISIBLE_ERRORS = new Set(['rate_limited', 'network']);
             <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5" novalidate>
                 <div class="flex flex-col gap-2">
                     <label for="email" class="font-medium">Correo</label>
-                    <input pInputText id="email" type="email" formControlName="email" autocomplete="email" class="w-full" />
+                    <input pInputText id="email" type="email" formControlName="email" autocomplete="email" class="w-full" [invalid]="emailInvalid()" [attr.aria-invalid]="emailA11y()['aria-invalid']" [attr.aria-describedby]="emailA11y()['aria-describedby']" />
                     @if (form.controls.email.touched && form.controls.email.hasError('required')) {
-                        <p-message severity="error" variant="simple" size="small">Ingresa tu correo.</p-message>
+                        <p-message id="email-error" severity="error" variant="simple" size="small">Ingresa tu correo.</p-message>
                     } @else if (form.controls.email.touched && form.controls.email.hasError('email')) {
-                        <p-message severity="error" variant="simple" size="small">Ingresa un correo válido.</p-message>
+                        <p-message id="email-error" severity="error" variant="simple" size="small">Ingresa un correo válido.</p-message>
                     }
                 </div>
 
@@ -57,6 +58,14 @@ export class ForgotPasswordPage {
     protected readonly submitting = signal(false);
     protected readonly sent = signal(false);
     protected readonly errorMessage = signal<string | null>(null);
+
+    protected emailInvalid(): boolean {
+        return this.form.controls.email.touched && this.form.controls.email.invalid;
+    }
+
+    protected emailA11y(): FieldA11y {
+        return fieldA11y('email', this.emailInvalid());
+    }
 
     protected async submit(): Promise<void> {
         if (this.submitting()) {

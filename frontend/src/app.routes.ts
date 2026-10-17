@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './app/core/auth/guards/auth.guard';
 import { membershipGuard } from './app/core/auth/guards/membership.guard';
+import { DEV_ROUTES } from './app/features/dev/dev-extras';
 import { AppLayout } from './app/layout/component/app.layout';
 
 /**
@@ -25,6 +26,8 @@ export const appRoutes: Routes = [
         canActivate: [authGuard],
         loadComponent: () => import('./app/features/errors/context-error/context-error').then((m) => m.ContextErrorPage)
     },
+    // Demos de SakaiNG solo en desarrollo: en producción DEV_ROUTES está vacío (dev-extras, FR-024).
+    ...DEV_ROUTES,
     {
         path: '**',
         title: 'Página no encontrada · PlayerTech',

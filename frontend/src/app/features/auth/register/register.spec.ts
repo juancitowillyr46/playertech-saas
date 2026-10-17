@@ -53,6 +53,23 @@ describe('RegisterPage', () => {
         expect(screen.getByText('Debes aceptar la Política de Tratamiento de Datos.')).toBeTruthy();
     });
 
+    it('asocia los errores de la confirmación y de las aceptaciones a su campo', async () => {
+        const { user } = await setup();
+
+        await user.type(await screen.findByLabelText('Contraseña'), 'Segura-2026');
+        await user.type(screen.getByLabelText('Confirmar contraseña'), 'Distinta-2026');
+        await user.click(screen.getByRole('button', { name: 'Crear cuenta' }));
+
+        const describedBy = (element: HTMLElement) => document.getElementById(element.getAttribute('aria-describedby') ?? '')?.textContent;
+        const confirmation = screen.getByLabelText('Confirmar contraseña');
+        const terms = screen.getByRole('checkbox', { name: /Términos y Condiciones/ });
+
+        expect(confirmation.getAttribute('aria-invalid')).toBe('true');
+        expect(describedBy(confirmation)).toContain('Las contraseñas no coinciden.');
+        expect(terms.getAttribute('aria-invalid')).toBe('true');
+        expect(describedBy(terms)).toContain('Debes aceptar los Términos y Condiciones.');
+    });
+
     it('rechaza una contraseña de menos de 8 caracteres y una confirmación distinta', async () => {
         const { auth, user } = await setup();
 

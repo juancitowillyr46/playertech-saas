@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
+import { LayoutService } from './app/layout/service/layout.service';
 
 @Component({
     selector: 'app-root',
@@ -11,4 +12,10 @@ import { ToastModule } from 'primeng/toast';
         <router-outlet />
     `
 })
-export class AppComponent {}
+export class AppComponent {
+    constructor() {
+        // Aplica el modo claro/oscuro guardado desde el arranque, también en las
+        // pantallas de acceso, que no usan el layout de la aplicación (FR-032).
+        inject(LayoutService);
+    }
+}

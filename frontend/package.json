@@ -9,7 +9,8 @@
         "format": "prettier --write \"**/*.{js,mjs,ts,mts,d.ts,html}\" --cache",
         "test": "ng test",
         "lint": "ng lint",
-        "test:ci": "ng test --watch=false"
+        "test:ci": "ng test --watch=false",
+        "check:bundle": "node scripts/check-bundle.mjs"
     },
     "private": true,
     "dependencies": {

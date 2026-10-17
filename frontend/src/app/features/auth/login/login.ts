@@ -8,6 +8,7 @@ import { PasswordModule } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AppError } from '../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../core/errors/error-messages';
+import { FieldA11y, fieldA11y, passwordPt } from '../forms/field-a11y';
 
 /** Inicio de sesión, versión básica (Historia 7 de la spec 002). HU-001 la completa. */
 @Component({
@@ -25,19 +26,39 @@ import { ERROR_MESSAGES } from '../../../core/errors/error-messages';
         <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5" novalidate>
             <div class="flex flex-col gap-2">
                 <label for="email" class="font-medium">Correo</label>
-                <input pInputText id="email" type="email" formControlName="email" autocomplete="email" class="w-full" />
+                <input
+                    pInputText
+                    id="email"
+                    type="email"
+                    formControlName="email"
+                    autocomplete="email"
+                    class="w-full"
+                    [invalid]="invalid('email')"
+                    [attr.aria-invalid]="a11y('email')['aria-invalid']"
+                    [attr.aria-describedby]="a11y('email')['aria-describedby']"
+                />
                 @if (showError('email', 'required')) {
-                    <p-message severity="error" variant="simple" size="small">Ingresa tu correo.</p-message>
+                    <p-message id="email-error" severity="error" variant="simple" size="small">Ingresa tu correo.</p-message>
                 } @else if (showError('email', 'email')) {
-                    <p-message severity="error" variant="simple" size="small">Ingresa un correo válido.</p-message>
+                    <p-message id="email-error" severity="error" variant="simple" size="small">Ingresa un correo válido.</p-message>
                 }
             </div>
 
             <div class="flex flex-col gap-2">
                 <label for="password" class="font-medium">Contraseña</label>
-                <p-password inputId="password" formControlName="password" [feedback]="false" [toggleMask]="true" autocomplete="current-password" styleClass="w-full" inputStyleClass="w-full" />
+                <p-password
+                    inputId="password"
+                    formControlName="password"
+                    [feedback]="false"
+                    [toggleMask]="true"
+                    autocomplete="current-password"
+                    styleClass="w-full"
+                    inputStyleClass="w-full"
+                    [invalid]="invalid('password')"
+                    [pt]="passwordPt('password', invalid('password'))"
+                />
                 @if (showError('password', 'required')) {
-                    <p-message severity="error" variant="simple" size="small">Ingresa tu contraseña.</p-message>
+                    <p-message id="password-error" severity="error" variant="simple" size="small">Ingresa tu contraseña.</p-message>
                 }
             </div>
 
@@ -64,10 +85,22 @@ export class LoginPage {
     protected readonly submitting = signal(false);
     protected readonly errorMessage = signal<string | null>(null);
 
+    protected readonly passwordPt = passwordPt;
+
     protected showError(control: 'email' | 'password', error: string): boolean {
         const field = this.form.controls[control];
 
         return field.touched && field.hasError(error);
+    }
+
+    protected invalid(control: 'email' | 'password'): boolean {
+        const field = this.form.controls[control];
+
+        return field.touched && field.invalid;
+    }
+
+    protected a11y(control: 'email' | 'password'): FieldA11y {
+        return fieldA11y(control, this.invalid(control));
     }
 
     protected async submit(): Promise<void> {

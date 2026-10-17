@@ -205,14 +205,14 @@ description: "Lista de tareas para implementar la base del frontend y el esquele
 
 ### Pruebas de la Historia 5
 
-- [ ] T068 [P] [US5] Escribir `frontend/src/app/core/storage/data/supabase-file-storage.repository.spec.ts` con cliente simulado: `upload` construye la clave `{academyId}/{module}/{entityId}/{fileId}.{ext}` con el `academyId` del contexto, sube al bucket indicado y registra la fila en `files`; si el registro falla, retira el objeto y rechaza con `AppError`; `getUrl` usa URL pública en `public-assets` y URL firmada (3600 s por defecto) en `private-files`; `remove` actualiza `deleted_at` (contracts/repositories.md)
+- [X] T068 [P] [US5] Escribir `frontend/src/app/core/storage/data/supabase-file-storage.repository.spec.ts` con cliente simulado: `upload` construye la clave `{academyId}/{module}/{entityId}/{fileId}.{ext}` con el `academyId` del contexto, sube al bucket indicado y registra la fila en `files`; si el registro falla, retira el objeto y rechaza con `AppError`; `getUrl` usa URL pública en `public-assets` y URL firmada (3600 s por defecto) en `private-files`; `remove` actualiza `deleted_at` (contracts/repositories.md)
 
 ### Implementación de la Historia 5
 
-- [ ] T069 [P] [US5] Crear `frontend/src/app/core/storage/data/file-storage.repository.ts` (clase abstracta con `upload`, `getUrl`, `remove` según `contracts/repositories.md`)
-- [ ] T070 [US5] Crear `frontend/src/app/core/storage/data/supabase-file-storage.repository.ts` según `contracts/repositories.md` y ADR-013 (id con `crypto.randomUUID()`, extensión a partir del tipo MIME `image/png` → `png`, `image/jpeg` → `jpg`) hasta que T068 pase, y registrarlo en `frontend/src/app.config.ts` con `{ provide: FileStorageRepository, useClass: SupabaseFileStorageRepository }`
-- [ ] T071 [US5] Verificar la regla de importaciones: añadir temporalmente `import { createClient } from '@supabase/supabase-js';` en `frontend/src/app/features/home/home.routes.ts`, confirmar que `npm run lint` falla con el mensaje de ADR-002 y retirar la línea (SC-005)
-- [ ] T072 [US5] Ejecutar `npm run test:ci` hasta que T068 pase
+- [X] T069 [P] [US5] Crear `frontend/src/app/core/storage/data/file-storage.repository.ts` (clase abstracta con `upload`, `getUrl`, `remove` según `contracts/repositories.md`)
+- [X] T070 [US5] Crear `frontend/src/app/core/storage/data/supabase-file-storage.repository.ts` según `contracts/repositories.md` y ADR-013 (id con `crypto.randomUUID()`, extensión a partir del tipo MIME `image/png` → `png`, `image/jpeg` → `jpg`) hasta que T068 pase, y registrarlo en `frontend/src/app.config.ts` con `{ provide: FileStorageRepository, useClass: SupabaseFileStorageRepository }`
+- [X] T071 [US5] Verificar la regla de importaciones: añadir temporalmente `import { createClient } from '@supabase/supabase-js';` en `frontend/src/app/features/home/home.routes.ts`, confirmar que `npm run lint` falla con el mensaje de ADR-002 y retirar la línea (SC-005)
+- [X] T072 [US5] Ejecutar `npm run test:ci` hasta que T068 pase
 
 **Punto de control**: los cuatro contratos del núcleo implementados y verificados.
 
@@ -226,11 +226,11 @@ description: "Lista de tareas para implementar la base del frontend y el esquele
 
 ### Implementación de la Historia 6
 
-- [ ] T073 [US6] Crear `frontend/src/app/features/dev/dev.routes.ts` (`DEV_ROUTES`), solo con demos: `dev` bajo `AppLayout` sin guards, con `''` → `Dashboard`, `uikit` → `loadChildren` de `app/pages/uikit/uikit.routes`, `pages` → `loadChildren` de `app/pages/pages.routes`, `documentation` → `Documentation` y `landing` → `Landing` (componentes con `loadComponent`) (research R13)
-- [ ] T074 [US6] Crear `frontend/src/app/features/dev/dev-navigation.ts` (`DEV_NAVIGATION: MenuItem[]`): sección "Demos" con "Dashboard de ejemplo" (`/dev`), "Componentes UI" (`/dev/uikit/formlayout`), "Ejemplo de gestión" (`/dev/pages/crud`) y "Documentación de Sakai" (`/dev/documentation`); conectarla en `frontend/src/app/layout/component/app.menu.ts` como indica T062
-- [ ] T075 [US6] Añadir a `frontend/src/app.routes.ts` `...(environment.production ? [] : DEV_ROUTES)` antes de la ruta `**` (FR-024)
-- [ ] T076 [US6] Crear `frontend/scripts/check-bundle.mjs` y el script `"check:bundle": "node scripts/check-bundle.mjs"` en `frontend/package.json`: recorre `dist/playertech/browser/**/*.js`; extrae con una expresión regular los selectores de los componentes de `src/app/pages/**/*.ts`; falla (código 1) si encuentra en `dist/` alguno de esos selectores, el texto `/dev/` de `DEV_NAVIGATION` o los patrones `service_role`, `sb_secret_` o `SUPABASE_SERVICE`; imprime un resumen con lo revisado (research R14)
-- [ ] T077 [US6] Ejecutar `npm run build` y `npm run check:bundle`; confirmar que el bundle inicial es menor de 1 MB y que no hay fragmentos diferidos de las demos (SC-003, SC-004, research R16). Comprobar en desarrollo (`npm start`) que `/dev` muestra las demos
+- [X] T073 [US6] Crear `frontend/src/app/features/dev/dev.routes.ts` (`DEV_ROUTES`), solo con demos: `dev` bajo `AppLayout` sin guards, con `''` → `Dashboard`, `uikit` → `loadChildren` de `app/pages/uikit/uikit.routes`, `pages` → `loadChildren` de `app/pages/pages.routes`, `documentation` → `Documentation` y `landing` → `Landing` (componentes con `loadComponent`) (research R13)
+- [X] T074 [US6] Crear `frontend/src/app/features/dev/dev-navigation.ts` (`DEV_NAVIGATION: MenuItem[]`): sección "Demos" con "Dashboard de ejemplo" (`/dev`), "Componentes UI" (`/dev/uikit/formlayout`), "Ejemplo de gestión" (`/dev/pages/crud`) y "Documentación de Sakai" (`/dev/documentation`); conectarla en `frontend/src/app/layout/component/app.menu.ts` como indica T062
+- [X] T075 [US6] Añadir a `frontend/src/app.routes.ts` `...(environment.production ? [] : DEV_ROUTES)` antes de la ruta `**` (FR-024)
+- [X] T076 [US6] Crear `frontend/scripts/check-bundle.mjs` y el script `"check:bundle": "node scripts/check-bundle.mjs"` en `frontend/package.json`: recorre `dist/playertech/browser/**/*.js`; extrae con una expresión regular los selectores de los componentes de `src/app/pages/**/*.ts`; falla (código 1) si encuentra en `dist/` alguno de esos selectores, el texto `/dev/` de `DEV_NAVIGATION` o los patrones `service_role`, `sb_secret_` o `SUPABASE_SERVICE`; imprime un resumen con lo revisado (research R14)
+- [X] T077 [US6] Ejecutar `npm run build` y `npm run check:bundle`; confirmar que el bundle inicial es menor de 1 MB y que no hay fragmentos diferidos de las demos (SC-003, SC-004, research R16). Comprobar en desarrollo (`npm start`) que `/dev` muestra las demos
 
 **Punto de control**: producción sin demos ni secretos.
 
@@ -240,12 +240,12 @@ description: "Lista de tareas para implementar la base del frontend y el esquele
 
 **Propósito**: Documentación, validación de punta a punta y cierre de T-00.
 
-- [ ] T078 [P] Corregir el apartado "Layout" de `docs/architecture/frontend.md`: la adopción del layout ya no es una excepción al principio V (Constitución 3.1.0 en adelante, ADR-015); en las rutas "SOLO DESARROLLO", aclarar que `/dev` contiene solo demos y que ninguna funcionalidad de PlayerTech se ubica ahí
-- [ ] T079 [P] Actualizar `AGENTS.md` (sección Comandos, bloque de `frontend/`) con `npm run lint`, `npm run test:ci` y `npm run check:bundle`, e indicar Node 24
-- [ ] T080 [P] Añadir una nota en `docs/backlog/user-stories/HU-001-*.md`, `HU-014-*.md` y `HU-016-*.md`: "Versión básica de la pantalla construida en la spec 002 (`features/auth/`); esta HU la completa con sus criterios de aceptación y la revisión de diseño de T-01"
-- [ ] T081 Ejecutar de punta a punta `specs/002-frontend-foundation/quickstart.md` (secciones 1 a 7) con Supabase local y registrar los resultados en `frontend/README.md` (sección "Validación"); al terminar, `npm run db:reset` en la raíz
-- [ ] T082 Revisión básica de experiencia y accesibilidad (principio XIII) de las pantallas construidas: autenticación (login, registro, verificación, recuperación, nueva contraseña), callback, acceso denegado, academia suspendida, página no encontrada, error de contexto y layout de la aplicación. Usar la herramienta de revisión del agente (en Claude Code: `/impeccable audit`) y traducir cualquier ajuste a los tres sitios de estilos de `AGENTS.md`; la revisión de diseño completa queda para T-01
-- [ ] T083 Actualizar `docs/backlog/enablers/T-00-saas-foundation.md`: áreas 7 y 8 implementadas (spec `specs/002-frontend-foundation/`), CA-007, CA-008 y CA-009 verificados, y estado "Terminada" si todo pasa
+- [X] T078 [P] Corregir el apartado "Layout" de `docs/architecture/frontend.md`: la adopción del layout ya no es una excepción al principio V (Constitución 3.1.0 en adelante, ADR-015); en las rutas "SOLO DESARROLLO", aclarar que `/dev` contiene solo demos y que ninguna funcionalidad de PlayerTech se ubica ahí
+- [X] T079 [P] Actualizar `AGENTS.md` (sección Comandos, bloque de `frontend/`) con `npm run lint`, `npm run test:ci` y `npm run check:bundle`, e indicar Node 24
+- [X] T080 [P] Añadir una nota en `docs/backlog/user-stories/HU-001-*.md`, `HU-014-*.md` y `HU-016-*.md`: "Versión básica de la pantalla construida en la spec 002 (`features/auth/`); esta HU la completa con sus criterios de aceptación y la revisión de diseño de T-01"
+- [X] T081 Ejecutar de punta a punta `specs/002-frontend-foundation/quickstart.md` (secciones 1 a 7) con Supabase local y registrar los resultados en `frontend/README.md` (sección "Validación"); al terminar, `npm run db:reset` en la raíz
+- [X] T082 Revisión básica de experiencia y accesibilidad (principio XIII) de las pantallas construidas: autenticación (login, registro, verificación, recuperación, nueva contraseña), callback, acceso denegado, academia suspendida, página no encontrada, error de contexto y layout de la aplicación. Usar la herramienta de revisión del agente (en Claude Code: `/impeccable audit`) y traducir cualquier ajuste a los tres sitios de estilos de `AGENTS.md`; la revisión de diseño completa queda para T-01
+- [X] T083 Actualizar `docs/backlog/enablers/T-00-saas-foundation.md`: áreas 7 y 8 implementadas (spec `specs/002-frontend-foundation/`), CA-007, CA-008 y CA-009 verificados, y estado "Terminada" si todo pasa
 
 ---
 

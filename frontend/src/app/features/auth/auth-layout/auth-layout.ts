@@ -14,7 +14,7 @@ import { RouterOutlet } from '@angular/router';
             <aside class="hidden md:flex md:w-5/12 lg:w-1/2 flex-col justify-between p-10 lg:p-16 bg-primary text-primary-contrast">
                 <span class="text-2xl font-bold">PlayerTech</span>
                 <div class="flex flex-col gap-6 max-w-md">
-                    <h2 class="text-3xl lg:text-4xl font-semibold leading-tight m-0 text-primary-contrast">Tu academia organizada, desde el celular</h2>
+                    <p class="text-3xl lg:text-4xl font-semibold leading-tight m-0">Tu academia organizada, desde el celular</p>
                     <ul class="list-none p-0 m-0 flex flex-col gap-4 text-lg">
                         @for (benefit of benefits; track benefit) {
                             <li class="flex items-start gap-3">
@@ -24,7 +24,7 @@ import { RouterOutlet } from '@angular/router';
                         }
                     </ul>
                 </div>
-                <span class="text-sm opacity-80">Academias deportivas · Colombia</span>
+                <span class="text-sm">Academias deportivas · Colombia</span>
             </aside>
 
             <main class="flex-1 flex items-center justify-center px-4 py-10 sm:px-8">

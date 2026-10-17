@@ -14,6 +14,8 @@ import { SupabaseAuthRepository } from './app/core/auth/data/supabase-auth.repos
 import { APP_CONFIG, validateAppConfig } from './app/core/config/app-config';
 import { LegalDocumentsRepository } from './app/core/legal/data/legal-documents.repository';
 import { SupabaseLegalDocumentsRepository } from './app/core/legal/data/supabase-legal-documents.repository';
+import { FileStorageRepository } from './app/core/storage/data/file-storage.repository';
+import { SupabaseFileStorageRepository } from './app/core/storage/data/supabase-file-storage.repository';
 import { GlobalErrorHandler } from './app/core/errors/global-error-handler';
 import { PRIMENG_ES } from './app/core/i18n/primeng-es';
 import { createSupabaseClient, SUPABASE_CLIENT } from './app/core/supabase/supabase-client';
@@ -36,6 +38,7 @@ export const appConfig: ApplicationConfig = {
         { provide: AuthRepository, useClass: SupabaseAuthRepository },
         { provide: AcademyContextRepository, useClass: SupabaseAcademyContextRepository },
         { provide: LegalDocumentsRepository, useClass: SupabaseLegalDocumentsRepository },
+        { provide: FileStorageRepository, useClass: SupabaseFileStorageRepository },
         provideAppInitializer(() => inject(AuthService).restore())
     ]
 };

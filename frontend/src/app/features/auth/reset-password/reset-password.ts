@@ -7,6 +7,7 @@ import { PasswordModule } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AppError } from '../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../core/errors/error-messages';
+import { passwordPt } from '../forms/field-a11y';
 import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-match';
 
 /**
@@ -33,17 +34,17 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
             <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5" novalidate>
                 <div class="flex flex-col gap-2">
                     <label for="password" class="font-medium">Nueva contraseña</label>
-                    <p-password inputId="password" formControlName="password" [feedback]="false" [toggleMask]="true" autocomplete="new-password" styleClass="w-full" inputStyleClass="w-full" />
+                    <p-password inputId="password" formControlName="password" [feedback]="false" [toggleMask]="true" autocomplete="new-password" styleClass="w-full" inputStyleClass="w-full" [invalid]="invalid('password')" [pt]="passwordPt('password', invalid('password'))" />
                     @if (form.controls.password.touched && form.controls.password.invalid) {
-                        <p-message severity="error" variant="simple" size="small">{{ passwordLengthMessage }}</p-message>
+                        <p-message id="password-error" severity="error" variant="simple" size="small">{{ passwordLengthMessage }}</p-message>
                     }
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <label for="passwordConfirmation" class="font-medium">Confirmar contraseña</label>
-                    <p-password inputId="passwordConfirmation" formControlName="passwordConfirmation" [feedback]="false" [toggleMask]="true" autocomplete="new-password" styleClass="w-full" inputStyleClass="w-full" />
+                    <p-password inputId="passwordConfirmation" formControlName="passwordConfirmation" [feedback]="false" [toggleMask]="true" autocomplete="new-password" styleClass="w-full" inputStyleClass="w-full" [invalid]="invalid('passwordConfirmation')" [pt]="passwordPt('passwordConfirmation', invalid('passwordConfirmation'))" />
                     @if (form.controls.passwordConfirmation.touched && form.hasError('passwordsMismatch')) {
-                        <p-message severity="error" variant="simple" size="small">Las contraseñas no coinciden.</p-message>
+                        <p-message id="passwordConfirmation-error" severity="error" variant="simple" size="small">Las contraseñas no coinciden.</p-message>
                     }
                 </div>
 
@@ -66,6 +67,16 @@ export class ResetPasswordPage {
     );
     protected readonly submitting = signal(false);
     protected readonly errorMessage = signal<string | null>(null);
+
+    protected readonly passwordPt = passwordPt;
+
+    /** Inválido y ya tocado. La confirmación es inválida si no coincide con la contraseña. */
+    protected invalid(control: 'password' | 'passwordConfirmation'): boolean {
+        const field = this.form.controls[control];
+        const mismatch = control === 'passwordConfirmation' && this.form.hasError('passwordsMismatch');
+
+        return field.touched && (field.invalid || mismatch);
+    }
 
     protected async submit(): Promise<void> {
         if (this.submitting()) {

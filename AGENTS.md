@@ -94,13 +94,16 @@ npm run db:test    # pruebas pgTAP
 npm run db:types   # tipos TypeScript para el frontend
 ```
 
-Desde `frontend/`:
+Desde `frontend/` (Node 24 LTS, ver `frontend/.nvmrc`):
 
 ```bash
 npm install
-npm start          # servidor de desarrollo en http://localhost:4200
-npm run build
-npm test
+npm start              # servidor de desarrollo en http://localhost:4200, contra Supabase local
+npm run build          # compilación de producción
+npm run lint           # análisis estático (incluye la regla de capas de ADR-002)
+npm test               # pruebas con Vitest en modo observación
+npm run test:ci        # pruebas una sola vez
+npm run check:bundle   # sin claves privilegiadas ni demos en la compilación de producción
 ```
 
 ## Git

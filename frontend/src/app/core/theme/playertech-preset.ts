@@ -25,6 +25,19 @@ export const PlayerTechPreset = definePreset(Aura, {
             900: '{blue.900}',
             950: '{blue.950}'
         },
+        colorScheme: {
+            light: {
+                // Accesibilidad (principio XIII): el azul de marca (blue.500) da 3,68:1 sobre
+                // blanco. Como color de acción y de texto se usa blue.600 (5,17:1, WCAG AA);
+                // blue.500 sigue siendo la base de la paleta (ADR-015, FE-06).
+                primary: {
+                    color: '{primary.600}',
+                    contrastColor: '#ffffff',
+                    hoverColor: '{primary.700}',
+                    activeColor: '{primary.800}'
+                }
+            }
+        },
         formField: {
             paddingY: '0.9rem'
         },

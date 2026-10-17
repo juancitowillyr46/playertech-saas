@@ -48,7 +48,13 @@
                                     "maximumError": "4kb"
                                 }
                             ],
-                            "outputHashing": "all"
+                            "outputHashing": "all",
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/app/features/dev/dev-extras.ts",
+                                    "with": "src/app/features/dev/dev-extras.production.ts"
+                                }
+                            ]
                         },
                         "development": {
                             "optimization": false,

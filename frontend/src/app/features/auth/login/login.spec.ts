@@ -36,6 +36,27 @@ describe('LoginPage', () => {
         expect(screen.getByText('Ingresa tu contraseña.')).toBeTruthy();
     });
 
+    it('asocia cada error a su campo para los lectores de pantalla', async () => {
+        const { user } = await setup();
+
+        await user.click(screen.getByRole('button', { name: 'Iniciar sesión' }));
+
+        const email = screen.getByLabelText('Correo');
+        const password = screen.getByLabelText('Contraseña');
+
+        expect(email.getAttribute('aria-invalid')).toBe('true');
+        expect(document.getElementById(email.getAttribute('aria-describedby') ?? '')?.textContent).toContain('Ingresa tu correo.');
+        expect(password.getAttribute('aria-invalid')).toBe('true');
+        expect(document.getElementById(password.getAttribute('aria-describedby') ?? '')?.textContent).toContain('Ingresa tu contraseña.');
+    });
+
+    it('no marca los campos como inválidos antes de intentar enviar', async () => {
+        await setup();
+
+        expect(screen.getByLabelText('Correo').getAttribute('aria-invalid')).toBeNull();
+        expect(screen.getByLabelText('Contraseña').getAttribute('aria-describedby')).toBeNull();
+    });
+
     it('valida el formato del correo', async () => {
         const { auth, user } = await setup();
 

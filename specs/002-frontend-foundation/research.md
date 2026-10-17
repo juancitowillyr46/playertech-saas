@@ -141,10 +141,14 @@ Decisiones técnicas que resuelven las incógnitas del contexto técnico de `pla
 
 ## R13 — Rutas y demos solo en desarrollo
 
-**Decisión:** `app.routes.ts` combina rutas comunes y `...(environment.production ? [] : DEV_ROUTES)`. Como `environment.production` es una constante sustituida en compilación, la rama de desarrollo se elimina del bundle de producción y sus fragmentos diferidos (las demos) no se generan. Se verifica comparando la lista de fragmentos de la compilación de producción.
+**Decisión (ajustada en la implementación):** las demos se registran en un único módulo, `features/dev/dev-extras.ts` (`DEV_ROUTES` y `DEV_NAVIGATION`), que la configuración de producción de `angular.json` **sustituye** por `dev-extras.production.ts` (listas vacías) mediante `fileReplacements`, igual que los entornos. Así no queda ningún `import()` de las demos en el grafo de producción.
+
+Se descartaron dos alternativas tras comprobarlas con `check:bundle`:
+- `environment.production ? [] : DEV_ROUTES`: esbuild no propaga la constante entre módulos y las demos seguían en el bundle.
+- `ngDevMode ? DEV_ROUTES : []`: la rama se eliminaba del código principal, pero esbuild generaba igualmente los fragmentos de cada `import()` dinámico, que quedaban en `dist/` sin ruta que los usara.
 - `/dev` contiene **solo** las demos de SakaiNG (FR-037). Ninguna pantalla de PlayerTech vive ahí: la validación con sesión real usa las pantallas de autenticación básicas en sus rutas definitivas (R17).
 - `/dev` usa el `AppLayout` sin guards; las demos conservan su código intacto en `src/app/pages/`.
-- La sección "Demos" del menú (`DEV_NAVIGATION`) se define en `features/dev/` y se añade con el mismo condicional `environment.production ? [] : DEV_NAVIGATION`, para que tampoco quede en el bundle de producción. Si el menú recibiera el entorno como parámetro, sus textos y rutas seguirían en el bundle aunque no se mostraran.
+- La sección "Demos" del menú (`DEV_NAVIGATION`) vive en el mismo módulo sustituible, de modo que sus textos y rutas tampoco llegan a producción.
 - `**` → página 404 propia (`features/errors/not-found`), en lugar de la demo `notfound`.
 
 ## R14 — Verificación del bundle
