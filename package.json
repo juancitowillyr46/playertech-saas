@@ -1,0 +1,16 @@
+{
+  "name": "playertech-saas",
+  "private": true,
+  "description": "PlayerTech: herramientas de la base de datos local (Supabase CLI)",
+  "scripts": {
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:status": "supabase status",
+    "db:reset": "supabase db reset",
+    "db:test": "supabase test db",
+    "db:types": "supabase gen types typescript --local > frontend/src/app/core/supabase/database.types.ts"
+  },
+  "devDependencies": {
+    "supabase": "2.119.0"
+  }
+}
