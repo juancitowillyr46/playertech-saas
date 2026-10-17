@@ -109,6 +109,7 @@ frontend/src/app/
 │   ├── app-error.ts                 # Códigos nuevos (R4)
 │   ├── error-messages.ts            # Mensajes genéricos
 │   └── supabase-error.mapper.ts     # 23505, 23514, PGRST116
+├── shared/forms/field-a11y.ts       # Movido desde features/auth (segundo uso, principio IV)
 └── features/venues/
     ├── models/venue.models.ts       # address, directions y VenueInput
     ├── data/
