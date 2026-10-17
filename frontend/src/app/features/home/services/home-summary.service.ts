@@ -1,10 +1,10 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { AcademyContextService } from '../../core/academy-context/academy-context.service';
-import { FileStorageRepository } from '../../core/storage/data/file-storage.repository';
-import { StoredFile } from '../../core/storage/models/storage.models';
-import { initialsOf } from '../../shared/pipes/initials.pipe';
-import { HomeSummaryRepository } from './data/home-summary.repository';
-import { HomeSummary } from './models/home-summary.models';
+import { AcademyContextService } from '../../../core/academy-context/academy-context.service';
+import { FileStorageRepository } from '../../../core/storage/data/file-storage.repository';
+import { StoredFile } from '../../../core/storage/models/storage.models';
+import { initialsOf } from '../../../shared/pipes/initials.pipe';
+import { HomeSummaryRepository } from '../data/home-summary.repository';
+import { HomeSummary } from '../models/home-summary.models';
 
 export type HomeSummaryStatus = 'loading' | 'ready' | 'error';
 

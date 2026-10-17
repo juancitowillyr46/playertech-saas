@@ -17,9 +17,9 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
 import { map } from 'rxjs';
-import { PageHeader, PageHeaderAction } from '../../../shared/components/page-header/page-header';
-import { Venue, VENUE_TYPE_LABELS, VenueType } from '../models/venue.models';
-import { VenuesService, VenueStatusFilter } from '../venues.service';
+import { PageHeader, PageHeaderAction } from '../../../../shared/components/page-header/page-header';
+import { Venue, VENUE_TYPE_LABELS, VenueType } from '../../models/venue.models';
+import { VenuesService, VenueStatusFilter } from '../../services/venues.service';
 
 /** Por debajo de `md` (768 px): tarjetas y formulario a pantalla completa (research R8). */
 const MOBILE_QUERY = '(max-width: 767.98px)';

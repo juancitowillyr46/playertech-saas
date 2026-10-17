@@ -17,6 +17,7 @@ Los cambios de `config.toml` y de las plantillas se aplican al reiniciar Supabas
 |---|---|
 | `{{ .ConfirmationURL }}` | Botón y enlace en texto. Conserva el flujo PKCE actual: Supabase verifica y redirige a `/auth/callback` con el código |
 | `{{ .Email }}` | Opcional, para indicar a qué cuenta corresponde |
+| `{{ .Data.full_name }}` | Saludo personalizado («Hola, Juan Pérez.»), con respaldo «Hola.» si falta. Es el nombre del registro (metadato `full_name`, spec 001); las plantillas no permiten extraer solo el primer nombre |
 
 No se usan `{{ .Token }}` ni `{{ .TokenHash }}`: el flujo de la spec 002 no los necesita.
 
@@ -24,7 +25,7 @@ No se usan `{{ .Token }}` ni `{{ .TokenHash }}`: el flujo de la spec 002 no los 
 
 1. Texto de vista previa oculto (*preheader*).
 2. Marca tipográfica de PlayerTech en texto, no en imagen.
-3. Título y un párrafo en español de Colombia, con el vocabulario del glosario.
+3. Título y un párrafo en español de Colombia, con el vocabulario del glosario, que empieza saludando por el nombre.
 4. Botón de acción, como enlace con aspecto de botón y al menos 44 px de alto.
 5. El mismo enlace en texto plano, con la explicación "Si el botón no funciona, copia este enlace…".
 6. Vigencia del enlace y, en recuperación, "Si no solicitaste este cambio, ignora este correo; tu contraseña no cambiará".

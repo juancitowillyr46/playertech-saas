@@ -154,14 +154,14 @@ frontend/
             ├── errors/                            # 404 y error de contexto con la identidad
             ├── home/
             │   ├── home.routes.ts                 # Sustituye el placeholder
-            │   ├── home-page/                     # Nuevo
-            │   ├── home-summary.service.ts        # Nuevo
+            │   ├── pages/home-page/               # Nuevo
+            │   ├── services/home-summary.service.ts # Nuevo
             │   ├── models/home-summary.models.ts  # Nuevo
             │   └── data/home-summary.repository.ts, supabase-home-summary.repository.ts
             ├── venues/
             │   ├── venues.routes.ts               # Nuevo; lo carga settings.routes.ts
-            │   ├── venues-page/                   # Nuevo: tabla, tarjetas, drawer de maqueta
-            │   ├── venues.service.ts              # Nuevo
+            │   ├── pages/venues-page/             # Nuevo: tabla, filas regladas, drawer de maqueta
+            │   ├── services/venues.service.ts     # Nuevo
             │   ├── models/venue.models.ts         # Nuevo
             │   └── data/venue.repository.ts, supabase-venue.repository.ts
             └── settings/settings.routes.ts        # venues → features/venues

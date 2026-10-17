@@ -44,7 +44,7 @@ Implementación (`supabase-home-summary.repository.ts`), con lecturas en paralel
 - `from('venues').select('name, city').eq('is_primary', true).is('deleted_at', null).maybeSingle()`;
 - solo si hay `logoFileId`: la fila de `files` por `id`, sin borrado lógico, con las columnas que necesita `StoredFile` (`core/storage/models/storage.models.ts`). Se mapea igual que en `SupabaseFileStorageRepository`.
 
-El nombre de la academia y `logoFileId` salen del `AcademyContextService` existente. El `StoredFile` del logo se convierte en URL con `FileStorageRepository.getUrl()`. Todo lo combina `HomeSummaryService` (`features/home/home-summary.service.ts`). Si la URL falla, se muestran las iniciales y no un error de la página.
+El nombre de la academia y `logoFileId` salen del `AcademyContextService` existente. El `StoredFile` del logo se convierte en URL con `FileStorageRepository.getUrl()`. Todo lo combina `HomeSummaryService` (`features/home/services/home-summary.service.ts`). Si la URL falla, se muestran las iniciales y no un error de la página.
 
 ## Servicios
 

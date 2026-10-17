@@ -69,6 +69,8 @@ Contiene elementos reutilizables por varias features. No contiene lógica espec�
 
 Un elemento solo se mueve a `shared/` cuando lo necesita una segunda feature; mientras tanto, permanece en la feature que lo usa (principio IV de la Constitución).
 
+Elementos actuales (spec 003): `components/page-header` (encabezado común de página), `components/brand-mark` (marca y espacio único del logo), `components/placeholder-page` y `pipes/initials.pipe` (iniciales cuando no hay logo).
+
 ### Features
 
 Cada feature se organiza así:
@@ -87,13 +89,17 @@ features/venues/
 
 El layout de SakaiNG (`layout/`) se **adopta como código propio de PlayerTech** con cambios mínimos:
 
-- El menú se define en `core/navigation` y el componente de menú lo consume.
-- La marca (logo y nombre) es configurable.
-- El configurador de temas no se muestra al usuario final.
+- El menú se define en `core/navigation`; lo consumen el menú lateral (escritorio) y la navegación inferior `app.bottomnav.ts` (celular, spec 003).
+- La marca vive en `BrandMark`; en el celular, la barra superior muestra la academia en lugar de la marca.
+- El configurador de temas no se muestra al usuario final; el modo claro/oscuro está en el menú de usuario.
 
 Desde la Constitución 3.1.0, el principio V distingue el **layout adoptado** (código propio de PlayerTech, modificable con cambios mínimos y controlados) de las **demos** de SakaiNG (solo referencia), así que esta adopción ya no es una excepción (ADR-015). Las actualizaciones de SakaiNG que afecten a `layout/` se integran según `docs/engineering/sakai-upstream.md`.
 
 La tipografía y los estilos base de SakaiNG (`_core.scss`, `_typography.scss`) viven en la capa CSS `sakai`, entre la base y las utilidades de Tailwind, para que las utilidades puedan ajustar títulos y párrafos sin sobrescrituras.
+
+Orden de capas CSS (`_core.scss`): `theme, base, sakai, primeng, components, utilities`. Los estilos de PrimeNG se inyectan en la capa `primeng` (opción `cssLayer` de `providePrimeNG` en `app.config.ts`), de modo que las utilidades de Tailwind componen sobre los componentes (por ejemplo, el ancho del drawer) sin sobrescribir sus clases internas.
+
+Las tipografías (Public Sans y JetBrains Mono) están alojadas en `public/fonts/` y se declaran en `assets/styles.scss`; la familia se define una sola vez en el bloque `@theme` de `assets/tailwind.css`. El sistema visual completo está en `DESIGN.md`.
 
 ### Demos de SakaiNG
 

@@ -2,11 +2,11 @@ import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { AcademyContextService } from '../../../core/academy-context/academy-context.service';
-import { AppError } from '../../../core/errors/app-error';
-import { FileStorageRepository } from '../../../core/storage/data/file-storage.repository';
-import { HomeSummaryRepository } from '../data/home-summary.repository';
-import { HomeSummaryData } from '../models/home-summary.models';
+import { AcademyContextService } from '../../../../core/academy-context/academy-context.service';
+import { AppError } from '../../../../core/errors/app-error';
+import { FileStorageRepository } from '../../../../core/storage/data/file-storage.repository';
+import { HomeSummaryRepository } from '../../data/home-summary.repository';
+import { HomeSummaryData } from '../../models/home-summary.models';
 import { HomePage } from './home-page';
 
 const SUMMARY: HomeSummaryData = { planName: 'Free', primaryVenue: { name: 'Sede Chapinero', city: 'Bogotá' }, logo: null };

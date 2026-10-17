@@ -86,12 +86,12 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 - [X] T011 Crear `frontend/src/app/features/venues/data/venue.repository.ts` (abstracto) y `supabase-venue.repository.ts` según `contracts/repositories.md`, hasta que pase T009
 - [X] T012 Crear `frontend/src/app/features/home/data/home-summary.repository.ts` (abstracto) y `supabase-home-summary.repository.ts` según `contracts/repositories.md`, hasta que pase T010
 - [X] T013 Registrar `VenueRepository` y `HomeSummaryRepository` con sus implementaciones en `frontend/src/app.config.ts`
-- [X] T014 [P] Escribir `frontend/src/app/features/venues/venues.service.spec.ts` y crear `venues.service.ts`. El servicio expone:
+- [X] T014 [P] Escribir `frontend/src/app/features/venues/services/venues.service.spec.ts` y crear `venues.service.ts`. El servicio expone:
   - las señales `venues`, `status`, `query`, `statusFilter` y `visibleVenues`;
   - búsqueda por nombre y ciudad, sin distinguir mayúsculas ni tildes;
   - filtro `all`, `active` o `inactive`;
   - estados `loading`, `ready`, `empty` y `error`, con reintento.
-- [X] T015 [P] Escribir `frontend/src/app/features/home/home-summary.service.spec.ts` y crear `home-summary.service.ts`. El servicio:
+- [X] T015 [P] Escribir `frontend/src/app/features/home/services/home-summary.service.spec.ts` y crear `home-summary.service.ts`. El servicio:
   - combina `AcademyContextService` (nombre y `logoFileId`), `HomeSummaryRepository` y `FileStorageRepository.getUrl()`;
   - sin logo, o si falla su URL, usa iniciales de máximo 2 letras, sin poner la página en error;
   - expone los estados `loading`, `ready` y `error`.
@@ -214,7 +214,7 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 
 ### Sedes
 
-- [X] T052 [P] [US5] Escribir `frontend/src/app/features/venues/venues-page/venues-page.spec.ts`. Debe cubrir:
+- [X] T052 [P] [US5] Escribir `frontend/src/app/features/venues/pages/venues-page/venues-page.spec.ts`. Debe cubrir:
   - encabezado con "Nueva sede";
   - las dos vistas (lista de tarjetas y tabla) con los datos del servicio;
   - la marca "Principal" y el estado "Activa"/"Inactiva";
@@ -223,7 +223,7 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
   - drawer con "Guardar" deshabilitado y "Disponible próximamente";
   - al cerrar el drawer con cambios, confirmación "¿Descartar los cambios?"; sin cambios, se cierra sin preguntar;
   - "Desactivar" y "Eliminar" deshabilitados.
-- [X] T053 [US5] Crear `frontend/src/app/features/venues/venues-page/venues-page.ts` según `contracts/ui-contracts.md`:
+- [X] T053 [US5] Crear `frontend/src/app/features/venues/pages/venues-page/venues-page.ts` según `contracts/ui-contracts.md`:
   - `PageHeader`, buscador y filtro;
   - `p-table` (ordenamiento y paginación de 10) visible desde `md`, y lista de tarjetas por debajo;
   - `p-tag` y `p-menu` por fila;
@@ -233,8 +233,8 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 
 ### Inicio
 
-- [X] T056 [P] [US5] Escribir `frontend/src/app/features/home/home-page/home-page.spec.ts`: nombre de la academia, iniciales sin logo, plan, sede principal, estado vacío sin sede principal, estado de error con reintento, y tarjeta "Completa tu academia" con tres enlaces y sin contador
-- [X] T057 [US5] Crear `frontend/src/app/features/home/home-page/home-page.ts` según el patrón de inicio con tareas pendientes de `ui.md`, con `PageHeader`, resumen real y la tarjeta de maqueta, hasta que pase T056
+- [X] T056 [P] [US5] Escribir `frontend/src/app/features/home/pages/home-page/home-page.spec.ts`: nombre de la academia, iniciales sin logo, plan, sede principal, estado vacío sin sede principal, estado de error con reintento, y tarjeta "Completa tu academia" con tres enlaces y sin contador
+- [X] T057 [US5] Crear `frontend/src/app/features/home/pages/home-page/home-page.ts` según el patrón de inicio con tareas pendientes de `ui.md`, con `PageHeader`, resumen real y la tarjeta de maqueta, hasta que pase T056
 - [X] T058 [US5] Sustituir el placeholder en `frontend/src/app/features/home/home.routes.ts` por `HomePage` (título "Inicio · PlayerTech")
 
 **Checkpoint**: las cuatro pantallas modelo funcionan con datos reales en el celular.
@@ -261,10 +261,10 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 
 **Prueba independiente**: Registro y recuperación en local, con los dos correos revisados en Mailpit y su botón completando el proceso.
 
-- [ ] T062 [P] [US7] Crear `supabase/templates/confirmation.html` según `contracts/email-templates.md`: maquetación con tablas y estilos en línea, marca en texto, botón y enlace en texto con `{{ .ConfirmationURL }}`, vigencia, y colores tomados de los tokens elegidos
-- [ ] T063 [P] [US7] Crear `supabase/templates/recovery.html` con la misma estructura y el texto para quien no solicitó el cambio
-- [ ] T064 [US7] Registrar las dos plantillas con sus asuntos en `supabase/config.toml` (`[auth.email.template.confirmation]` y `[auth.email.template.recovery]`). Revisar los textos con `/impeccable clarify`
-- [ ] T065 [US7] Reiniciar Supabase local (`npm run db:stop` y `npm run db:start`) y validar los dos correos en Mailpit según la sección 6 de `quickstart.md`: vista móvil, vista sin imágenes y el botón completando la verificación y la recuperación (SC-007)
+- [X] T062 [P] [US7] Crear `supabase/templates/confirmation.html` según `contracts/email-templates.md`: maquetación con tablas y estilos en línea, marca en texto, botón y enlace en texto con `{{ .ConfirmationURL }}`, vigencia, y colores tomados de los tokens elegidos
+- [X] T063 [P] [US7] Crear `supabase/templates/recovery.html` con la misma estructura y el texto para quien no solicitó el cambio
+- [X] T064 [US7] Registrar las dos plantillas con sus asuntos en `supabase/config.toml` (`[auth.email.template.confirmation]` y `[auth.email.template.recovery]`). Revisar los textos con `/impeccable clarify`
+- [X] T065 [US7] Reiniciar Supabase local (`npm run db:stop` y `npm run db:start`) y validar los dos correos en Mailpit según la sección 6 de `quickstart.md`: vista móvil, vista sin imágenes y el botón completando la verificación y la recuperación (SC-007)
 
 **Checkpoint**: correos validados en local.
 
@@ -274,27 +274,27 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 
 **Propósito**: Documentar el sistema desde lo construido, validar de punta a punta y cerrar T-01.
 
-- [ ] T066 Generar `DESIGN.md` en la raíz con el documentador de Impeccable (`/impeccable document` o el agente `impeccable-documenter`) a partir de la aplicación construida. Revisar que incluya:
+- [X] T066 Generar `DESIGN.md` en la raíz con el documentador de Impeccable (`/impeccable document` o el agente `impeccable-documenter`) a partir de la aplicación construida. Revisar que incluya:
   - tokens, tipografía, color, marca, estados y reglas de uso;
   - los ajustes de contraste de T034;
   - la correspondencia con el preset;
   - la nota sobre el HTML de correo (research R10).
-- [ ] T067 [P] Actualizar `docs/architecture/ui.md`:
+- [X] T067 [P] Actualizar `docs/architecture/ui.md`:
   - la sección "Tema" pasa a enlazar a `DESIGN.md`;
   - añadir el encabezado de página, la variante móvil del patrón de gestión, la maqueta de escritura y las pantallas modelo como referencia.
-- [ ] T068 [P] Actualizar `docs/architecture/decisions.md`:
+- [X] T068 [P] Actualizar `docs/architecture/decisions.md`:
   - enmendar FE-06 (preset definitivo, tipografía alojada en el proyecto, preferencia del sistema);
   - añadir a ADR-003 la nota de T-01 (la calidad visual no es *gold plating*).
-- [ ] T069 [P] Actualizar `docs/architecture/frontend.md`: `features/venues/` y `features/home/data/`, `shared/components/page-header` y `brand-mark`, y la nota sobre la carga de la tipografía
-- [ ] T070 [P] Actualizar el backlog:
+- [X] T069 [P] Actualizar `docs/architecture/frontend.md`: `features/venues/` y `features/home/data/`, `shared/components/page-header` y `brand-mark`, y la nota sobre la carga de la tipografía
+- [X] T070 [P] Actualizar el backlog:
   - `docs/backlog/enablers/T-01-design-system.md`: estado Terminado y evidencia por criterio;
   - `HU-030` y `HU-032`: nota "Versión de lectura disponible" con lo que falta.
-- [ ] T071 Ejecutar todos los controles automáticos de la sección 1 de `quickstart.md` (`lint`, `check:styles`, `test:ci`, `build` y `check:bundle`) y comprobar que el bundle inicial no crece más de 50 KB
-- [ ] T072 Recorrer las secciones 3 a 6 de `quickstart.md` con los scripts del scratchpad (capturas, áreas táctiles, desplazamiento y contraste) y anotar los resultados en la sección "Resultados". Incluir dos comprobaciones manuales explícitas:
+- [X] T071 Ejecutar todos los controles automáticos de la sección 1 de `quickstart.md` (`lint`, `check:styles`, `test:ci`, `build` y `check:bundle`) y comprobar que el bundle inicial no crece más de 50 KB
+- [X] T072 Recorrer las secciones 3 a 6 de `quickstart.md` con los scripts del scratchpad (capturas, áreas táctiles, desplazamiento y contraste) y anotar los resultados en la sección "Resultados". Incluir dos comprobaciones manuales explícitas:
   - movimiento reducido emulado (FR-011), porque no tiene prueba automática;
   - revisión de todos los textos de la interfaz y de los correos frente a `docs/product/glossary.md` (FR-022).
-- [ ] T073 ⏸ Decisión: revisión final de las pantallas modelo con el responsable de producto, en su celular, y aplicación de los ajustes acordados
-- [ ] T074 Marcar las tareas completadas en este archivo y preparar el resumen para el PR
+- [X] T073 ⏸ Decisión: revisión final de las pantallas modelo con el responsable de producto, en su celular, y aplicación de los ajustes acordados. *Resultado (2026-10-17): aprobadas; ajuste pedido y aplicado: los correos saludan por el nombre del registro.*
+- [X] T074 Marcar las tareas completadas en este archivo y preparar el resumen para el PR
 
 ---
 

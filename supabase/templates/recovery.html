@@ -1,0 +1,68 @@
+<!doctype html>
+<!--
+  Correo de recuperación de contraseña de PlayerTech (spec 003, T063; contracts/email-templates.md).
+  HTML de correo: tablas y estilos en línea, porque los clientes de correo ignoran las hojas
+  externas. El saludo usa el nombre del registro (metadato full_name). Los colores son los
+  tokens de la dirección Planilla (DESIGN.md): tinta #1c2b4a,
+  papel #fbfaf7, texto #20242b, secundario #5a606b, filete #ddd9cf, sello #b3261e.
+  La variable ConfirmationURL conserva el flujo PKCE: Supabase verifica y redirige a /auth/callback.
+-->
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="light" />
+        <title>Crea una nueva contraseña</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #fbfaf7">
+        <div style="display: none; max-height: 0; overflow: hidden; opacity: 0">Usa este enlace para crear una nueva contraseña de PlayerTech.</div>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #fbfaf7">
+            <tr>
+                <td align="center" style="padding: 32px 16px">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; table-layout: fixed; background-color: #ffffff; border: 1px solid #ddd9cf">
+                        <tr>
+                            <td style="padding: 28px 28px 0 28px; font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                    <tr>
+                                        <td width="32" height="32" align="center" valign="middle" style="width: 32px; height: 32px; border: 2px solid #b3261e; border-radius: 50%; color: #b3261e; font-size: 11px; font-weight: 800; letter-spacing: 0.5px">PT</td>
+                                        <td style="padding-left: 10px; color: #20242b; font-size: 20px; font-weight: 800; letter-spacing: -0.2px">PlayerTech</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 28px 28px 0 28px; font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif">
+                                <h1 style="margin: 0; padding-bottom: 14px; border-bottom: 2px solid #20242b; color: #20242b; font-size: 26px; line-height: 1.2; font-weight: 800">Crea una nueva contraseña</h1>
+                                <p style="margin: 20px 0 0 0; color: #20242b; font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; word-break: break-word">{{ if .Data.full_name }}Hola, {{ .Data.full_name }}.{{ else }}Hola.{{ end }} Recibimos una solicitud para restablecer la contraseña de tu cuenta de PlayerTech (<strong>{{ .Email }}</strong>).</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 24px 28px 0 28px">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                    <tr>
+                                        <td style="background-color: #1c2b4a; border-radius: 2px">
+                                            <a href="{{ .ConfirmationURL }}" style="display: inline-block; padding: 14px 24px; color: #ffffff; font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 16px; font-weight: 600; text-decoration: none">Crear nueva contraseña</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 24px 28px 0 28px; font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; color: #5a606b; font-size: 14px; line-height: 1.5">
+                                <p style="margin: 0">Ábrelo en el mismo navegador donde lo pediste. El enlace vence en 1 hora y solo funciona una vez.</p>
+                                <p style="margin: 16px 0 0 0">Si el botón no funciona, copia este enlace en tu navegador:</p>
+                                <p style="margin: 6px 0 0 0; word-break: break-all"><a href="{{ .ConfirmationURL }}" style="color: #1c2b4a">{{ .ConfirmationURL }}</a></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 24px 28px 28px 28px; font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif">
+                                <p style="margin: 0; padding-top: 16px; border-top: 1px solid #ddd9cf; color: #5a606b; font-size: 13px; line-height: 1.5">Si no solicitaste este cambio, ignora este correo: tu contraseña no cambiará.</p>
+                            </td>
+                        </tr>
+                    </table>
+                    <p style="margin: 16px 0 0 0; font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; color: #5a606b; font-size: 12px">Enviado por PlayerTech.</p>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

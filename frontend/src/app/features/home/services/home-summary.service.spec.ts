@@ -1,11 +1,11 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { AcademyContextService } from '../../core/academy-context/academy-context.service';
-import { CurrentAcademy } from '../../core/academy-context/models/academy-context.models';
-import { AppError } from '../../core/errors/app-error';
-import { FileStorageRepository } from '../../core/storage/data/file-storage.repository';
-import { StoredFile } from '../../core/storage/models/storage.models';
-import { HomeSummaryRepository } from './data/home-summary.repository';
+import { AcademyContextService } from '../../../core/academy-context/academy-context.service';
+import { CurrentAcademy } from '../../../core/academy-context/models/academy-context.models';
+import { AppError } from '../../../core/errors/app-error';
+import { FileStorageRepository } from '../../../core/storage/data/file-storage.repository';
+import { StoredFile } from '../../../core/storage/models/storage.models';
+import { HomeSummaryRepository } from '../data/home-summary.repository';
 import { HomeSummaryService } from './home-summary.service';
 
 const LOGO: StoredFile = { id: 'file-1', bucket: 'public-assets', storageKey: 'a/academy/a/file-1.png', mimeType: 'image/png', sizeBytes: 1200 };

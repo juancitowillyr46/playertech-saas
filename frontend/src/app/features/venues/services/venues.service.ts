@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { VenueRepository } from './data/venue.repository';
-import { Venue } from './models/venue.models';
+import { VenueRepository } from '../data/venue.repository';
+import { Venue } from '../models/venue.models';
 
 export type VenuesStatus = 'loading' | 'ready' | 'empty' | 'error';
 export type VenueStatusFilter = 'all' | 'active' | 'inactive';

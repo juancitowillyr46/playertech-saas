@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { AppError } from '../../core/errors/app-error';
-import { VenueRepository } from './data/venue.repository';
-import { Venue } from './models/venue.models';
+import { AppError } from '../../../core/errors/app-error';
+import { VenueRepository } from '../data/venue.repository';
+import { Venue } from '../models/venue.models';
 import { VenuesService } from './venues.service';
 
 const VENUES: Venue[] = [

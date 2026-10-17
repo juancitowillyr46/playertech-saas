@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-17T18:00:00-05:00",
+  "title": "Design System: PlayerTech",
+  "extensions": {
+    "colorMeta": {
+      "tinta": { "role": "primary", "displayName": "Tinta de planilla", "tonalRamp": ["#0c1424", "#141f36", "#1c2b4a", "#263f6e", "#34528a", "#6f8ec4", "#c6d3e9", "#f3f6fb"] },
+      "papel": { "role": "neutral", "displayName": "Papel de planilla", "tonalRamp": ["#14161a", "#20242b", "#45433e", "#7c786f", "#c7c2b6", "#ddd9cf", "#f4f2ec", "#fbfaf7"] },
+      "pizarra": { "role": "neutral", "displayName": "Pizarra (modo oscuro)", "tonalRamp": ["#10141d", "#171d29", "#222a3a", "#2c3445", "#5c6475", "#a9afbb", "#e2e4e9", "#f1f2f4"] },
+      "sello": { "role": "tertiary", "displayName": "Rojo de sello (solo la marca)" }
+    },
+    "typographyMeta": {
+      "titulo-pagina": { "displayName": "Título de página", "purpose": "Un h1 por página, con el filete de tinta debajo." },
+      "sello": { "displayName": "Sello", "purpose": "Estados en mayúsculas espaciadas, siempre con texto." },
+      "numero-fila": { "displayName": "Número de fila", "purpose": "Solo el orden de las filas de la planilla." }
+    },
+    "shadows": [
+      { "name": "accion-flotante", "value": "0 6px 16px -4px rgb(0 0 0 / 0.3)", "purpose": "Acción principal flotante sobre la navegación inferior en el celular." }
+    ],
+    "motion": [
+      { "name": "transicion-estandar", "value": "0.15s", "purpose": "Duración de --p-transition-duration; 0s con prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "576px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "992px" },
+      { "name": "xl", "value": "1200px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón principal",
+      "kind": "button",
+      "refersTo": "boton-principal",
+      "description": "La única acción en tinta sólida de cada pantalla.",
+      "html": "<button class=\"ds-btn-principal\">Iniciar sesión</button>",
+      "css": ".ds-btn-principal { background: #1c2b4a; color: #fff; min-height: 44px; padding: 12px 18px; border: 0; border-radius: 2px; font: 600 16px 'Public Sans', system-ui, sans-serif; cursor: pointer; transition: background 0.15s; } .ds-btn-principal:hover { background: #141f36; } .ds-btn-principal:focus-visible { outline: 2px solid #1c2b4a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo",
+      "kind": "input",
+      "refersTo": "campo",
+      "description": "Campo con etiqueta visible encima y ayuda debajo.",
+      "html": "<label class=\"ds-field\"><span>Correo</span><input type=\"email\" placeholder=\"nombre@correo.com\"></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 8px; font: 500 16px 'Public Sans', system-ui, sans-serif; color: #20242b; } .ds-field input { min-height: 46px; padding: 12px 14px; border: 1px solid #8b8f98; border-radius: 2px; background: #fff; font: 400 16px 'Public Sans', system-ui, sans-serif; color: #20242b; } .ds-field input:hover { border-color: #20242b; } .ds-field input:focus-visible { outline: 2px solid #1c2b4a; outline-offset: 2px; border-color: #1c2b4a; }"
+    },
+    {
+      "name": "Sello de estado",
+      "kind": "chip",
+      "refersTo": "sello-activa",
+      "description": "Estado sin relleno, con borde y texto en mayúsculas.",
+      "html": "<span class=\"ds-sello\">Activa</span> <span class=\"ds-sello ds-sello-off\">Inactiva</span>",
+      "css": ".ds-sello { display: inline-flex; align-items: center; padding: 2px 8px; border: 2px solid currentColor; border-radius: 2px; color: #1c2b4a; font: 700 11px 'Public Sans', system-ui, sans-serif; letter-spacing: 0.05em; text-transform: uppercase; } .ds-sello-off { color: #6b7079; }"
+    },
+    {
+      "name": "Fila reglada",
+      "kind": "custom",
+      "refersTo": "fila-reglada",
+      "description": "Registro de la planilla: número, datos y sellos, con filete inferior.",
+      "html": "<div class=\"ds-fila\"><span class=\"ds-fila-n\">01</span><div><strong>Sede Chapinero</strong><small>Oficina · Bogotá</small></div></div>",
+      "css": ".ds-fila { display: flex; gap: 12px; padding: 12px 4px; border-bottom: 1px solid #ddd9cf; font: 400 16px 'Public Sans', system-ui, sans-serif; color: #20242b; } .ds-fila-n { width: 28px; font: 500 14px 'JetBrains Mono', ui-monospace, monospace; color: #5a606b; } .ds-fila strong { display: block; font-weight: 600; } .ds-fila small { display: block; font-size: 14px; color: #5a606b; }"
+    },
+    {
+      "name": "Encabezado de página",
+      "kind": "custom",
+      "refersTo": "page-header",
+      "description": "Título con el filete de tinta de 2 px: la firma de la planilla.",
+      "html": "<header class=\"ds-ph\"><h1>Sedes</h1><p>Lugares donde funciona tu academia.</p></header>",
+      "css": ".ds-ph { padding-bottom: 12px; border-bottom: 2px solid #20242b; font-family: 'Public Sans', system-ui, sans-serif; } .ds-ph h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.01em; color: #20242b; } .ds-ph p { margin: 4px 0 0; color: #5a606b; }"
+    },
+    {
+      "name": "Navegación inferior",
+      "kind": "nav",
+      "refersTo": "navegacion-inferior",
+      "description": "Destinos principales en el celular; la sección actual con pastilla y negrita.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-on\" aria-current=\"page\"><span></span>Inicio</a><a><span></span>Academia</a><a><span></span>Sedes</a></nav>",
+      "css": ".ds-nav { display: flex; background: #fff; border-top: 1px solid #ddd9cf; font: 600 12px 'Public Sans', system-ui, sans-serif; } .ds-nav a { flex: 1; height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #5a606b; } .ds-nav span { width: 56px; height: 32px; border-radius: 9999px; } .ds-nav-on { color: #20242b; font-weight: 800; } .ds-nav-on span { background: #f3f6fb; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "La planilla oficial",
+    "overview": "PlayerTech se lleva como la planilla oficial de juego de una liga de fútbol: cada registro es una fila numerada y reglada, la tinta azul marca lo que se hace y cada estado queda sellado. La planilla es el documento en el que todos confían, y esa es la impresión que debe dejar el producto: serio y confiable, sin dejar de ser del mundo del fútbol formativo.",
+    "keyCharacteristics": [
+      "Papel claro y tinta azul; el rojo de sello vive solo en la marca.",
+      "Filas regladas y numeradas en lugar de tarjetas flotantes.",
+      "Estados como sellos: sin relleno, con borde y en mayúsculas espaciadas.",
+      "Controles firmes y precisos: rectos, de 44 px y sin sombras decorativas.",
+      "En el celular, chasis de app: barra superior con la academia y navegación inferior."
+    ],
+    "rules": [
+      { "name": "The Tinta Manda Rule", "body": "Solo la tinta señala lo que se puede hacer. Una pantalla tiene una sola acción en tinta sólida; las demás son contorno o texto.", "section": "colors" },
+      { "name": "The Sello en su Sitio Rule", "body": "El rojo de sello no se usa para errores, avisos ni decoración: solo en la marca. Los errores usan el rojo de error de PrimeNG.", "section": "colors" },
+      { "name": "The Estado sin Color Solo Rule", "body": "Ningún estado se comunica solo con color: el sello lleva texto («ACTIVA», «INACTIVA»), la sección actual lleva negrita y aria-current.", "section": "colors" },
+      { "name": "The Un Borde Rule", "body": "Todo se alinea a la izquierda sobre un solo borde: marca, título, descripción, campos y enlaces. Nada centrado ni a la derecha en formularios (observaciones del responsable de producto, T043).", "section": "typography" },
+      { "name": "The Sin Rótulo Rule", "body": "No hay rótulos ni \"eyebrows\" sobre los títulos; el título habla solo.", "section": "typography" }
+    ],
+    "dos": [
+      "Do cambiar el aspecto de un componente desde los tokens del preset; si no hay token, combinar utilidades de Tailwind en la plantilla o la API pt de PrimeNG.",
+      "Do alinear todo a un solo borde izquierdo y anclar los formularios arriba en el celular.",
+      "Do usar filas regladas y fichas para agrupar; el filete de tinta bajo cada título de página.",
+      "Do comprobar cada pantalla a 360 px y en escritorio, en modo claro y oscuro, con controles de 44 px y sin desplazamiento horizontal.",
+      "Do respetar el movimiento reducido: las transiciones salen de --p-transition-duration.",
+      "Do escribir en español de Colombia, con tuteo y el vocabulario del glosario."
+    ],
+    "donts": [
+      "Don't sobrescribir clases internas de PrimeNG (.p-*), usar !important ni estilos en línea en la aplicación (lo verifican npm run check:styles y npm run lint).",
+      "Don't usar tarjetas iguales de icono, título y texto como estructura de página, ni tarjetas anidadas.",
+      "Don't poner rótulos sobre los títulos ni flechas «→» añadidas a botones y enlaces.",
+      "Don't usar el rojo de sello fuera de la marca ni comunicar un estado solo con color.",
+      "Don't anunciar funciones que aún no existen; las de maqueta se muestran deshabilitadas.",
+      "Don't mostrar la marca PlayerTech en las pantallas internas del celular: ahí la identidad es la academia."
+    ]
+  }
+}

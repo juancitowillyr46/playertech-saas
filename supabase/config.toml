@@ -244,6 +244,16 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
+# Correos de autenticación con la identidad de PlayerTech (spec 003, T064;
+# contracts/email-templates.md). Se aplican al reiniciar Supabase local.
+[auth.email.template.confirmation]
+subject = "Confirma tu correo para activar tu academia en PlayerTech"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Restablece tu contraseña de PlayerTech"
+content_path = "./supabase/templates/recovery.html"
+
 # Uncomment to customize email template
 # [auth.email.template.invite]
 # subject = "You have been invited"

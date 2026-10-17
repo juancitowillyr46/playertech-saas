@@ -21,7 +21,7 @@ Los valores concretos los fija la dirección elegida (R3). Este contrato fija **
 |---|---|---|
 | `title` | `string` | Sí; se renderiza como `<h1>` |
 | `description` | `string` | No |
-| Contenido proyectado `[pageHeaderAction]` | Botón u otra acción | No |
+| Contenido proyectado `[appPageHeaderAction]` | Botón u otra acción | No |
 
 Comportamiento:
 - En el celular, la acción flota abajo a la derecha, sobre la navegación inferior, al alcance del pulgar; en escritorio va a la derecha del título.

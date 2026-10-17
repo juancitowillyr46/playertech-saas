@@ -3,9 +3,9 @@ import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
 import { SkeletonModule } from 'primeng/skeleton';
-import { PageHeader } from '../../../shared/components/page-header/page-header';
-import { HomeSummaryService } from '../home-summary.service';
-import { RECOMMENDED_TASKS } from '../models/home-summary.models';
+import { PageHeader } from '../../../../shared/components/page-header/page-header';
+import { HomeSummaryService } from '../../services/home-summary.service';
+import { RECOMMENDED_TASKS } from '../../models/home-summary.models';
 
 /**
  * Pantalla modelo de Inicio (spec 003, US5; patrón «inicio con tareas pendientes» de

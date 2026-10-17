@@ -2,9 +2,9 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
-import { AppError } from '../../../core/errors/app-error';
-import { VenueRepository } from '../data/venue.repository';
-import { Venue } from '../models/venue.models';
+import { AppError } from '../../../../core/errors/app-error';
+import { VenueRepository } from '../../data/venue.repository';
+import { Venue } from '../../models/venue.models';
 import { VenuesPage } from './venues-page';
 
 const VENUES: Venue[] = [
