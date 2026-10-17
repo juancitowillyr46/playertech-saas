@@ -188,9 +188,15 @@ TESTS        = VERIFY
 ```text
 playertech-saas/
 │
+├── AGENTS.md                    ← guía operativa para cualquier agente
+├── CLAUDE.md                    ← adaptador de Claude Code (importa AGENTS.md)
+│
 ├── .specify/
-│   └── memory/
-│       └── constitution.md      ← Constitución vigente (fuente única)
+│   ├── memory/
+│   │   └── constitution.md      ← Constitución vigente (fuente única)
+│   └── templates/
+│       └── overrides/
+│           └── plan-template.md ← plantilla de plan propia del proyecto
 │
 ├── docs/
 │   │
@@ -400,6 +406,8 @@ spec.md
 plan.md
 ```
 
+**Documentación de referencia obligatoria (principio XI de la Constitución).** Todo plan incluye una sección que lista los documentos de `docs/` aplicables a la spec, qué se toma de cada uno y qué partes no aplican. La plantilla propia del proyecto (`.specify/templates/overrides/plan-template.md`) ya la trae, y Spec Kit la usa con prioridad sobre la oficial, también tras actualizarse. La implementación lee todos esos documentos antes de empezar, la haga una persona o cualquier agente. Es necesario porque los comandos de Spec Kit solo cargan automáticamente la Constitución y los archivos de `specs/`.
+
 Para HU-001 podría definir:
 
 ```text
@@ -587,7 +595,9 @@ En otras palabras:
 | `/speckit-implement` | Implementar | Código |
 | `/speckit-analyze` | Revisar consistencia | Hallazgos |
 
-> En Claude Code los comandos se invocan con guion (`/speckit-specify`). Los comandos disponibles pueden variar según la versión de Spec Kit.
+> La forma de invocar los comandos depende del agente: en Claude Code se invocan con guion (`/speckit-specify`). Los comandos disponibles pueden variar según la versión de Spec Kit.
+>
+> **Guías para agentes:** `AGENTS.md` es la guía operativa común para cualquier agente de IA (Codex, Copilot, Cursor, Claude Code…). `CLAUDE.md` solo la importa y añade lo específico de Claude Code. Ninguna de las dos establece principios.
 
 **Origen de una spec:** una Historia de Usuario o un Habilitador técnico (T-xx), según el principio I de la Constitución. La relación entre HU y spec se detalla en `docs/backlog/README.md`.
 

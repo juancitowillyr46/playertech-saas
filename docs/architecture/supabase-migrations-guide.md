@@ -50,23 +50,17 @@ La estructura propuesta es:
 playertech-saas/
 ├── supabase/
 │   ├── migrations/
-│   │   ├── 001_initial_schema.sql
-│   │   ├── 002_academies.sql
-│   │   ├── 003_academy_members.sql
-│   │   ├── 004_players.sql
-│   │   ├── 005_groups.sql
-│   │   ├── 006_player_groups.sql
-│   │   ├── 007_activities.sql
-│   │   ├── 008_call_ups.sql
-│   │   ├── 009_responses.sql
-│   │   └── ...
-│   ├── seed/
-│   │   └── development.sql
+│   │   ├── 20261016090000_foundation_extensions_and_helpers.sql
+│   │   ├── 20261016090100_platform_catalogs.sql
+│   │   └── ...                      # nombres según la sección 3
+│   ├── tests/
+│   │   └── database/                # pruebas pgTAP (supabase test db)
+│   ├── seed.sql
 │   ├── config.toml
 │   └── README.md
 ```
 
-La estructura exacta puede evolucionar según las necesidades del proyecto.
+La estructura vigente y el orden de las migraciones de la Fase 1 están en `specs/001-database-foundation/plan.md` y `research.md` (R13).
 
 La documentación arquitectónica se mantiene en:
 
