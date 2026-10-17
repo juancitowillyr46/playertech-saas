@@ -78,7 +78,11 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
   - el mapeo a `Venue`;
   - el orden (principal primero, después por nombre con `es-CO`);
   - los errores se traducen con `mapSupabaseError`.
-- [ ] T010 [P] Escribir `frontend/src/app/features/home/data/supabase-home-summary.repository.spec.ts`: plan activo, sin suscripción (`planName: null`), sede principal, sin sede principal y mapeo de errores
+- [ ] T010 [P] Escribir `frontend/src/app/features/home/data/supabase-home-summary.repository.spec.ts`. Debe cubrir:
+  - plan activo y sin suscripción (`planName: null`);
+  - sede principal y sin sede principal;
+  - logo: con `logoFileId` lee la fila de `files` y devuelve un `StoredFile`; sin `logoFileId` no consulta `files`;
+  - mapeo de errores.
 - [ ] T011 Crear `frontend/src/app/features/venues/data/venue.repository.ts` (abstracto) y `supabase-venue.repository.ts` según `contracts/repositories.md`, hasta que pase T009
 - [ ] T012 Crear `frontend/src/app/features/home/data/home-summary.repository.ts` (abstracto) y `supabase-home-summary.repository.ts` según `contracts/repositories.md`, hasta que pase T010
 - [ ] T013 Registrar `VenueRepository` y `HomeSummaryRepository` con sus implementaciones en `frontend/src/app.config.ts`
@@ -87,7 +91,10 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
   - búsqueda por nombre y ciudad, sin distinguir mayúsculas ni tildes;
   - filtro `all`, `active` o `inactive`;
   - estados `loading`, `ready`, `empty` y `error`, con reintento.
-- [ ] T015 [P] Escribir `frontend/src/app/features/home/home-summary.service.spec.ts` y crear `home-summary.service.ts`. El servicio combina `AcademyContextService`, `HomeSummaryRepository` y `FileStorageRepository` (logo o, si no hay, iniciales de máximo 2 letras), con los estados `loading`, `ready` y `error`
+- [ ] T015 [P] Escribir `frontend/src/app/features/home/home-summary.service.spec.ts` y crear `home-summary.service.ts`. El servicio:
+  - combina `AcademyContextService` (nombre y `logoFileId`), `HomeSummaryRepository` y `FileStorageRepository.getUrl()`;
+  - sin logo, o si falla su URL, usa iniciales de máximo 2 letras, sin poner la página en error;
+  - expone los estados `loading`, `ready` y `error`.
 
 **Checkpoint**: `npm run test:ci` en verde; la capa de datos está lista sin interfaz.
 
@@ -116,7 +123,7 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 
 - [ ] T020 [US2] Leer `.claude/skills/impeccable/reference/new-work.md` (sección "Create or replace the visual world"). Preparar el material de los pasos 1 a 3: el mecanismo del producto, la escena del owner (celular, en la cancha o en la oficina), su mundo cultural (fútbol de academias en Colombia) y el "rut" de la categoría. Partir de las referencias del brief de T-01
 - [ ] T021 [US2] Ejecutar `.claude/skills/impeccable/scripts/impeccable.cmd concept-seed --scope direction --mode operate` y seguir lo que imprime (MODE RULES, DIRECTIONS). No escribir muestras antes de este paso
-- [ ] T022 [US2] Construir, por cada dirección (2 o 3) y para la salida "estándar de la categoría", muestras HTML code-led bajo `.impeccable/`:
+- [ ] T022 [US2] Construir, por cada dirección (2 o 3) y para la salida "estándar de la categoría", muestras HTML code-led en `.impeccable/mocks/decision/` (ignorada por T002):
   - el inicio de sesión y la pantalla de sedes con datos de ejemplo;
   - a 360 y a 1280 px, en modo claro y oscuro;
   - solo con lo que la base adoptada permite construir (FR-004).
@@ -155,7 +162,7 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 - [ ] T032 [US3] Ajustar `frontend/src/assets/layout/variables/_light.scss`, `_dark.scss` y `_common.scss` solo donde el layout no lea ya los tokens `--p-*` (fondo del layout, sombras, bordes del chasis)
 - [ ] T033 [P] [US3] Crear `frontend/src/app/shared/components/brand-mark/brand-mark.ts` (marca tipográfica de la dirección, entrada `size`) con su `brand-mark.spec.ts` (texto accesible "PlayerTech")
 - [ ] T034 [US3] Verificar los contrastes de los pares de tokens de `contracts/ui-contracts.md` en ambos modos con un script del scratchpad. Ajustar el tono (no la dirección) si alguno no cumple y anotar el ajuste para `DESIGN.md`
-- [ ] T035 [US3] Ejecutar `npm run lint`, `npm run check:styles`, `npm run test:ci` y `npm run build` y recorrer las pantallas existentes en ambos modos con capturas a 360 y 1280 px
+- [ ] T035 [US3] Ejecutar `npm run lint`, `npm run check:styles`, `npm run test:ci` y `npm run build` y recorrer las pantallas existentes en ambos modos con capturas a 360 y 1280 px. Comprobar además el escenario 3 de la Historia 3: montar en una página temporal, que no se versiona, componentes aún no usados (`p-datepicker`, `p-select`, `p-fileupload`, `p-dialog`) y verificar que adoptan la identidad sin ajustes. Después se borra la página
 
 **Checkpoint**: identidad aplicada a toda la aplicación por tokens.
 
@@ -200,31 +207,34 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 - [ ] T046 [US5] Rediseñar `frontend/src/app/features/auth/register/register.ts` (orden de campos, agrupación, mensajes y aceptación legal) con las observaciones, conservando validaciones y comportamiento. Actualizar `register.spec.ts` solo en los textos consultados
 - [ ] T047 [P] [US5] Aplicar la identidad y revisar los textos de `verify-email`, `forgot-password`, `reset-password`, `callback`, `access-denied` y `suspended` en `frontend/src/app/features/auth/`, ajustando sus `*.spec.ts` solo en textos
 - [ ] T048 [P] [US5] Aplicar la identidad a `frontend/src/app/features/errors/not-found/not-found.ts` y `context-error/context-error.ts`
-- [ ] T049 [US5] Pasar `/impeccable critique`, `/impeccable audit` y `/impeccable polish` sobre el inicio de sesión y el registro, y corregir los hallazgos. Validar el registro completo en el celular en menos de 3 minutos (SC-006)
+- [ ] T049 [US5] Pasar `/impeccable critique`, `/impeccable audit` y `/impeccable polish` sobre el inicio de sesión y el registro, y corregir los hallazgos
+- [ ] T050 [US5] Pasar `/impeccable audit` y `/impeccable polish` sobre las 8 pantallas de T047 y T048, a 360 px en ambos modos, y corregir los hallazgos (principio XIII)
+- [ ] T051 [US5] ⏸ Decisión: validar SC-006 con una persona que no haya visto la pantalla (el responsable de producto u otra persona que designe), en su celular y sin ayuda, cronometrando desde que abre `/auth/register` hasta que llega al inicio, verificación por Mailpit incluida. Anotar el tiempo en los resultados de `quickstart.md`
 
 ### Sedes
 
-- [ ] T050 [P] [US5] Escribir `frontend/src/app/features/venues/venues-page/venues-page.spec.ts`. Debe cubrir:
+- [ ] T052 [P] [US5] Escribir `frontend/src/app/features/venues/venues-page/venues-page.spec.ts`. Debe cubrir:
   - encabezado con "Nueva sede";
   - las dos vistas (lista de tarjetas y tabla) con los datos del servicio;
   - la marca "Principal" y el estado "Activa"/"Inactiva";
   - búsqueda y filtro;
   - estado vacío y de error con reintento;
   - drawer con "Guardar" deshabilitado y "Disponible próximamente";
+  - al cerrar el drawer con cambios, confirmación "¿Descartar los cambios?"; sin cambios, se cierra sin preguntar;
   - "Desactivar" y "Eliminar" deshabilitados.
-- [ ] T051 [US5] Crear `frontend/src/app/features/venues/venues-page/venues-page.ts` según `contracts/ui-contracts.md`:
+- [ ] T053 [US5] Crear `frontend/src/app/features/venues/venues-page/venues-page.ts` según `contracts/ui-contracts.md`:
   - `PageHeader`, buscador y filtro;
   - `p-table` (ordenamiento y paginación de 10) visible desde `md`, y lista de tarjetas por debajo;
   - `p-tag` y `p-menu` por fila;
   - estados de carga, vacío y error.
-- [ ] T052 [US5] Añadir a `venues-page.ts` el drawer de maqueta (FR-018a): `p-drawer` con los campos de HU-029 (vacíos al crear, con los valores actuales al editar), "Cancelar" activo, "Guardar" deshabilitado y `p-message` "Disponible próximamente". Ninguna llamada de escritura. Debe pasar T050
-- [ ] T053 [US5] Crear `frontend/src/app/features/venues/venues.routes.ts` y montarlo desde `frontend/src/app/features/settings/settings.routes.ts` en `venues`, sustituyendo el placeholder (título "Sedes · PlayerTech")
+- [ ] T054 [US5] Añadir a `venues-page.ts` el drawer de maqueta (FR-018a): `p-drawer` con los campos de HU-029 (vacíos al crear, con los valores actuales al editar), "Cancelar" activo, "Guardar" deshabilitado y `p-message` "Disponible próximamente". Al cerrarlo con cambios sin guardar, `p-confirmdialog` "¿Descartar los cambios?" (`contracts/ui-contracts.md`). Ninguna llamada de escritura. Debe pasar T052
+- [ ] T055 [US5] Crear `frontend/src/app/features/venues/venues.routes.ts` y montarlo desde `frontend/src/app/features/settings/settings.routes.ts` en `venues`, sustituyendo el placeholder (título "Sedes · PlayerTech")
 
 ### Inicio
 
-- [ ] T054 [P] [US5] Escribir `frontend/src/app/features/home/home-page/home-page.spec.ts`: nombre de la academia, iniciales sin logo, plan, sede principal, estado vacío sin sede principal, estado de error con reintento, y tarjeta "Completa tu academia" con tres enlaces y sin contador
-- [ ] T055 [US5] Crear `frontend/src/app/features/home/home-page/home-page.ts` según el patrón de inicio con tareas pendientes de `ui.md`, con `PageHeader`, resumen real y la tarjeta de maqueta, hasta que pase T054
-- [ ] T056 [US5] Sustituir el placeholder en `frontend/src/app/features/home/home.routes.ts` por `HomePage` (título "Inicio · PlayerTech")
+- [ ] T056 [P] [US5] Escribir `frontend/src/app/features/home/home-page/home-page.spec.ts`: nombre de la academia, iniciales sin logo, plan, sede principal, estado vacío sin sede principal, estado de error con reintento, y tarjeta "Completa tu academia" con tres enlaces y sin contador
+- [ ] T057 [US5] Crear `frontend/src/app/features/home/home-page/home-page.ts` según el patrón de inicio con tareas pendientes de `ui.md`, con `PageHeader`, resumen real y la tarjeta de maqueta, hasta que pase T056
+- [ ] T058 [US5] Sustituir el placeholder en `frontend/src/app/features/home/home.routes.ts` por `HomePage` (título "Inicio · PlayerTech")
 
 **Checkpoint**: las cuatro pantallas modelo funcionan con datos reales en el celular.
 
@@ -236,9 +246,9 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 
 **Prueba independiente**: En sedes, a 360 px, listado sin desplazamiento horizontal y drawer a pantalla completa con las acciones visibles.
 
-- [ ] T057 [US6] Ligar `[fullScreen]` del drawer de `venues-page.ts` a una señal de `BreakpointObserver` (`@angular/cdk/layout`) por debajo de `md`. Dejar el pie de acciones siempre visible y añadir el caso al `venues-page.spec.ts` con el observador simulado (research R8)
-- [ ] T058 [US6] Comprobar en las tarjetas los textos largos (recorte con el texto completo accesible), el botón de acciones de 44 px y la ausencia de desplazamiento horizontal. Validar con una sede de 60 caracteres renombrada en local
-- [ ] T059 [US6] Pasar `/impeccable critique`, `/impeccable audit` y `/impeccable polish` sobre sedes e inicio a 360 y 1280 px en ambos modos, y corregir los hallazgos (FR-021)
+- [ ] T059 [US6] Ligar `[fullScreen]` del drawer de `venues-page.ts` a una señal de `BreakpointObserver` (`@angular/cdk/layout`) por debajo de `md`. Dejar el pie de acciones siempre visible y añadir el caso al `venues-page.spec.ts` con el observador simulado (research R8)
+- [ ] T060 [US6] Comprobar en las tarjetas los textos largos (recorte con el texto completo accesible), el botón de acciones de 44 px y la ausencia de desplazamiento horizontal. Validar con una sede de 60 caracteres renombrada en local
+- [ ] T061 [US6] Pasar `/impeccable critique`, `/impeccable audit` y `/impeccable polish` sobre sedes e inicio a 360 y 1280 px en ambos modos, y corregir los hallazgos (FR-021)
 
 **Checkpoint**: patrones móviles validados.
 
@@ -250,10 +260,10 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 
 **Prueba independiente**: Registro y recuperación en local, con los dos correos revisados en Mailpit y su botón completando el proceso.
 
-- [ ] T060 [P] [US7] Crear `supabase/templates/confirmation.html` según `contracts/email-templates.md`: maquetación con tablas y estilos en línea, marca en texto, botón y enlace en texto con `{{ .ConfirmationURL }}`, vigencia, y colores tomados de los tokens elegidos
-- [ ] T061 [P] [US7] Crear `supabase/templates/recovery.html` con la misma estructura y el texto para quien no solicitó el cambio
-- [ ] T062 [US7] Registrar las dos plantillas con sus asuntos en `supabase/config.toml` (`[auth.email.template.confirmation]` y `[auth.email.template.recovery]`). Revisar los textos con `/impeccable clarify`
-- [ ] T063 [US7] Reiniciar Supabase local (`npm run db:stop` y `npm run db:start`) y validar los dos correos en Mailpit según la sección 6 de `quickstart.md`: vista móvil, vista sin imágenes y el botón completando la verificación y la recuperación (SC-007)
+- [ ] T062 [P] [US7] Crear `supabase/templates/confirmation.html` según `contracts/email-templates.md`: maquetación con tablas y estilos en línea, marca en texto, botón y enlace en texto con `{{ .ConfirmationURL }}`, vigencia, y colores tomados de los tokens elegidos
+- [ ] T063 [P] [US7] Crear `supabase/templates/recovery.html` con la misma estructura y el texto para quien no solicitó el cambio
+- [ ] T064 [US7] Registrar las dos plantillas con sus asuntos en `supabase/config.toml` (`[auth.email.template.confirmation]` y `[auth.email.template.recovery]`). Revisar los textos con `/impeccable clarify`
+- [ ] T065 [US7] Reiniciar Supabase local (`npm run db:stop` y `npm run db:start`) y validar los dos correos en Mailpit según la sección 6 de `quickstart.md`: vista móvil, vista sin imágenes y el botón completando la verificación y la recuperación (SC-007)
 
 **Checkpoint**: correos validados en local.
 
@@ -263,25 +273,27 @@ description: "Lista de tareas para implementar el sistema de diseño PlayerTech 
 
 **Propósito**: Documentar el sistema desde lo construido, validar de punta a punta y cerrar T-01.
 
-- [ ] T064 Generar `DESIGN.md` en la raíz con el documentador de Impeccable (`/impeccable document` o el agente `impeccable-documenter`) a partir de la aplicación construida. Revisar que incluya:
+- [ ] T066 Generar `DESIGN.md` en la raíz con el documentador de Impeccable (`/impeccable document` o el agente `impeccable-documenter`) a partir de la aplicación construida. Revisar que incluya:
   - tokens, tipografía, color, marca, estados y reglas de uso;
   - los ajustes de contraste de T034;
   - la correspondencia con el preset;
   - la nota sobre el HTML de correo (research R10).
-- [ ] T065 [P] Actualizar `docs/architecture/ui.md`:
+- [ ] T067 [P] Actualizar `docs/architecture/ui.md`:
   - la sección "Tema" pasa a enlazar a `DESIGN.md`;
   - añadir el encabezado de página, la variante móvil del patrón de gestión, la maqueta de escritura y las pantallas modelo como referencia.
-- [ ] T066 [P] Actualizar `docs/architecture/decisions.md`:
+- [ ] T068 [P] Actualizar `docs/architecture/decisions.md`:
   - enmendar FE-06 (preset definitivo, tipografía alojada en el proyecto, preferencia del sistema);
   - añadir a ADR-003 la nota de T-01 (la calidad visual no es *gold plating*).
-- [ ] T067 [P] Actualizar `docs/architecture/frontend.md`: `features/venues/` y `features/home/data/`, `shared/components/page-header` y `brand-mark`, y la nota sobre la carga de la tipografía
-- [ ] T068 [P] Actualizar el backlog:
+- [ ] T069 [P] Actualizar `docs/architecture/frontend.md`: `features/venues/` y `features/home/data/`, `shared/components/page-header` y `brand-mark`, y la nota sobre la carga de la tipografía
+- [ ] T070 [P] Actualizar el backlog:
   - `docs/backlog/enablers/T-01-design-system.md`: estado Terminado y evidencia por criterio;
   - `HU-030` y `HU-032`: nota "Versión de lectura disponible" con lo que falta.
-- [ ] T069 Ejecutar todos los controles automáticos de la sección 1 de `quickstart.md` (`lint`, `check:styles`, `test:ci`, `build` y `check:bundle`) y comprobar que el bundle inicial no crece más de 50 KB
-- [ ] T070 Recorrer las secciones 3 a 6 de `quickstart.md` con los scripts del scratchpad (capturas, áreas táctiles, desplazamiento y contraste) y anotar los resultados en la sección "Resultados"
-- [ ] T071 ⏸ Decisión: revisión final de las pantallas modelo con el responsable de producto, en su celular, y aplicación de los ajustes acordados
-- [ ] T072 Marcar las tareas completadas en este archivo y preparar el resumen para el PR
+- [ ] T071 Ejecutar todos los controles automáticos de la sección 1 de `quickstart.md` (`lint`, `check:styles`, `test:ci`, `build` y `check:bundle`) y comprobar que el bundle inicial no crece más de 50 KB
+- [ ] T072 Recorrer las secciones 3 a 6 de `quickstart.md` con los scripts del scratchpad (capturas, áreas táctiles, desplazamiento y contraste) y anotar los resultados en la sección "Resultados". Incluir dos comprobaciones manuales explícitas:
+  - movimiento reducido emulado (FR-011), porque no tiene prueba automática;
+  - revisión de todos los textos de la interfaz y de los correos frente a `docs/product/glossary.md` (FR-022).
+- [ ] T073 ⏸ Decisión: revisión final de las pantallas modelo con el responsable de producto, en su celular, y aplicación de los ajustes acordados
+- [ ] T074 Marcar las tareas completadas en este archivo y preparar el resumen para el PR
 
 ---
 
@@ -309,9 +321,9 @@ Primero las pruebas, que deben fallar; después la implementación; por último 
 - Fase 1: T003 y T005.
 - Fase 2: T007 a T010; después T014 y T015.
 - Fase 5: T026, T029 y T033.
-- Fase 7: T047 y T048; T050 y T054.
-- Fase 9: T060 y T061, en paralelo con las Fases 6 a 8.
-- Fase 10: T065 a T068.
+- Fase 7: T047 y T048; T052 y T056.
+- Fase 9: T062 y T063, en paralelo con las Fases 6 a 8.
+- Fase 10: T067 a T070.
 
 ### Ejemplo de paralelismo en la Fase 2
 
@@ -341,6 +353,7 @@ T008 home-summary.models.ts
 ## Notas
 
 - `[P]` = archivos distintos y sin dependencias pendientes.
+- SC-008 es un criterio cualitativo posterior a la entrega (se comprobará en la primera gestión de la Fase 2) y no tiene tarea propia.
 - Las tareas con ⏸ detienen la implementación hasta tener la respuesta del responsable de producto; no se suponen respuestas.
 - La integración real con Supabase y la verificación visual se validan con `quickstart.md`; las pruebas unitarias usan dobles.
 - Ante una contradicción entre las tareas, el plan, la Constitución o los ADR, detenerse y resolverla con el flujo de Spec Kit.

@@ -25,7 +25,7 @@ Cada decisión sigue el formato: decisión, motivo y alternativas descartadas.
 ## R2 — Muestras de las direcciones
 
 **Decisión**: Cada dirección se muestra con el **inicio de sesión** y una **pantalla interna** (la de sedes, con datos de ejemplo), a 360 px y a 1280 px, en modo claro y oscuro.
-- Las muestras son HTML autónomo servido por la página de decisión de Impeccable desde `.impeccable/`. No forman parte de la aplicación ni de su compilación.
+- Las muestras son HTML autónomo servido por la página de decisión de Impeccable desde `.impeccable/mocks/decision/`. No forman parte de la aplicación ni de su compilación.
 - Se añaden a `.gitignore` las rutas de muestras que la skill no ignora ya.
 - La evidencia de la elección (capturas y el porqué) queda resumida en `DESIGN.md` y en el registro de decisiones.
 

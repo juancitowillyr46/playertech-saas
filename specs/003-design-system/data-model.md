@@ -33,7 +33,7 @@ Estado de la vista: `loading → ready | empty | error`. La búsqueda (por nombr
 | Campo | Tipo | Origen | Reglas |
 |---|---|---|---|
 | `academyName` | `string` | Contexto de academia existente | — |
-| `logoUrl` | `string \| null` | `academies.logo_file_id` → `FileStorageRepository` | Sin logo se muestran las iniciales del nombre (máximo 2 letras) |
+| `logoUrl` | `string \| null` | `academies.logo_file_id` → fila de `files` (`StoredFile`) → `FileStorageRepository.getUrl()` | Sin logo, o si la URL falla, se muestran las iniciales del nombre (máximo 2 letras) |
 | `planName` | `string \| null` | `subscriptions` (activa) → `plans.name` | Sin suscripción activa se muestra "Sin plan activo" |
 | `primaryVenue` | `{ name: string; city: string \| null } \| null` | `venues` con `is_primary` y no eliminada | Sin sede principal se muestra un estado vacío con enlace a Sedes |
 

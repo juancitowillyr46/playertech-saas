@@ -52,7 +52,8 @@ En ambos casos: buscador y filtro de estado encima, estado vacío ("Aún no hay 
 |---|---|
 | "Nueva sede" y "Editar" | Abren `p-drawer`: a la derecha en escritorio, a pantalla completa en móvil (`[fullScreen]`). El formulario muestra los campos de HU-029 y los valores actuales al editar |
 | Pie del drawer | "Cancelar" activo; "Guardar" deshabilitado; `p-message` informativo "Disponible próximamente" visible sin desplazarse |
-| "Desactivar" y "Eliminar" en el menú de fila | Deshabilitados, con el texto "Próximamente" |
+| Cerrar el drawer con cambios sin guardar | `p-confirmdialog` "¿Descartar los cambios?" con "Seguir editando" y "Descartar". Es la confirmación real del patrón, no una maqueta |
+| "Desactivar" y "Eliminar" en el menú de fila | Deshabilitados, con el texto "Próximamente". La confirmación de eliminar y el aviso (`p-toast`) tras guardar quedan definidos por tokens y en `DESIGN.md`, y se usan por primera vez en HU-031 |
 | "Completa tu academia" | Lista de tareas con enlace; sin contador ni estado de completado |
 
 Ninguna acción de la maqueta llama a un repositorio de escritura.
