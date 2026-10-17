@@ -1,11 +1,14 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MenuItem } from 'primeng/api';
 import { RippleModule } from 'primeng/ripple';
 import { LayoutService } from '@/app/layout/service/layout.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
+    // Selector de atributo del layout adoptado de SakaiNG: se aplica sobre <li> para conservar la semántica de lista.
+    // eslint-disable-next-line @angular-eslint/component-selector
     selector: '[app-menuitem]',
     imports: [CommonModule, RouterModule, RippleModule],
     template: `
@@ -49,7 +52,7 @@ import { filter } from 'rxjs/operators';
         @if (hasChildren() && isVisible() && (root() || isActive())) {
             <ul [animate.enter]="initialized() ? 'p-submenu-enter' : null" [animate.leave]="'p-submenu-leave'" [class.layout-root-submenulist]="root()">
                 @for (child of item().items; track child?.label) {
-                    <li app-menuitem [item]="child" [parentPath]="fullPath()" [root]="false" [class]="child['badgeClass']"></li>
+                    <li app-menuitem [item]="child" [parentPath]="fullPath()" [root]="false" [class]="child.badgeClass"></li>
                 }
             </ul>
         }
@@ -92,12 +95,12 @@ import { filter } from 'rxjs/operators';
         `
     ]
 })
-export class AppMenuitem {
+export class AppMenuitem implements OnInit, AfterViewInit {
     layoutService = inject(LayoutService);
 
     router = inject(Router);
 
-    item = input<any>(null);
+    item = input.required<AppMenuItem>();
 
     root = input<boolean>(false);
 
@@ -105,7 +108,7 @@ export class AppMenuitem {
 
     isVisible = computed(() => this.item()?.visible !== false);
 
-    hasChildren = computed(() => this.item()?.items && this.item()?.items.length > 0);
+    hasChildren = computed(() => (this.item().items?.length ?? 0) > 0);
 
     hasRouterLink = computed(() => !!this.item()?.routerLink);
 
@@ -206,4 +209,12 @@ export class AppMenuitem {
             }));
         }
     }
+}
+
+/** Entrada del menú del layout: `MenuItem` de PrimeNG con los campos propios de SakaiNG. */
+export interface AppMenuItem extends MenuItem {
+    path?: string;
+    class?: string;
+    badgeClass?: string;
+    items?: AppMenuItem[];
 }

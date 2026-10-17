@@ -49,7 +49,7 @@ Decisiones técnicas que resuelven las incógnitas del contexto técnico de `pla
 
 **Justificación:** es el camino oficial de Angular 21 para Vitest (`@angular/build` declara `vitest ^4.0.8`), sin configuración propia de Vite. jsdom 27 es compatible con Node 20, 22 y 24.
 
-**Pruebas de componentes:** se usan las utilidades de Angular (`TestBed`). Angular Testing Library (`docs/engineering/testing.md`) se incorpora cuando lleguen las pantallas con formularios (HU-001), donde aporta valor (principio II).
+**Pruebas de componentes:** **Angular Testing Library** (`@testing-library/angular` 19.5.0, `@testing-library/dom` 10.4.2 y `@testing-library/user-event` 14.6.7), como indica `docs/engineering/testing.md`. Decisión del responsable (2026-10-16, tras la etapa 1): se adopta ya, porque la Historia 7 trae cinco pantallas con formularios. Las pruebas buscan elementos por rol y etiqueta (`getByRole`, `getByLabelText`) e interactúan con `userEvent`, lo que además verifica que las etiquetas sean accesibles. Las pruebas unitarias de servicios, repositorios y guards siguen con `TestBed`. Son dependencias de desarrollo: no llegan al navegador.
 
 **Alternativas consideradas:** Jest (Angular lo abandonó); Vitest con configuración propia (`@analogjs/vitest-angular`), innecesaria con el builder oficial.
 
@@ -174,6 +174,19 @@ La verificación de producción es **estática** (sobre `dist/`): la configuraci
 **Alcance de la versión básica:** los campos y validaciones de FR-036, mensajes de `contracts/app-errors.md`, las reglas de formularios de `docs/architecture/ui.md` y pruebas de componentes. **Queda para las HU:** reenvío del correo de verificación, cualquier criterio de aceptación adicional de sus HU y la revisión de diseño de T-01.
 
 **Documentos legales:** `LegalDocumentsRepository.getCurrent()` lee las versiones vigentes y sus enlaces; el registro envía esas versiones en los metadatos (contrato de la spec 001), de modo que siempre coinciden con las que valida el trigger.
+
+## R18 — Actualización de seguridad durante la implementación (Fase 1)
+
+**Hallazgo:** `npm audit` mostró vulnerabilidades altas en Angular 21.0.x (framework) y críticas en el compilador basado en webpack (`@angular-devkit/build-angular` → `piscina`, `webpack-dev-server`).
+
+**Decisión:**
+- Angular **21.2.25** (framework) y PrimeNG **21.1.10**, con `@angular/cdk` **21.2.14** (dependencia par de PrimeNG 21.1). Misma versión mayor; ADR-015 no cambia.
+- CLI y `@angular/build` **21.2.27**: es una corrección de seguridad crítica publicada el 2026-10-15, por lo que se exceptúa la regla de dos semanas.
+- Los builders pasan de `@angular-devkit/build-angular:*` a **`@angular/build:*`** (el compilador oficial de Angular 21, basado en esbuild y Vite) y se retira `@angular-devkit/build-angular`, que arrastraba webpack (413 paquetes menos).
+- Las dependencias de desarrollo tienen versión exacta.
+- npm 11 bloquea los scripts de instalación de dependencias por defecto. `esbuild`, `lmdb`, `msgpackr-extract` y `@parcel/watcher` traen binarios precompilados para Windows; no se aprueban sus scripts mientras la compilación funcione sin ellos.
+
+**Riesgo aceptado:** quedan `picomatch` (alta) y `ajv` (moderada) dentro de las herramientas del CLI (`@angular-devkit/core` fija sus versiones), solo explotables con patrones o esquemas controlados por un atacante y sin llegar al navegador; y `quill` (baja), usado solo por las demos. Se revisan en la próxima actualización del CLI.
 
 ## R16 — Presupuesto del bundle
 

@@ -8,7 +8,7 @@ Los repositorios convierten cualquier error del proveedor en un `AppError` con u
 | `email_not_confirmed` | Auth `email_not_confirmed` | Debes verificar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada. |
 | `weak_password` | Auth `weak_password` | La contraseña debe tener al menos 8 caracteres. |
 | `link_invalid` | Auth `otp_expired`, `bad_code_verifier` o código rechazado; parámetros `error` en la URL | El enlace venció o ya fue usado. |
-| `other_browser` | Auth `flow_state_not_found` o falta el verificador PKCE | Abriste el enlace en otro navegador. (Texto completo en [routes.md](routes.md)) |
+| `other_browser` | Auth `flow_state_not_found` o `pkce_code_verifier_not_found` (falta el verificador PKCE en este navegador) | Abriste el enlace en otro navegador. (Texto completo en [routes.md](routes.md)) |
 | `rate_limited` | Auth `over_email_send_rate_limit`, `over_request_rate_limit` | Hiciste demasiados intentos. Espera unos minutos y vuelve a intentarlo. |
 | `network` | Fallo de `fetch` (sin conexión) | No pudimos conectarnos. Revisa tu conexión e inténtalo de nuevo. |
 | `forbidden` | PostgreSQL `42501` (RLS o privilegios) | No tienes permiso para realizar esta acción. |

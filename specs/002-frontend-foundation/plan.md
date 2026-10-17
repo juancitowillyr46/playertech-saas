@@ -18,11 +18,11 @@ La regla de importaciones de ESLint y un script sobre el bundle hacen verificabl
 
 **Lenguaje/versión**: TypeScript 5.9 (modo estricto) sobre **Node 24 LTS** (R1)
 
-**Dependencias principales**: Angular 21.0, PrimeNG 21.0 con `@primeuix/themes` (Aura), Tailwind CSS 4.1 con `tailwindcss-primeui`, `@supabase/supabase-js` 2.117.2 (R4)
+**Dependencias principales**: Angular 21.2 con el compilador `@angular/build` (R18), PrimeNG 21.1 con `@primeuix/themes` (Aura), Tailwind CSS 4.1 con `tailwindcss-primeui`, `@supabase/supabase-js` 2.117.2 (R4)
 
 **Almacenamiento**: Supabase local de la spec 001 (PostgreSQL con RLS, Auth y Storage); sesión persistida por el cliente de Supabase en `localStorage`
 
-**Pruebas**: Vitest 4.1.11 con `@angular/build:unit-test` y jsdom 27.4.0 (R3); validación manual con `quickstart.md`
+**Pruebas**: Vitest 4.1.11 con `@angular/build:unit-test` y jsdom 27.4.0; componentes con Angular Testing Library 19.5.0 (R3); validación manual con `quickstart.md`
 
 **Plataforma objetivo**: navegadores modernos, móvil primero desde 360 px de ancho
 
@@ -68,7 +68,7 @@ La implementación DEBE leer estos documentos antes de empezar y aplicarlos junt
 | Principio | Estado | Evidencia |
 |---|---|---|
 | I. SDD | ✅ Cumple | La spec proviene del habilitador T-00 (áreas 7 y 8) y referencia CA-007 a CA-009 |
-| II. Simplicidad | ✅ Cumple | Herramientas oficiales (builder de Vitest de Angular, schematic de `angular-eslint`); sin librerías de estado ni de i18n; Angular Testing Library se pospone (R3); sin RPC nueva para el contexto (R6) |
+| II. Simplicidad | ✅ Cumple | Herramientas oficiales (builder de Vitest de Angular, schematic de `angular-eslint`); sin librerías de estado ni de i18n; Angular Testing Library solo como dependencia de desarrollo, prevista en `testing.md` (R3); sin RPC nueva para el contexto (R6) |
 | III. Separación de responsabilidades | ✅ Cumple | Página → servicio → repositorio abstracto → implementación Supabase; regla de importaciones en ESLint (R2) |
 | IV. Reutilización controlada | ✅ Cumple | Se adopta el layout existente; no se crean componentes que reemplacen a PrimeNG |
 | V. Base tecnológica | ✅ Cumple | Layout adoptado modificado en sus archivos; demos intactas y solo en desarrollo; tema por preset (R12) |
