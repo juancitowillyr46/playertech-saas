@@ -3,6 +3,8 @@
 **Épica:** EP-00 — Alta de academia · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
 **Spec:** pendiente
 
+> **Versión básica disponible:** la spec 002 (`specs/002-frontend-foundation/`, Historia 7) construyó una versión básica funcional de esta pantalla en `frontend/src/app/features/auth/`. Esta HU la **completa** con todos sus criterios de aceptación y la revisión de diseño de T-01; no la reemplaza.
+
 ## Historia de usuario
 
 > Como **visitante**, quiero registrar mi academia y mi cuenta de owner, para empezar a gestionar mi academia en PlayerTech.

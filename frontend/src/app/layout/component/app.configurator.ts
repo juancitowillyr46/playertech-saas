@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, computed, inject, PLATFORM_ID, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { $t, updatePreset, updateSurfacePalette } from '@primeuix/themes';
@@ -18,7 +18,7 @@ const presets = {
 
 declare type KeyOfType<T> = keyof T extends infer U ? U : never;
 
-declare type SurfacesType = {
+interface SurfacesType {
     name?: string;
     palette?: {
         0?: string;
@@ -34,7 +34,7 @@ declare type SurfacesType = {
         900?: string;
         950?: string;
     };
-};
+}
 
 @Component({
     selector: 'app-configurator',
@@ -85,17 +85,19 @@ declare type SurfacesType = {
                 <span class="text-sm text-muted-color font-semibold">Presets</span>
                 <p-selectbutton [options]="presets" [ngModel]="selectedPreset()" (ngModelChange)="onPresetChange($event)" [allowEmpty]="false" size="small" />
             </div>
-            <div *ngIf="showMenuModeButton()" class="flex flex-col gap-2">
-                <span class="text-sm text-muted-color font-semibold">Menu Mode</span>
-                <p-selectbutton [ngModel]="menuMode()" (ngModelChange)="onMenuModeChange($event)" [options]="menuModeOptions" [allowEmpty]="false" size="small" />
-            </div>
+            @if (showMenuModeButton()) {
+                <div class="flex flex-col gap-2">
+                    <span class="text-sm text-muted-color font-semibold">Menu Mode</span>
+                    <p-selectbutton [ngModel]="menuMode()" (ngModelChange)="onMenuModeChange($event)" [options]="menuModeOptions" [allowEmpty]="false" size="small" />
+                </div>
+            }
         </div>
     `,
     host: {
         class: 'hidden absolute top-13 right-0 w-72 p-4 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border origin-top shadow-[0px_3px_5px_rgba(0,0,0,0.02),0px_0px_2px_rgba(0,0,0,0.05),0px_1px_4px_rgba(0,0,0,0.08)]'
     }
 })
-export class AppConfigurator {
+export class AppConfigurator implements OnInit {
     router = inject(Router);
 
     config: PrimeNG = inject(PrimeNG);
@@ -414,18 +416,18 @@ export class AppConfigurator {
         }
     }
 
-    updateColors(event: any, type: string, color: any) {
+    updateColors(event: Event, type: string, color: SurfacesType) {
         if (type === 'primary') {
-            this.layoutService.layoutConfig.update((state) => ({ ...state, primary: color.name }));
+            this.layoutService.layoutConfig.update((state) => ({ ...state, primary: color.name ?? state.primary }));
         } else if (type === 'surface') {
-            this.layoutService.layoutConfig.update((state) => ({ ...state, surface: color.name }));
+            this.layoutService.layoutConfig.update((state) => ({ ...state, surface: color.name ?? state.surface }));
         }
         this.applyTheme(type, color);
 
         event.stopPropagation();
     }
 
-    applyTheme(type: string, color: any) {
+    applyTheme(type: string, color: SurfacesType) {
         if (type === 'primary') {
             updatePreset(this.getPresetExt());
         } else if (type === 'surface') {
@@ -433,7 +435,7 @@ export class AppConfigurator {
         }
     }
 
-    onPresetChange(event: any) {
+    onPresetChange(event: string) {
         this.layoutService.layoutConfig.update((state) => ({ ...state, preset: event }));
         const preset = presets[event as KeyOfType<typeof presets>];
         const surfacePalette = this.surfaces.find((s) => s.name === this.selectedSurfaceColor())?.palette;

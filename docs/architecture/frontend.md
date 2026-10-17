@@ -91,7 +91,9 @@ El layout de SakaiNG (`layout/`) se **adopta como código propio de PlayerTech**
 - La marca (logo y nombre) es configurable.
 - El configurador de temas no se muestra al usuario final.
 
-Esta adopción es una excepción controlada al principio V de la Constitución, documentada en ADR-015. Las actualizaciones de SakaiNG que afecten a `layout/` se integran según `docs/engineering/sakai-upstream.md`.
+Desde la Constitución 3.1.0, el principio V distingue el **layout adoptado** (código propio de PlayerTech, modificable con cambios mínimos y controlados) de las **demos** de SakaiNG (solo referencia), así que esta adopción ya no es una excepción (ADR-015). Las actualizaciones de SakaiNG que afecten a `layout/` se integran según `docs/engineering/sakai-upstream.md`.
+
+La tipografía y los estilos base de SakaiNG (`_core.scss`, `_typography.scss`) viven en la capa CSS `sakai`, entre la base y las utilidades de Tailwind, para que las utilidades puedan ajustar títulos y párrafos sin sobrescrituras.
 
 ### Demos de SakaiNG
 
@@ -116,7 +118,9 @@ PRIVADAS — AppLayout (authGuard + membershipGuard)
 /settings/venues          HU-029, HU-030, HU-031
 
 SOLO DESARROLLO
-/dev/**                   Demos de SakaiNG
+/dev/**                   Solo demos de SakaiNG. Ninguna funcionalidad de PlayerTech se ubica aquí.
+                          En producción no existen: features/dev/dev-extras.ts se sustituye por
+                          una versión vacía (fileReplacements) y npm run check:bundle lo verifica.
 
 /        → /home
 **       → página 404 de PlayerTech

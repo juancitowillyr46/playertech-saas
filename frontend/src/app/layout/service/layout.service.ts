@@ -17,15 +17,35 @@ interface LayoutState {
     activePath: string | null;
 }
 
+/** Preferencia de modo claro/oscuro guardada en el navegador (FR-032). */
+const DARK_THEME_KEY = 'playertech.darkTheme';
+
+function readDarkTheme(): boolean {
+    try {
+        return localStorage.getItem(DARK_THEME_KEY) === 'true';
+    } catch {
+        return false;
+    }
+}
+
+function writeDarkTheme(darkTheme: boolean): void {
+    try {
+        localStorage.setItem(DARK_THEME_KEY, String(darkTheme));
+    } catch {
+        // Sin almacenamiento (ventana privada, bloqueo): la preferencia dura solo esta sesión.
+    }
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class LayoutService {
+    // El tema lo fija el preset de PlayerTech (core/theme); el primario aquí solo informa al layout.
     layoutConfig = signal<LayoutConfig>({
         preset: 'Aura',
-        primary: 'emerald',
+        primary: 'blue',
         surface: null,
-        darkTheme: false,
+        darkTheme: readDarkTheme(),
         menuMode: 'static'
     });
 
@@ -55,6 +75,8 @@ export class LayoutService {
     private initialized = false;
 
     constructor() {
+        this.toggleDarkMode();
+
         effect(() => {
             const config = this.layoutConfig();
 
@@ -63,6 +85,7 @@ export class LayoutService {
                 return;
             }
 
+            writeDarkTheme(config.darkTheme);
             this.handleDarkModeTransition(config);
         });
     }

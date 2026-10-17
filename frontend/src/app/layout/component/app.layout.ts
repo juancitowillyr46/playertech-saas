@@ -14,9 +14,10 @@ import { LayoutService } from '@/app/layout/service/layout.service';
         <app-topbar></app-topbar>
         <app-sidebar></app-sidebar>
         <div class="layout-main-container">
-            <div class="layout-main">
+            <!-- <main> como landmark del contenido; los estilos dependen de la clase. -->
+            <main class="layout-main">
                 <router-outlet></router-outlet>
-            </div>
+            </main>
             <app-footer></app-footer>
         </div>
         <div class="layout-mask"></div>
