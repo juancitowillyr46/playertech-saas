@@ -1,7 +1,7 @@
 # T-01 — Sistema de diseño PlayerTech
 
 **Tipo:** Habilitador técnico (*enabler*) · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definido
-**Spec:** pendiente
+**Spec:** [`specs/003-design-system/`](../../../specs/003-design-system/spec.md) (en especificación)
 
 ## Propósito
 
