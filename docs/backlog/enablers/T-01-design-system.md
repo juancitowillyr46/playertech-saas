@@ -1,7 +1,19 @@
 # T-01 — Sistema de diseño PlayerTech
 
-**Tipo:** Habilitador técnico (*enabler*) · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definido
-**Spec:** pendiente
+**Tipo:** Habilitador técnico (*enabler*) · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Terminado (entorno local)
+**Spec:** [`specs/003-design-system/`](../../../specs/003-design-system/spec.md) (**implementada**)
+
+## Avance
+
+| Criterio | Estado | Evidencia |
+|---|---|---|
+| CA-001 — Brief aprobado | ✅ | `PRODUCT.md`, aprobado el 2026-10-17 |
+| CA-002 — Dirección visual elegida | ✅ | Dirección «Planilla», elegida entre tres en la página de decisión de Impeccable; registrada en `DESIGN.md` |
+| CA-003 — Tema aplicado por tokens | ✅ | Preset en `frontend/src/app/core/theme/`; `npm run check:styles` y `npm run lint` (sin `!important`, sin `.p-*`, sin estilos en línea) |
+| CA-004 — Móvil primero | ✅ | Chasis de app con navegación inferior; pantallas modelo sin desbordes a 360 px y con controles de 44 px o más (`specs/003-design-system/quickstart.md`) |
+| CA-005 — Accesibilidad | ✅ | Contraste AA medido en ambos modos, foco visible, etiquetas asociadas; detector de Impeccable sin hallazgos |
+| CA-006 — Modo claro y oscuro | ✅ | Ambos modos con la identidad; sigue la preferencia del dispositivo |
+| CA-007 — Correos con la identidad | ✅ (local) | `supabase/templates/`, validados en Mailpit; aplicarlos en la nube con el SMTP real queda en «Antes del piloto» |
 
 ## Propósito
 

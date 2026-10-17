@@ -81,6 +81,13 @@ Permitir que una academia se registre por su cuenta y quede creada como un tenan
 - Reenvío del correo de verificación desde la interfaz *(a confirmar en la spec)*.
 - Limpieza de registros no verificados (MVP+).
 
+## Posibles evoluciones
+
+Ideas del responsable de producto (2026-10-17) para una spec propia (`feat`). Cambiarían DEC-24 y los metadatos del registro de la spec 001:
+
+- Pedir en el registro datos de la sede principal, como la dirección.
+- Al terminar el registro, invitar de forma destacada a completar los datos de la sede principal.
+
 ## Decisiones relacionadas
 
 DEC-01, DEC-02, DEC-05, DEC-07, DEC-08, DEC-09, DEC-10, DEC-11, DEC-12, DEC-13, DEC-14, DEC-15, DEC-19, DEC-20, DEC-21, DEC-24 (ADR-012) y ADR-014.

@@ -20,6 +20,7 @@ Desde `frontend/`:
 | `npm test` | Pruebas con Vitest en modo observación |
 | `npm run test:ci` | Pruebas una sola vez, sin navegador |
 | `npm run check:bundle` | Verifica que la compilación de producción no contenga claves privilegiadas ni demos *(spec 002, Historia 6)* |
+| `npm run check:styles` | Verifica las reglas de estilos: sin `!important`, sin selectores `.p-*` y sin colores hexadecimales en plantillas *(spec 003, R11)* |
 
 ## Configuración
 

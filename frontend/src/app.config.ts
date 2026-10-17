@@ -14,6 +14,10 @@ import { SupabaseAuthRepository } from './app/core/auth/data/supabase-auth.repos
 import { APP_CONFIG, validateAppConfig } from './app/core/config/app-config';
 import { LegalDocumentsRepository } from './app/core/legal/data/legal-documents.repository';
 import { SupabaseLegalDocumentsRepository } from './app/core/legal/data/supabase-legal-documents.repository';
+import { HomeSummaryRepository } from './app/features/home/data/home-summary.repository';
+import { SupabaseHomeSummaryRepository } from './app/features/home/data/supabase-home-summary.repository';
+import { SupabaseVenueRepository } from './app/features/venues/data/supabase-venue.repository';
+import { VenueRepository } from './app/features/venues/data/venue.repository';
 import { FileStorageRepository } from './app/core/storage/data/file-storage.repository';
 import { SupabaseFileStorageRepository } from './app/core/storage/data/supabase-file-storage.repository';
 import { GlobalErrorHandler } from './app/core/errors/global-error-handler';
@@ -29,7 +33,8 @@ export const appConfig: ApplicationConfig = {
         provideRouter(appRoutes, withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }), withEnabledBlockingInitialNavigation(), withComponentInputBinding()),
         provideHttpClient(withFetch()),
         provideZonelessChangeDetection(),
-        providePrimeNG({ theme: { preset: PlayerTechPreset, options: { darkModeSelector: '.app-dark' } }, translation: PRIMENG_ES }),
+        // Estilos de PrimeNG en su propia capa, bajo las utilidades de Tailwind (orden en _core.scss).
+        providePrimeNG({ theme: { preset: PlayerTechPreset, options: { darkModeSelector: '.app-dark', cssLayer: { name: 'primeng', order: 'theme, base, sakai, primeng, components, utilities' } } }, translation: PRIMENG_ES }),
         { provide: LOCALE_ID, useValue: 'es-CO' },
         MessageService,
         { provide: ErrorHandler, useClass: GlobalErrorHandler },
@@ -39,6 +44,8 @@ export const appConfig: ApplicationConfig = {
         { provide: AcademyContextRepository, useClass: SupabaseAcademyContextRepository },
         { provide: LegalDocumentsRepository, useClass: SupabaseLegalDocumentsRepository },
         { provide: FileStorageRepository, useClass: SupabaseFileStorageRepository },
+        { provide: VenueRepository, useClass: SupabaseVenueRepository },
+        { provide: HomeSummaryRepository, useClass: SupabaseHomeSummaryRepository },
         provideAppInitializer(() => inject(AuthService).restore())
     ]
 };

@@ -17,4 +17,13 @@
     --focus-ring-color: var(--p-focus-ring-color);
     --focus-ring-offset: var(--p-focus-ring-offset);
     --focus-ring-shadow: var(--p-focus-ring-shadow);
+
+    // Chasis en tinta (dirección Planilla, DESIGN.md): topbar y menú lateral.
+    // Texto 12,6:1 y secundario 7,5:1 sobre la tinta.
+    --shell-background: var(--p-tinta-800);
+    --shell-color: var(--p-papel-100);
+    --shell-muted-color: #b9bdc6;
+    --shell-rule: color-mix(in srgb, var(--shell-color) 18%, transparent);
+    --shell-hover-background: color-mix(in srgb, var(--shell-color) 10%, transparent);
+    --shell-active-background: color-mix(in srgb, var(--shell-color) 16%, transparent);
 }

@@ -14,20 +14,26 @@ import { checkboxPt, FieldA11y, fieldA11y, passwordPt } from '../forms/field-a11
 import { RegistrationService } from '../services/registration.service';
 import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-match';
 
-/** Registro de una academia, versión básica (Historia 7 de la spec 002, FR-036). HU-014 la completa. */
+/**
+ * Registro de una academia (Historia 7 de la spec 002, FR-036; rediseño Planilla de la
+ * spec 003). Campos agrupados en «Tu academia» y «Tu cuenta», un solo borde izquierdo
+ * y la regla de la contraseña visible antes de equivocarse (T043). HU-014 la completa.
+ */
 @Component({
     selector: 'app-register-page',
     imports: [ReactiveFormsModule, RouterLink, ButtonModule, CheckboxModule, InputTextModule, MessageModule, PasswordModule, ProgressSpinnerModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <h1 class="text-3xl font-semibold m-0 mb-2">Crea tu academia</h1>
-        <p class="text-muted-color m-0 mb-8">Registra tu academia y tu cuenta de administrador.</p>
+        <div class="mb-6 border-b-2 border-(--p-text-color) pb-4">
+            <h1 class="m-0 text-3xl">Registra tu academia</h1>
+            <p class="m-0 mt-2 text-muted-color">Crea tu academia y tu cuenta para administrarla. Es gratis.</p>
+        </div>
 
         @if (loadError()) {
             <p-message severity="error" styleClass="mb-4">{{ loadError() }}</p-message>
             <p-button label="Reintentar" icon="pi pi-refresh" [outlined]="true" (onClick)="loadLegalDocuments()" />
         } @else if (!legal()) {
-            <div class="flex justify-center py-10">
+            <div class="flex py-10">
                 <p-progressSpinner strokeWidth="4" ariaLabel="Cargando" styleClass="w-12 h-12" />
             </div>
         } @else {
@@ -36,6 +42,7 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
             }
 
             <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5" novalidate>
+                <h2 class="m-0 text-base">Tu academia</h2>
                 <div class="flex flex-col gap-2">
                     <label for="academyName" class="font-medium">Nombre de la academia</label>
                     <input pInputText id="academyName" formControlName="academyName" autocomplete="organization" class="w-full" [invalid]="invalid('academyName')" [attr.aria-invalid]="a11y('academyName')['aria-invalid']" [attr.aria-describedby]="a11y('academyName')['aria-describedby']" />
@@ -44,6 +51,7 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
                     }
                 </div>
 
+                <h2 class="m-0 mt-3 border-t border-(--p-content-border-color) pt-5 text-base">Tu cuenta</h2>
                 <div class="flex flex-col gap-2">
                     <label for="fullName" class="font-medium">Tu nombre</label>
                     <input pInputText id="fullName" formControlName="fullName" autocomplete="name" class="w-full" [invalid]="invalid('fullName')" [attr.aria-invalid]="a11y('fullName')['aria-invalid']" [attr.aria-describedby]="a11y('fullName')['aria-describedby']" />
@@ -67,6 +75,8 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
                     <p-password inputId="password" formControlName="password" [feedback]="false" [toggleMask]="true" autocomplete="new-password" styleClass="w-full" inputStyleClass="w-full" [invalid]="invalid('password')" [pt]="passwordPt('password', invalid('password'))" />
                     @if (showError('password', 'required') || showError('password', 'minlength')) {
                         <p-message id="password-error" severity="error" variant="simple" size="small">{{ passwordLengthMessage }}</p-message>
+                    } @else {
+                        <small class="text-muted-color">Mínimo {{ minPasswordLength }} caracteres.</small>
                     }
                 </div>
 
@@ -78,12 +88,12 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
                     }
                 </div>
 
-                <div class="flex flex-col gap-2">
-                    <div class="flex items-start gap-3">
+                <div class="mt-3 flex flex-col gap-2 border-t border-(--p-content-border-color) pt-5">
+                    <div class="flex min-h-11 items-center gap-3">
                         <p-checkbox inputId="acceptTerms" formControlName="acceptTerms" [binary]="true" [invalid]="invalid('acceptTerms')" [pt]="checkboxPt('acceptTerms', invalid('acceptTerms'))" />
-                        <label for="acceptTerms">
+                        <label for="acceptTerms" class="flex-1 py-2.5">
                             Acepto los
-                            <a [href]="legal()!.terms.url" target="_blank" rel="noopener" class="text-primary font-medium">Términos y Condiciones</a>
+                            <a [href]="legal()!.terms.url" target="_blank" rel="noopener" class="font-semibold text-primary underline underline-offset-4">Términos y Condiciones</a>
                         </label>
                     </div>
                     @if (showError('acceptTerms', 'required')) {
@@ -92,11 +102,11 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <div class="flex items-start gap-3">
+                    <div class="flex min-h-11 items-center gap-3">
                         <p-checkbox inputId="acceptPrivacy" formControlName="acceptPrivacy" [binary]="true" [invalid]="invalid('acceptPrivacy')" [pt]="checkboxPt('acceptPrivacy', invalid('acceptPrivacy'))" />
-                        <label for="acceptPrivacy">
+                        <label for="acceptPrivacy" class="flex-1 py-2.5">
                             Acepto la
-                            <a [href]="legal()!.privacyPolicy.url" target="_blank" rel="noopener" class="text-primary font-medium">Política de Tratamiento de Datos</a>
+                            <a [href]="legal()!.privacyPolicy.url" target="_blank" rel="noopener" class="font-semibold text-primary underline underline-offset-4">Política de Tratamiento de Datos</a>
                         </label>
                     </div>
                     @if (showError('acceptPrivacy', 'required')) {
@@ -104,13 +114,13 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
                     }
                 </div>
 
-                <p-button type="submit" label="Crear cuenta" [loading]="submitting()" styleClass="w-full" />
+                <p-button type="submit" label="Crear cuenta" [loading]="submitting()" styleClass="w-full mt-1" />
             </form>
         }
 
-        <p class="text-center mt-8 mb-0">
+        <p class="m-0 mt-6 border-t border-(--p-content-border-color) pt-5 text-muted-color">
             ¿Ya tienes cuenta?
-            <a routerLink="/auth/login" class="text-primary font-medium">Iniciar sesión</a>
+            <a routerLink="/auth/login" class="font-semibold text-primary underline underline-offset-4">Inicia sesión</a>
         </p>
     `
 })
@@ -119,6 +129,7 @@ export class RegisterPage implements OnInit {
     private readonly router = inject(Router);
 
     protected readonly passwordLengthMessage = ERROR_MESSAGES.weak_password;
+    protected readonly minPasswordLength = MIN_PASSWORD_LENGTH;
     protected readonly form = inject(FormBuilder).nonNullable.group(
         {
             academyName: ['', Validators.required],

@@ -1,17 +1,21 @@
-// Orden de capas: la base de Sakai queda por encima del reset de Tailwind (base)
-// y por debajo de sus utilidades, para que las utilidades puedan ajustar títulos y
+// Orden de capas: la base de Sakai queda por encima del reset de Tailwind (base);
+// los estilos de PrimeNG (capa primeng, configurada en app.config.ts) van encima de la
+// base y debajo de las utilidades, para que las utilidades compongan (por ejemplo, el
+// ancho del drawer) sin sobrescrituras. Las utilidades también ajustan títulos y
 // párrafos sin sobrescrituras (AGENTS.md, sitio 3 de estilos).
-@layer theme, base, sakai, components, utilities;
+@layer theme, base, sakai, primeng, components, utilities;
 
 @layer sakai {
+    // Base de 16 px (spec 003): texto legible al sol y campos de formulario que
+    // Safari de iOS no amplía al enfocarlos. La familia sale del tema de Tailwind.
     html {
         height: 100%;
-        font-size: 14px;
-        line-height: 1.2;
+        font-size: 16px;
+        line-height: 1.45;
     }
 
     body {
-        font-family: 'Lato', sans-serif;
+        font-family: var(--font-sans);
         color: var(--text-color);
         background-color: var(--surface-ground);
         margin: 0;
@@ -19,13 +23,34 @@
         min-height: 100%;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        // Cifras de igual ancho en tablas y conteos.
+        font-variant-numeric: tabular-nums;
+        accent-color: var(--primary-color);
+        caret-color: var(--primary-color);
+    }
+
+    // Superficies del navegador con la paleta (DESIGN.md): selección y subrayado.
+    ::selection {
+        background: color-mix(in srgb, var(--primary-color) 22%, transparent);
+        color: var(--text-color);
     }
 
     a {
         text-decoration: none;
+        text-underline-offset: 0.2em;
     }
 
     .layout-wrapper {
         min-height: 100vh;
+    }
+}
+
+// Movimiento reducido (spec 003, FR-011; research R6): se anula la duración de
+// las transiciones desde la variable del token, sin tocar clases de PrimeNG.
+@media (prefers-reduced-motion: reduce) {
+    // Doble :root para ganar a la variable que PrimeNG inyecta en tiempo de ejecución.
+    :root:root {
+        --p-transition-duration: 0s;
+        --layout-section-transition-duration: 0s;
     }
 }

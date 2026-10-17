@@ -30,6 +30,7 @@ import { filter } from 'rxjs/operators';
                 [ngClass]="item().class"
                 [routerLink]="item().routerLink"
                 routerLinkActive="active-route"
+                ariaCurrentWhenActive="page"
                 [routerLinkActiveOptions]="item().routerLinkActiveOptions || { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"
                 [fragment]="item().fragment"
                 [queryParamsHandling]="item().queryParamsHandling"
@@ -50,7 +51,7 @@ import { filter } from 'rxjs/operators';
             </a>
         }
         @if (hasChildren() && isVisible() && (root() || isActive())) {
-            <ul [animate.enter]="initialized() ? 'p-submenu-enter' : null" [animate.leave]="'p-submenu-leave'" [class.layout-root-submenulist]="root()">
+            <ul [animate.enter]="initialized() ? 'layout-submenu-enter' : null" [animate.leave]="'layout-submenu-leave'" [class.layout-root-submenulist]="root()">
                 @for (child of item().items; track child?.label) {
                     <li app-menuitem [item]="child" [parentPath]="fullPath()" [root]="false" [class]="child.badgeClass"></li>
                 }
@@ -63,15 +64,15 @@ import { filter } from 'rxjs/operators';
     },
     styles: [
         `
-            .p-submenu-enter {
-                animation: p-animate-submenu-expand 450ms cubic-bezier(0.86, 0, 0.07, 1) forwards;
+            .layout-submenu-enter {
+                animation: layout-submenu-expand 450ms cubic-bezier(0.86, 0, 0.07, 1) forwards;
             }
 
-            .p-submenu-leave {
-                animation: p-animate-submenu-collapse 450ms cubic-bezier(0.86, 0, 0.07, 1) forwards;
+            .layout-submenu-leave {
+                animation: layout-submenu-collapse 450ms cubic-bezier(0.86, 0, 0.07, 1) forwards;
             }
 
-            @keyframes p-animate-submenu-expand {
+            @keyframes layout-submenu-expand {
                 from {
                     max-height: 0;
                     overflow: hidden;
@@ -82,7 +83,7 @@ import { filter } from 'rxjs/operators';
                 }
             }
 
-            @keyframes p-animate-submenu-collapse {
+            @keyframes layout-submenu-collapse {
                 from {
                     max-height: 1000px;
                     overflow: hidden;
@@ -90,6 +91,14 @@ import { filter } from 'rxjs/operators';
                 to {
                     max-height: 0;
                     overflow: hidden;
+                }
+            }
+
+            /* Movimiento reducido (spec 003, FR-011). */
+            @media (prefers-reduced-motion: reduce) {
+                .layout-submenu-enter,
+                .layout-submenu-leave {
+                    animation-duration: 0s;
                 }
             }
         `

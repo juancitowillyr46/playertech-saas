@@ -1,19 +1,19 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { BrandMark } from '../../../shared/components/brand-mark/brand-mark';
 
 /** Página propia para direcciones inexistentes (FR-023). */
 @Component({
     selector: 'app-not-found-page',
-    imports: [RouterLink],
+    imports: [RouterLink, BrandMark],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <main class="min-h-screen flex items-center justify-center px-4 bg-surface-0 dark:bg-surface-950">
-            <div class="max-w-md text-center">
-                <span class="block text-2xl font-bold text-primary mb-10">PlayerTech</span>
-                <p class="text-6xl font-bold text-primary m-0 mb-4">404</p>
-                <h1 class="text-2xl font-semibold m-0 mb-4">Página no encontrada</h1>
-                <p class="text-muted-color m-0 mb-8">La dirección que abriste no existe o cambió.</p>
-                <a routerLink="/home" class="inline-block py-4 text-primary font-medium">Volver al inicio</a>
+        <main class="flex min-h-screen items-start justify-center bg-surface-0 px-4 pt-8 pb-10 md:items-center dark:bg-surface-950">
+            <div class="w-full max-w-md">
+                <app-brand-mark class="mb-10 block" size="lg" />
+                <h1 class="m-0 mb-6 border-b-2 border-(--p-text-color) pb-4 text-3xl">Página no encontrada</h1>
+                <p class="m-0 mb-6 text-muted-color">La dirección que abriste no existe o cambió.</p>
+                <a routerLink="/home" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Volver al inicio</a>
             </div>
         </main>
     `

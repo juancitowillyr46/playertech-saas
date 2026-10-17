@@ -3,6 +3,8 @@
 **Épica:** EP-12 — Sedes · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
 **Spec:** pendiente
 
+> **Versión de lectura disponible:** la spec 003 (`specs/003-design-system/`, T-01) construyó la pantalla modelo de Sedes en `frontend/src/app/features/venues/` con lectura real: listado, sede principal, estados activa e inactiva y aislamiento por RLS (adelanta CA-001 a CA-004; CA-005 lo garantiza la base de datos). Esta HU la **completa** y la verifica formalmente; crear, editar, desactivar y eliminar siguen como maqueta hasta HU-029 y HU-031.
+
 ## Historia de usuario
 
 > Como **owner**, quiero consultar las sedes de mi academia, para conocer los lugares registrados y su estado.

@@ -8,7 +8,8 @@ import { LayoutService } from './app/layout/service/layout.service';
     imports: [RouterOutlet, ToastModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <p-toast />
+        <!-- Arriba al centro: no tapa las acciones del topbar ni la acción fija del pie en el celular (spec 003, T040). -->
+        <p-toast position="top-center" />
         <router-outlet />
     `
 })

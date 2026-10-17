@@ -162,3 +162,6 @@ Thumbs.db
 **/.impeccable/live/deferred-svelte-component-accepts.json
 **/.impeccable/live/*.png
 # impeccable-ignore-end
+
+# Muestras de las direcciones visuales de Impeccable (spec 003, research R2): descartables, no se versionan.
+**/.impeccable/mocks/

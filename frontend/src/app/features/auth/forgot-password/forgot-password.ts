@@ -17,8 +17,10 @@ const VISIBLE_ERRORS = new Set(['rate_limited', 'network']);
     imports: [ReactiveFormsModule, RouterLink, ButtonModule, InputTextModule, MessageModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <h1 class="text-3xl font-semibold m-0 mb-2">Recuperar contraseña</h1>
-        <p class="text-muted-color m-0 mb-8">Te enviaremos un enlace para crear una nueva contraseña.</p>
+        <div class="mb-6 border-b-2 border-(--p-text-color) pb-4">
+            <h1 class="m-0 text-3xl">Recupera tu contraseña</h1>
+            <p class="m-0 mt-2 text-muted-color">Te enviaremos un enlace para crear una nueva.</p>
+        </div>
 
         @if (sent()) {
             <p-message severity="success" styleClass="mb-6">
@@ -44,8 +46,8 @@ const VISIBLE_ERRORS = new Set(['rate_limited', 'network']);
             </form>
         }
 
-        <p class="text-center mt-8 mb-0">
-            <a routerLink="/auth/login" class="text-primary font-medium">Volver a iniciar sesión</a>
+        <p class="m-0 mt-6 border-t border-(--p-content-border-color) pt-5">
+            <a routerLink="/auth/login" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Volver a iniciar sesión</a>
         </p>
     `
 })

@@ -130,6 +130,8 @@ Pero si toca Supabase, SIEMPRE repository.
 Si buscas un componente en PrimeNG y dice "pero yo quería algo custom"...
 **Detente**. Probablemente es gold plating que ralentiza MVP.
 
+**Nota de T-01 (2026-10-17, spec 003):** la decisión se mantiene para los componentes. La **calidad visual y de experiencia es un requisito de producto** (principio XIII), no *gold plating*: se logra con el preset de tokens, las utilidades de Tailwind y el layout adoptado, y con componentes propios de composición mínima (`PageHeader`, `BrandMark`) que no sustituyen a ninguno de PrimeNG.
+
 ### Cuándo crear componente propio
 1. PrimeNG no tiene la solución
 2. Se va a reutilizar en 3+ features
@@ -764,8 +766,8 @@ Ninguna. Ningún componente debe construir URLs de almacenamiento ni llamar dire
 | FE-02 | Las demos de SakaiNG solo se registran en desarrollo, bajo `/dev` |
 | FE-03 | Configuración por entorno con archivos `environment.ts`, solo con valores públicos |
 | FE-04 | URLs y código en inglés; interfaz en español (`es-CO`) |
-| FE-05 | El configurador de temas no se muestra; solo existe un botón de modo claro/oscuro |
-| FE-06 | Tema Aura, color primario `rgb(59, 130, 246)` (`blue.500`) como base de la paleta, surface por defecto y menú estático. **Ajuste por accesibilidad (2026-10-17):** en modo claro, el color de acción y de texto es `blue.600` (`#2563eb`, contraste 5,17:1 sobre blanco), porque `blue.500` da 3,68:1 y no cumple WCAG AA (principio XIII). Se configura en el preset (`core/theme/playertech-preset.ts`) |
+| FE-05 | El configurador de temas no se muestra; solo existe un botón de modo claro/oscuro. **Enmienda (2026-10-17, T-01):** el cambio de modo está en el menú de usuario y, sin elección guardada, se sigue la preferencia del dispositivo |
+| FE-06 | Tema Aura, color primario `rgb(59, 130, 246)` (`blue.500`) como base de la paleta, surface por defecto y menú estático. **Ajuste por accesibilidad (2026-10-17):** en modo claro, el color de acción y de texto es `blue.600` (`#2563eb`, contraste 5,17:1 sobre blanco), porque `blue.500` da 3,68:1 y no cumple WCAG AA (principio XIII). Se configura en el preset (`core/theme/playertech-preset.ts`). **Sustituida por T-01 (2026-10-17, spec 003):** el preset de PlayerTech sobre Aura implementa la dirección visual «Planilla», elegida por el responsable de producto: tinta `#1c2b4a`, papel y pizarra como superficies, radios de 2 px, Public Sans y JetBrains Mono alojadas en el proyecto, estilos de PrimeNG en la capa CSS `primeng` y chasis de app con navegación inferior en el celular. El detalle está en `DESIGN.md` |
 | FE-07 | ESLint se rehace con `angular-eslint` (formato de ESLint 9) |
 | FE-08 | Estado con signals; Reactive Forms tipados; repositorios como clases abstractas inyectables |
 | FE-09 | Supabase Auth con flujo PKCE y ruta `/auth/callback` |

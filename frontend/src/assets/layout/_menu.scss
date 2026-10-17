@@ -1,20 +1,22 @@
 @use 'mixins' as *;
 
+// Menú lateral en tinta, pegado al borde, bajo el topbar (dirección Planilla, DESIGN.md).
 .layout-sidebar {
     position: fixed;
-    width: 20rem;
-    height: calc(100vh - 8rem);
+    width: 17rem;
+    height: calc(100vh - 4rem);
     z-index: 999;
     overflow-y: auto;
     user-select: none;
-    top: 6rem;
-    left: 2rem;
+    top: 4rem;
+    left: 0;
     transition:
         transform var(--layout-section-transition-duration),
         left var(--layout-section-transition-duration);
-    background-color: var(--surface-overlay);
-    border-radius: var(--content-border-radius);
-    padding: 0.5rem 1.5rem;
+    background-color: var(--shell-background);
+    color: var(--shell-color);
+    border-top: 1px solid var(--shell-rule);
+    padding: 0.5rem 0.75rem 1.5rem;
 }
 
 .layout-menu {
@@ -24,11 +26,12 @@
 
     .layout-root-menuitem {
         > .layout-menuitem-root-text {
-            font-size: 0.857rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
             font-weight: 700;
-            color: var(--text-color);
-            margin: 0.75rem 0;
+            color: var(--shell-muted-color);
+            margin: 1.25rem 0.75rem 0.375rem;
         }
 
         > a {
@@ -64,15 +67,16 @@
             align-items: center;
             position: relative;
             outline: 0 none;
-            color: var(--text-color);
+            color: inherit;
             cursor: pointer;
-            padding: 1rem;
+            min-height: 2.75rem;
+            padding: 0.625rem 0.75rem;
             border-radius: var(--content-border-radius);
             transition:
                 box-shadow var(--element-transition-duration);
 
             .layout-menuitem-icon {
-                margin-right: 0.5rem;
+                margin-right: 0.75rem;
             }
 
             .layout-submenu-toggler {
@@ -83,16 +87,22 @@
 
             &.active-route {
                 font-weight: 700;
-                color: var(--primary-color);
+                background-color: var(--shell-active-background);
             }
 
             &:hover {
-                background-color: var(--surface-hover);
+                background-color: var(--shell-hover-background);
             }
 
-            &:focus {
-                @include focused-inset();
+            &:focus-visible {
+                outline: 2px solid var(--shell-color);
+                outline-offset: -2px;
             }
+        }
+
+        // Las entradas de un grupo raíz (General, Configuración) no se sangran.
+        .layout-root-submenulist > li > a {
+            margin-left: 0;
         }
 
         ul {
@@ -156,4 +166,76 @@
 .layout-submenu-enter-active {
     overflow: hidden;
     transition: max-height 1s ease-in-out;
+}
+
+// Navegación inferior del celular (spec 003, FR-012a): destinos principales al alcance
+// del pulgar. La sección actual lleva pastilla, negrita y aria-current.
+.layout-bottomnav {
+    position: fixed;
+    z-index: 996;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--surface-card);
+    border-top: 1px solid var(--surface-border);
+    padding-bottom: env(safe-area-inset-bottom);
+
+    ul {
+        display: flex;
+        margin: 0;
+        padding: 0 0.25rem;
+        list-style: none;
+    }
+
+    li {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .layout-bottomnav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        height: 4rem;
+        color: var(--text-color-secondary);
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: var(--content-border-radius);
+
+        &:focus-visible {
+            outline: var(--focus-ring-width) var(--focus-ring-style) var(--focus-ring-color);
+            outline-offset: -2px;
+        }
+
+        &.active-route {
+            color: var(--text-color);
+            font-weight: 800;
+
+            .layout-bottomnav-icon {
+                background-color: var(--p-highlight-background);
+                color: var(--p-highlight-color);
+            }
+        }
+    }
+
+    .layout-bottomnav-icon {
+        display: grid;
+        place-items: center;
+        width: 3.5rem;
+        height: 2rem;
+        border-radius: 999px;
+        transition: background-color var(--element-transition-duration);
+
+        i {
+            font-size: 1.25rem;
+        }
+    }
+}
+
+@media (min-width: 992px) {
+    .layout-bottomnav {
+        display: none;
+    }
 }

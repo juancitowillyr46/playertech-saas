@@ -3,6 +3,8 @@
 **Épica:** EP-09 — Gestión de la academia · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
 **Spec:** pendiente
 
+> **Versión de lectura disponible:** la spec 003 (`specs/003-design-system/`, T-01) construyó la pantalla modelo de Inicio en `frontend/src/app/features/home/`: resumen real con el nombre, el logo o las iniciales, el plan y la sede principal (adelanta CA-001). La sección «Completa tu academia» es una maqueta con las tareas y sus enlaces, sin estado ni progreso: esta HU completa CA-002 a CA-004.
+
 ## Historia de usuario
 
 > Como **owner**, quiero ver un inicio con el resumen de mi academia y lo que me falta configurar, para saber por dónde empezar después de registrarme.

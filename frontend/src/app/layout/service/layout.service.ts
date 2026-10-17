@@ -20,12 +20,22 @@ interface LayoutState {
 /** Preferencia de modo claro/oscuro guardada en el navegador (FR-032). */
 const DARK_THEME_KEY = 'playertech.darkTheme';
 
+/**
+ * La elección guardada del owner prevalece; sin ella, se sigue la preferencia
+ * del dispositivo (spec 003, FR-009). La preferencia del sistema no se guarda.
+ */
 function readDarkTheme(): boolean {
     try {
-        return localStorage.getItem(DARK_THEME_KEY) === 'true';
+        const stored = localStorage.getItem(DARK_THEME_KEY);
+
+        if (stored !== null) {
+            return stored === 'true';
+        }
     } catch {
-        return false;
+        // Sin almacenamiento: se usa la preferencia del sistema.
     }
+
+    return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
 function writeDarkTheme(darkTheme: boolean): void {
@@ -43,7 +53,7 @@ export class LayoutService {
     // El tema lo fija el preset de PlayerTech (core/theme); el primario aquí solo informa al layout.
     layoutConfig = signal<LayoutConfig>({
         preset: 'Aura',
-        primary: 'blue',
+        primary: 'tinta',
         surface: null,
         darkTheme: readDarkTheme(),
         menuMode: 'static'

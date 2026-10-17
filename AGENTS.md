@@ -104,6 +104,7 @@ npm run lint           # análisis estático (incluye la regla de capas de ADR-0
 npm test               # pruebas con Vitest en modo observación
 npm run test:ci        # pruebas una sola vez
 npm run check:bundle   # sin claves privilegiadas ni demos en la compilación de producción
+npm run check:styles   # sin !important, sin selectores .p-* ni colores fijos en plantillas
 ```
 
 ## Git

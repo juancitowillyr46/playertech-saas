@@ -9,7 +9,7 @@ import { AuthService } from '../../../core/auth/auth.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <i class="pi pi-pause-circle text-4xl text-primary mb-4" aria-hidden="true"></i>
-        <h1 class="text-3xl font-semibold m-0 mb-4">Academia suspendida</h1>
+        <h1 class="m-0 mb-6 border-b-2 border-(--p-text-color) pb-4 text-3xl">Academia suspendida</h1>
         <p class="m-0 mb-8 leading-relaxed">Tu academia está suspendida. Tus datos se conservan. Escríbenos para reactivarla.</p>
         <p-button label="Cerrar sesión" icon="pi pi-sign-out" [outlined]="true" (onClick)="auth.signOut()" />
     `
