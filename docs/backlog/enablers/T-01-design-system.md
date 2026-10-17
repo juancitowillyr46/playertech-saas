@@ -60,9 +60,10 @@ Deportivo · Confiable · Cercano · Moderno · Enérgico · Profesional · Senc
 2. **Dirección visual**: explorar 2 o 3 direcciones y elegir una.
 3. **Tokens**: preset de PlayerTech sobre Aura (`definePreset`), con paleta, superficies, tipografía, radios, foco, densidad y ajustes por componente (botón, tabla, drawer, tarjeta, formularios).
 4. **Chasis**: topbar, sidebar, menú de usuario y encabezado de página, con navegación móvil.
-5. **Pantallas modelo**: inicio de sesión, registro, página de gestión (sedes) e inicio. Se convierten en la referencia de los patrones de `ui.md`.
+5. **Pantallas modelo**: inicio de sesión, registro, página de gestión (sedes) e inicio. Se convierten en la referencia de los patrones de `ui.md`. Parten de las pantallas de acceso básicas de la spec 002 y afinan su experiencia (textos, orden de campos, mensajes y uso en el celular).
 6. **Patrones móviles**: en pantallas pequeñas, las tablas se presentan como listas de tarjetas y el drawer ocupa la pantalla completa.
-7. **Documentación** del sistema de diseño (ver la regla de fuente única más abajo).
+7. **Correos de autenticación**: confirmación de cuenta y recuperación de contraseña con la identidad de PlayerTech (asunto, texto en español de Colombia, marca y botón de acción). Hoy Supabase envía sus plantillas por defecto, en inglés. Se definen como plantillas HTML en `supabase/templates/`, registradas en `supabase/config.toml`, y se verifican en local con Mailpit.
+8. **Documentación** del sistema de diseño (ver la regla de fuente única más abajo).
 
 ## Reglas
 
@@ -125,6 +126,12 @@ Cada pantalla de la Fase 1 y posteriores pasa por `/impeccable critique`, `/impe
 **Dado** el tema de PlayerTech,
 **cuando** se cambia entre modo claro y oscuro,
 **entonces** ambos mantienen la identidad y un contraste adecuado.
+
+### CA-007 — Correos con la identidad de PlayerTech
+
+**Dado** un registro o una solicitud de recuperación de contraseña,
+**cuando** llega el correo,
+**entonces** su asunto y su texto están en español de Colombia, llevan la marca de PlayerTech, el botón de acción funciona, y se leen bien en un cliente de correo móvil.
 
 ## Fuera de alcance
 

@@ -23,6 +23,7 @@ Requisitos de operación (ADR-014 y ADR-016) que no son funcionalidades, pero de
 - Proyecto de Supabase en la nube (plan Free) con las migraciones aplicadas.
 - Dominio propio de PlayerTech.
 - SMTP propio verificado con ese dominio (recomendación inicial: Resend).
+- Correos de autenticación con la identidad de PlayerTech (T-01, CA-007) aplicados en la nube y probados con el SMTP real.
 - Copias de seguridad propias de la base de datos y procedimiento de restauración.
 - Documentos legales definitivos (Términos y Condiciones y Política de Tratamiento de Datos) publicados en su URL final.
 
