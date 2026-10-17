@@ -52,6 +52,19 @@ module.exports = defineConfig([
     {
         files: ['**/*.html'],
         extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
-        rules: {}
+        rules: {
+            // Estilos solo por preset, utilidades de Tailwind y SCSS del layout (AGENTS.md; spec 003, R11).
+            '@angular-eslint/template/no-inline-styles': ['error', { allowNgStyle: false, allowBindToStyle: false }]
+        }
+    },
+    {
+        // El configurador de temas de Sakai solo lo usan las demos en desarrollo (FE-06: oculto
+        // para el usuario final). Sus muestras de color pintan paletas dinámicas, que no tienen
+        // una utilidad ni un token fijo.
+        // La plantilla en línea se analiza como un archivo virtual dentro del .ts.
+        files: ['src/app/layout/component/app.configurator.ts/**/*.html'],
+        rules: {
+            '@angular-eslint/template/no-inline-styles': 'off'
+        }
     }
 ]);

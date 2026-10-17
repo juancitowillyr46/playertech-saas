@@ -4,12 +4,13 @@ import { RouterModule } from '@angular/router';
 import { AppTopbar } from './app.topbar';
 import { AppSidebar } from './app.sidebar';
 import { AppFooter } from './app.footer';
+import { AppBottomnav } from './app.bottomnav';
 import { LayoutService } from '@/app/layout/service/layout.service';
 
 @Component({
     selector: 'app-layout',
     standalone: true,
-    imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppFooter],
+    imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppFooter, AppBottomnav],
     template: `<div class="layout-wrapper" [ngClass]="containerClass()">
         <app-topbar></app-topbar>
         <app-sidebar></app-sidebar>
@@ -20,6 +21,8 @@ import { LayoutService } from '@/app/layout/service/layout.service';
             </main>
             <app-footer></app-footer>
         </div>
+        <!-- Navegación de app en el celular (spec 003, FR-012a); en escritorio navega el menú lateral. -->
+        <app-bottomnav></app-bottomnav>
         <div class="layout-mask"></div>
     </div> `
 })

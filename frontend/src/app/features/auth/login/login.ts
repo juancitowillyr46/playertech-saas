@@ -10,14 +10,20 @@ import { AppError } from '../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../core/errors/error-messages';
 import { FieldA11y, fieldA11y, passwordPt } from '../forms/field-a11y';
 
-/** Inicio de sesión, versión básica (Historia 7 de la spec 002). HU-001 la completa. */
+/**
+ * Inicio de sesión (Historia 7 de la spec 002; rediseño Planilla de la spec 003).
+ * Un solo borde izquierdo y la recuperación debajo de la acción principal (T043).
+ * HU-001 la completa.
+ */
 @Component({
     selector: 'app-login-page',
     imports: [ReactiveFormsModule, RouterLink, ButtonModule, InputTextModule, MessageModule, PasswordModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <h1 class="text-3xl font-semibold m-0 mb-2">Iniciar sesión</h1>
-        <p class="text-muted-color m-0 mb-8">Entra a la gestión de tu academia.</p>
+        <div class="mb-6 border-b-2 border-(--p-text-color) pb-4">
+            <h1 class="m-0 text-3xl">Inicia sesión</h1>
+            <p class="m-0 mt-2 text-muted-color">Entra para gestionar tu academia.</p>
+        </div>
 
         @if (errorMessage()) {
             <p-message severity="error" styleClass="mb-6">{{ errorMessage() }}</p-message>
@@ -62,15 +68,16 @@ import { FieldA11y, fieldA11y, passwordPt } from '../forms/field-a11y';
                 }
             </div>
 
-            <a routerLink="/auth/forgot-password" class="inline-block py-4 text-primary font-medium self-end">¿Olvidaste tu contraseña?</a>
-
-            <p-button type="submit" label="Iniciar sesión" [loading]="submitting()" styleClass="w-full" />
+            <p-button type="submit" label="Iniciar sesión" [loading]="submitting()" styleClass="w-full mt-1" />
         </form>
 
-        <p class="text-center mt-8 mb-0">
-            ¿Aún no tienes cuenta?
-            <a routerLink="/auth/register" class="text-primary font-medium">Crear cuenta</a>
-        </p>
+        <div class="mt-4 flex flex-col items-start">
+            <a routerLink="/auth/forgot-password" class="inline-flex min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline">¿Olvidaste tu contraseña?</a>
+            <p class="m-0 mt-4 self-stretch border-t border-(--p-content-border-color) pt-5 text-muted-color">
+                ¿Aún no tienes cuenta?
+                <a routerLink="/auth/register" class="font-semibold text-primary underline underline-offset-4">Registra tu academia</a>
+            </p>
+        </div>
     `
 })
 export class LoginPage {

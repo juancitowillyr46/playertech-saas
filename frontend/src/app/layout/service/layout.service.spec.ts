@@ -11,10 +11,10 @@ describe('LayoutService', () => {
 
     afterEach(() => vi.restoreAllMocks());
 
-    it('usa el primario azul y el menú estático', () => {
+    it('usa el primario tinta del preset y el menú estático', () => {
         const service = TestBed.inject(LayoutService);
 
-        expect(service.getPrimary()).toBe('blue');
+        expect(service.getPrimary()).toBe('tinta');
         expect(service.layoutConfig().menuMode).toBe('static');
     });
 
@@ -25,6 +25,28 @@ describe('LayoutService', () => {
 
         expect(service.isDarkTheme()).toBe(true);
         expect(document.documentElement.classList.contains('app-dark')).toBe(true);
+    });
+
+    it('sin preferencia guardada sigue el modo oscuro del sistema, sin guardarlo', () => {
+        vi.stubGlobal('matchMedia', (query: string) => ({ matches: query === '(prefers-color-scheme: dark)' }));
+
+        const service = TestBed.inject(LayoutService);
+        TestBed.tick();
+
+        expect(service.isDarkTheme()).toBe(true);
+        expect(document.documentElement.classList.contains('app-dark')).toBe(true);
+        expect(localStorage.getItem(KEY)).toBeNull();
+        vi.unstubAllGlobals();
+    });
+
+    it('la elección guardada prevalece sobre la preferencia del sistema', () => {
+        vi.stubGlobal('matchMedia', () => ({ matches: true }));
+        localStorage.setItem(KEY, 'false');
+
+        const service = TestBed.inject(LayoutService);
+
+        expect(service.isDarkTheme()).toBe(false);
+        vi.unstubAllGlobals();
     });
 
     it('guarda el modo al cambiarlo', () => {

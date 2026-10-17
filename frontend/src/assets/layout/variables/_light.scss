@@ -1,5 +1,7 @@
 :root {
-    --surface-ground: var(--p-surface-100);
+    --surface-ground: var(--p-surface-50);
+    // Rojo sello de la marca (DESIGN.md): solo para el sello «PT».
+    --brand-seal: #b3261e;
     --code-background: var(--p-surface-900);
     --code-color: var(--p-surface-200);
 }

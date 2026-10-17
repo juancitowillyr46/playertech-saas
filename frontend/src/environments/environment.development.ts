@@ -5,6 +5,8 @@
  */
 export const environment = {
     production: false,
-    supabaseUrl: 'http://127.0.0.1:54321',
+    // Mismo host con el que se abrió la app: localhost en el PC o la IP de la red
+    // local al probar desde el celular (Supabase local escucha en todas las interfaces).
+    supabaseUrl: `http://${location.hostname}:54321`,
     supabasePublishableKey: 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH'
 };

@@ -80,9 +80,9 @@ Como owner que trabaja desde el celular, necesito que la barra superior, el men�
 
 **Escenarios de aceptación**:
 
-1. **Dado** un celular de 360 px, **cuando** el owner abre y cierra el menú, **entonces** puede hacerlo con una mano, el menú indica la sección actual y se cierra al elegir un destino.
+1. **Dado** un celular de 360 px, **cuando** el owner navega, **entonces** usa la barra de navegación inferior con el pulgar, sin abrir menús, y la barra indica la sección actual.
 2. **Dado** cualquier página interna, **cuando** se muestra, **entonces** tiene un encabezado con título, descripción breve opcional y, si aplica, la acción principal, siempre al alcance en el celular.
-3. **Dado** la barra superior, **cuando** se muestra en el celular, **entonces** el nombre de la academia es legible, y el cambio de modo y el menú de usuario tienen áreas táctiles de al menos 44 px.
+3. **Dado** la barra superior, **cuando** se muestra en el celular, **entonces** es compacta, muestra la identidad de la academia (logo o iniciales y nombre legible) y el menú de usuario, con áreas táctiles de al menos 44 px; el cambio de modo está dentro del menú de usuario.
 
 ---
 
@@ -178,7 +178,8 @@ Como owner que se registra o recupera su contraseña, necesito recibir un correo
 **Chasis**
 
 - **FR-012**: La barra superior, el menú lateral, el menú de usuario y el encabezado de página DEBEN aplicar la identidad y la arquitectura de información de `ui.md`.
-- **FR-013**: En pantallas de 360 px, todos los controles del chasis DEBEN tener áreas táctiles de al menos 44 px, el menú DEBE indicar la sección actual y cerrarse al navegar, y no DEBE haber desplazamiento horizontal (CA-004 de T-01).
+- **FR-012a**: En el celular (por debajo de 992 px) la aplicación DEBE comportarse como una app: barra superior compacta con la identidad de la academia (logo o iniciales y nombre) y el menú de usuario; **navegación inferior** con los destinos principales; sin menú hamburguesa; la marca PlayerTech no se repite en las pantallas internas (sí en el acceso, en escritorio y en los correos). El cambio de modo claro/oscuro vive en el menú de usuario. En escritorio se mantiene el menú lateral con la marca.
+- **FR-013**: En pantallas de 360 px, todos los controles del chasis DEBEN tener áreas táctiles de al menos 44 px, la navegación DEBE indicar la sección actual (no solo por color) y no DEBE haber desplazamiento horizontal (CA-004 de T-01).
 - **FR-014**: Toda página interna DEBE usar un encabezado común con título, descripción opcional y acción principal opcional.
 
 **Pantallas modelo y patrones**
@@ -230,6 +231,7 @@ Como owner que se registra o recupera su contraseña, necesito recibir un correo
 ### Session 2026-10-17
 
 - Q: ¿Dónde y con qué datos viven las pantallas modelo de sedes e inicio? → A: En sus rutas reales, con datos reales solo de lectura; escritura y progreso como maqueta visual (Historia 5, escenario 4; FR-018a).
+- Q: ¿Qué patrón de navegación usa la aplicación en el celular, tras probarla en el dispositivo? → A: App con barra inferior: barra superior compacta con la academia y el menú de usuario, navegación inferior con los destinos principales, modo claro/oscuro en el menú de usuario y acción principal flotante sobre la barra; escritorio sin cambios (FR-012a, FR-013).
 
 ## Assumptions
 

@@ -21,23 +21,23 @@ const ALLOWED_NEXT = ['/home', '/auth/reset-password'];
     template: `
         @switch (state()) {
             @case ('processing') {
-                <div class="flex flex-col items-center gap-4 py-10" role="status">
+                <div class="flex flex-col items-start gap-4 py-10" role="status">
                     <p-progressSpinner strokeWidth="4" ariaLabel="Verificando" styleClass="w-12 h-12" />
                     <p class="m-0 text-lg">Verificando…</p>
                 </div>
             }
             @case ('other_browser') {
-                <h1 class="text-3xl font-semibold m-0 mb-4">Abre el enlace en tu navegador</h1>
+                <h1 class="m-0 mb-6 border-b-2 border-(--p-text-color) pb-4 text-3xl">Abre el enlace en tu navegador</h1>
                 <p class="m-0 mb-8 leading-relaxed">{{ messages.other_browser }}</p>
                 <div class="flex flex-col">
-                    <a routerLink="/auth/login" class="inline-block py-4 text-primary font-medium">Ir a iniciar sesión</a>
-                    <a routerLink="/auth/forgot-password" class="inline-block py-4 text-primary font-medium">Solicitar un enlace nuevo</a>
+                    <a routerLink="/auth/login" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Ir a iniciar sesión</a>
+                    <a routerLink="/auth/forgot-password" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Solicitar un enlace nuevo</a>
                 </div>
             }
             @default {
-                <h1 class="text-3xl font-semibold m-0 mb-4">Enlace no válido</h1>
+                <h1 class="m-0 mb-6 border-b-2 border-(--p-text-color) pb-4 text-3xl">Enlace no válido</h1>
                 <p class="m-0 mb-8 leading-relaxed">{{ messages.link_invalid }}</p>
-                <a routerLink="/auth/login" class="inline-block py-4 text-primary font-medium">Ir a iniciar sesión</a>
+                <a routerLink="/auth/login" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Ir a iniciar sesión</a>
             }
         }
     `

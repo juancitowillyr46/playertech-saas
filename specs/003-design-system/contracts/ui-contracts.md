@@ -24,8 +24,17 @@ Los valores concretos los fija la dirección elegida (R3). Este contrato fija **
 | Contenido proyectado `[pageHeaderAction]` | Botón u otra acción | No |
 
 Comportamiento:
-- En el celular, la acción no se pierde de vista: queda junto al título o fija al pie si no cabe.
+- En el celular, la acción flota abajo a la derecha, sobre la navegación inferior, al alcance del pulgar; en escritorio va a la derecha del título.
 - Un solo `<h1>` por página.
+
+## Chasis en el celular (FR-012a)
+
+| Pieza | Contenido | Reglas |
+|---|---|---|
+| Barra superior (3,5 rem) | Logo o iniciales y nombre de la academia (enlace al inicio); botón del menú de usuario | Sin marca PlayerTech ni menú hamburguesa; nombre recortado con el completo accesible |
+| Menú de usuario | Correo, «Modo oscuro»/«Modo claro», «Cerrar sesión» | Mismo menú en escritorio |
+| Navegación inferior (4 rem + zona segura) | Destinos de `APP_NAVIGATION` con icono y etiqueta (Fase 1: Inicio, Academia, Sedes) | `<nav aria-label>`, objetivos de 44 px o más, sección actual con fondo de pastilla, negrita y `aria-current="page"`; como máximo 5 destinos (en la Fase 2, el quinto agrupa el resto) |
+| Escritorio (≥ 992 px) | Topbar con la marca y la academia; menú lateral | La navegación inferior no se muestra |
 
 ## BrandMark (`shared/components/brand-mark`)
 

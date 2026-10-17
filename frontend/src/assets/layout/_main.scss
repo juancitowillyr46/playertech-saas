@@ -3,11 +3,33 @@
     flex-direction: column;
     min-height: 100vh;
     justify-content: space-between;
-    padding: 6rem 2rem 0 2rem;
+    // Celular: bajo la barra superior (3.5rem) y sobre la navegación inferior (4rem + zona
+    // segura); 16 px de margen lateral.
+    padding: 4.75rem 1rem calc(5rem + env(safe-area-inset-bottom)) 1rem;
     transition: margin-left var(--layout-section-transition-duration);
 }
 
 .layout-main {
     flex: 1 1 auto;
     padding-bottom: 2rem;
+
+    // En el celular, la acción principal del encabezado flota sobre la navegación
+    // inferior (PageHeader): se reserva su alto para que no tape el final de la página.
+    &:has(.page-header-action:not(:empty)) {
+        padding-bottom: 4.5rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .layout-main-container {
+        padding: 5.5rem 2rem 0 2rem;
+    }
+
+    .layout-footer {
+        display: flex;
+    }
+
+    .layout-main:has(.page-header-action:not(:empty)) {
+        padding-bottom: 2rem;
+    }
 }

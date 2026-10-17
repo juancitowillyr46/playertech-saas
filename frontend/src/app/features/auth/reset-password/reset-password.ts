@@ -19,13 +19,13 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
     imports: [ReactiveFormsModule, RouterLink, ButtonModule, MessageModule, PasswordModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <h1 class="text-3xl font-semibold m-0 mb-2">Nueva contraseña</h1>
+        <h1 class="m-0 mb-6 border-b-2 border-(--p-text-color) pb-4 text-3xl">Crea una nueva contraseña</h1>
 
         @if (!auth.isAuthenticated()) {
             <p class="m-0 mb-6">El enlace de recuperación ya no es válido.</p>
-            <a routerLink="/auth/forgot-password" class="inline-block py-4 text-primary font-medium">Solicitar un enlace nuevo</a>
+            <a routerLink="/auth/forgot-password" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Solicitar un enlace nuevo</a>
         } @else {
-            <p class="text-muted-color m-0 mb-8">Elige una contraseña de al menos 8 caracteres.</p>
+            <p class="text-muted-color m-0 mb-6">Elige una contraseña de al menos 8 caracteres.</p>
 
             @if (errorMessage()) {
                 <p-message severity="error" styleClass="mb-6">{{ errorMessage() }}</p-message>

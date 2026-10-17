@@ -8,11 +8,11 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <i class="pi pi-envelope text-4xl text-primary mb-4" aria-hidden="true"></i>
-        <h1 class="text-3xl font-semibold m-0 mb-4">Verifica tu correo</h1>
+        <h1 class="m-0 mb-6 border-b-2 border-(--p-text-color) pb-4 text-3xl">Verifica tu correo</h1>
         <p class="m-0 mb-8 leading-relaxed">
             Te enviamos un enlace a <strong>{{ email || 'tu correo' }}</strong>. Ábrelo desde este mismo navegador para activar tu cuenta.
         </p>
-        <a routerLink="/auth/login" class="inline-block py-4 text-primary font-medium">Ir a iniciar sesión</a>
+        <a routerLink="/auth/login" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Ir a iniciar sesión</a>
     `
 })
 export class VerifyEmailPage {

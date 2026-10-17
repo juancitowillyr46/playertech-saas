@@ -2,8 +2,8 @@
     .layout-main,
     .landing-wrapper {
         width: 1504px;
-        margin-left: auto !important;
-        margin-right: auto !important;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
@@ -41,7 +41,7 @@
 
         &.layout-static {
             .layout-main-container {
-                margin-left: 22rem;
+                margin-left: 17rem;
             }
 
             &.layout-static-inactive {
@@ -64,6 +64,13 @@
 }
 
 @media (max-width: 991px) {
+    // En el celular navega la barra inferior (spec 003, FR-012a): el menú lateral de
+    // Sakai y su máscara no se muestran.
+    .layout-wrapper .layout-sidebar,
+    .layout-wrapper.layout-mobile-active .layout-mask {
+        display: none;
+    }
+
     .blocked-scroll {
         overflow: hidden;
     }
@@ -71,14 +78,17 @@
     .layout-wrapper {
         .layout-main-container {
             margin-left: 0;
-            padding-left: 2rem;
         }
 
+        // En el celular el menú se abre por encima del topbar, a casi todo el ancho.
         .layout-sidebar {
             transform: translateX(-100%);
             left: 0;
             top: 0;
+            width: min(18rem, 85vw);
             height: 100vh;
+            border-top: 0;
+            padding-top: 1rem;
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
             transition:
