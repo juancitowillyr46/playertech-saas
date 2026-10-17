@@ -255,7 +255,7 @@ Las funciones de autorización usan `SECURITY DEFINER` con `search_path` fijo, p
 
 | Bucket | Lectura | Escritura | Configuración |
 |---|---|---|---|
-| `public-assets` | Pública | `is_academy_member(primer segmento de la ruta)` | Logos: `image/jpeg`, `image/png`; máximo 1 MB |
+| `public-assets` | Pública por URL; listar o descargar por la API, solo miembros | `is_academy_member(primer segmento de la ruta)` | Logos: `image/jpeg`, `image/png`; máximo 1 MB |
 | `private-files` | Miembros, con URL firmada | `is_academy_member(primer segmento de la ruta)` | Sin uso en la Fase 1 |
 
 ---

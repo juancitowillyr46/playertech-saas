@@ -92,12 +92,12 @@ description: "Lista de tareas para implementar la base de datos de la Fundación
 
 ### Pruebas de la Historia 2
 
-- [ ] T021 [P] [US2] Crear `supabase/tests/database/030-isolation.test.sql` usando las academias del seed: para `academies`, `subscriptions`, `academy_members`, `venues`, `files`, `legal_acceptances` y `profiles`, verificar como owner A que lee solo lo propio y que **no** lee, crea, modifica ni elimina registros de B; que insertar una sede o un archivo con `academy_id` de B se rechaza; que insertar una sede o un archivo propio con `created_by` de otro usuario se rechaza y que, sin indicarlo, `created_by` queda con el id de A; que registrar en `files` (con `academy_id` de A) una `storage_key` que empieza por el id de B se rechaza; que la creación directa en `academies`, `academy_members`, `subscriptions` y `legal_acceptances` se rechaza; que un usuario sin membresía no lee datos de academia; que `anon` no lee datos de academia, no lee `plans` y sí lee `legal_documents`
-- [ ] T022 [P] [US2] Crear `supabase/tests/database/040-suspension.test.sql`: poner `academia-a` en `suspended` (como superusuario dentro de la transacción), verificar que su owner no puede leer ni modificar sus sedes ni su academia, que `current_academy_id()` devuelve NULL y que los datos siguen existiendo; verificar lo mismo para una membresía `disabled`
+- [X] T021 [P] [US2] Crear `supabase/tests/database/030-isolation.test.sql` usando las academias del seed: para `academies`, `subscriptions`, `academy_members`, `venues`, `files`, `legal_acceptances` y `profiles`, verificar como owner A que lee solo lo propio y que **no** lee, crea, modifica ni elimina registros de B; que insertar una sede o un archivo con `academy_id` de B se rechaza; que insertar una sede o un archivo propio con `created_by` de otro usuario se rechaza y que, sin indicarlo, `created_by` queda con el id de A; que registrar en `files` (con `academy_id` de A) una `storage_key` que empieza por el id de B se rechaza; que la creación directa en `academies`, `academy_members`, `subscriptions` y `legal_acceptances` se rechaza; que un usuario sin membresía no lee datos de academia; que `anon` no lee datos de academia, no lee `plans` y sí lee `legal_documents`
+- [X] T022 [P] [US2] Crear `supabase/tests/database/040-suspension.test.sql`: poner `academia-a` en `suspended` (como superusuario dentro de la transacción), verificar que su owner no puede leer ni modificar sus sedes ni su academia, que `current_academy_id()` devuelve NULL y que los datos siguen existiendo; verificar lo mismo para una membresía `disabled`
 
 ### Implementación de la Historia 2
 
-- [ ] T023 [US2] Ejecutar `npm run db:test` y corregir las políticas de `supabase/migrations/*_rls_policies_and_grants.sql` o las funciones de `*_authorization_functions.sql` hasta que T021 y T022 pasen (si las migraciones ya se compartieron, corregir con una migración nueva)
+- [X] T023 [US2] Ejecutar `npm run db:test` y corregir las políticas de `supabase/migrations/*_rls_policies_and_grants.sql` o las funciones de `*_authorization_functions.sql` hasta que T021 y T022 pasen (si las migraciones ya se compartieron, corregir con una migración nueva)
 
 **Punto de control**: aislamiento verificado en todas las tablas protegidas (SC-003).
 
@@ -111,11 +111,11 @@ description: "Lista de tareas para implementar la base de datos de la Fundación
 
 ### Pruebas de la Historia 3
 
-- [ ] T024 [P] [US3] Crear `supabase/tests/database/020-registration.test.sql`: con `tests.create_user` y metadatos válidos, verificar que existen perfil, academia (`country_code = 'CO'`, `timezone = 'America/Bogota'`, `status = 'active'`, `contact_email` igual al correo normalizado), membresía `owner` activa, suscripción `free` activa, sede "Sede principal" `training_ground` principal y activa, y dos aceptaciones con la versión vigente; verificar que faltar `academy_name`, `full_name` o una versión legal, o enviar una versión no vigente, lanza error y **no deja** fila en `auth.users` ni en ninguna tabla; verificar que dos registros con el mismo `academy_name` producen slugs distintos; verificar que un correo con mayúsculas o espacios se guarda normalizado en `contact_email`; verificar que un segundo `tests.create_user` con un correo ya registrado falla y no crea una segunda academia (escenario 7). Los registros simultáneos no se prueban con pgTAP: los cubre por diseño el reintento ante `unique_violation` (research R3)
+- [X] T024 [P] [US3] Crear `supabase/tests/database/020-registration.test.sql`: con `tests.create_user` y metadatos válidos, verificar que existen perfil, academia (`country_code = 'CO'`, `timezone = 'America/Bogota'`, `status = 'active'`, `contact_email` igual al correo normalizado), membresía `owner` activa, suscripción `free` activa, sede "Sede principal" `training_ground` principal y activa, y dos aceptaciones con la versión vigente; verificar que faltar `academy_name`, `full_name` o una versión legal, o enviar una versión no vigente, lanza error y **no deja** fila en `auth.users` ni en ninguna tabla; verificar que dos registros con el mismo `academy_name` producen slugs distintos; verificar que un correo con mayúsculas o espacios se guarda normalizado en `contact_email`; verificar que un segundo `tests.create_user` con un correo ya registrado falla y no crea una segunda academia (escenario 7). Los registros simultáneos no se prueban con pgTAP: los cubre por diseño el reintento ante `unique_violation` (research R3)
 
 ### Implementación de la Historia 3
 
-- [ ] T025 [US3] Ejecutar `npm run db:test` y corregir `supabase/migrations/*_registration.sql` hasta que T024 pase (SC-004)
+- [X] T025 [US3] Ejecutar `npm run db:test` y corregir `supabase/migrations/*_registration.sql` hasta que T024 pase (SC-004)
 
 **Punto de control**: registro atómico verificado.
 
@@ -129,11 +129,11 @@ description: "Lista de tareas para implementar la base de datos de la Fundación
 
 ### Pruebas de la Historia 4
 
-- [ ] T026 [P] [US4] Crear `supabase/tests/database/050-integrity.test.sql` como owner A: crear una segunda sede; verificar que no puede desactivar ni eliminar la sede principal; que `set_primary_venue` sobre una sede inactiva falla y sobre una activa cambia la principal dejando exactamente una; que el owner B no puede ejecutar `set_primary_venue` sobre sedes de A; que no puede actualizar `is_primary` directamente; que un nombre de sede duplicado (sin distinguir mayúsculas) se rechaza y que el nombre de una sede eliminada se puede reutilizar; que no puede modificar `status`, `slug`, `country_code` ni `timezone` de su academia y sí `name` y `contact_phone`; que no puede actualizar ni eliminar sus `legal_acceptances`; que al modificar una sede su `updated_at` cambia (FR-008); y, como superusuario, que una segunda membresía para el mismo usuario, un segundo owner, una segunda suscripción activa o un segundo documento vigente del mismo tipo violan sus restricciones
+- [X] T026 [P] [US4] Crear `supabase/tests/database/050-integrity.test.sql` como owner A: crear una segunda sede; verificar que no puede desactivar ni eliminar la sede principal; que `set_primary_venue` sobre una sede inactiva falla y sobre una activa cambia la principal dejando exactamente una; que el owner B no puede ejecutar `set_primary_venue` sobre sedes de A; que no puede actualizar `is_primary` directamente; que un nombre de sede duplicado (sin distinguir mayúsculas) se rechaza y que el nombre de una sede eliminada se puede reutilizar; que no puede modificar `status`, `slug`, `country_code` ni `timezone` de su academia y sí `name` y `contact_phone`; que no puede actualizar ni eliminar sus `legal_acceptances`; que al modificar una sede su `updated_at` cambia (FR-008); y, como superusuario, que una segunda membresía para el mismo usuario, un segundo owner, una segunda suscripción activa o un segundo documento vigente del mismo tipo violan sus restricciones
 
 ### Implementación de la Historia 4
 
-- [ ] T027 [US4] Ejecutar `npm run db:test` y corregir restricciones, privilegios por columna o `set_primary_venue` hasta que T026 pase (SC-005)
+- [X] T027 [US4] Ejecutar `npm run db:test` y corregir restricciones, privilegios por columna o `set_primary_venue` hasta que T026 pase (SC-005)
 
 **Punto de control**: reglas de integridad verificadas.
 
@@ -147,12 +147,12 @@ description: "Lista de tareas para implementar la base de datos de la Fundación
 
 ### Pruebas de la Historia 5
 
-- [ ] T028 [P] [US5] Crear `supabase/tests/database/060-storage.test.sql`: verificar que existen los buckets `public-assets` (público, `file_size_limit` de 1048576, `allowed_mime_types` `{image/jpeg,image/png}`) y `private-files` (privado); como owner A, que insertar en `storage.objects` con ruta `<academia A>/academy/<id>/<file_id>.png` se permite y con ruta de la academia B o con un primer segmento que no es UUID se rechaza; que A registra en `public.files` su propio archivo con clave, tipo, tamaño y autor (escenario 1); que A no lee objetos de `private-files` de B; que `anon` puede leer los objetos de `public-assets` (escenario 4); y que registrar en `public.files` una fila de B se rechaza. Los límites de tipo y tamaño los aplica la API de Storage, no la base de datos: aquí solo se verifica la configuración del bucket; la subida rechazada se valida en T032
+- [X] T028 [P] [US5] Crear `supabase/tests/database/060-storage.test.sql`: verificar que existen los buckets `public-assets` (público, `file_size_limit` de 1048576, `allowed_mime_types` `{image/jpeg,image/png}`) y `private-files` (privado); como owner A, que insertar en `storage.objects` con ruta `<academia A>/academy/<id>/<file_id>.png` se permite y con ruta de la academia B o con un primer segmento que no es UUID se rechaza; que A registra en `public.files` su propio archivo con clave, tipo, tamaño y autor (escenario 1); que A no lee objetos de `private-files` de B; que `anon` puede leer los objetos de `public-assets` (escenario 4); y que registrar en `public.files` una fila de B se rechaza. Los límites de tipo y tamaño los aplica la API de Storage, no la base de datos: aquí solo se verifica la configuración del bucket; la subida rechazada se valida en T032
 
 ### Implementación de la Historia 5
 
-- [ ] T029 [US5] Crear la migración `storage` en `supabase/migrations/`: insertar en `storage.buckets` `public-assets` (`public = true`, `file_size_limit = 1048576`, `allowed_mime_types = '{image/jpeg,image/png}'`) y `private-files` (`public = false`); políticas en `storage.objects` para INSERT, UPDATE y DELETE en ambos buckets y SELECT en `private-files`, que exigen que `(storage.foldername(name))[1]` cumpla el patrón de UUID y que `public.is_academy_member(((storage.foldername(name))[1])::uuid)` sea verdadero (research R10)
-- [ ] T030 [US5] Ejecutar `npm run db:reset` y `npm run db:test` y corregir hasta que T028 pase
+- [X] T029 [US5] Crear la migración `storage` en `supabase/migrations/`: insertar en `storage.buckets` `public-assets` (`public = true`, `file_size_limit = 1048576`, `allowed_mime_types = '{image/jpeg,image/png}'`) y `private-files` (`public = false`); políticas en `storage.objects` para INSERT, UPDATE y DELETE en ambos buckets y SELECT en `private-files`, que exigen que `(storage.foldername(name))[1]` cumpla el patrón de UUID y que `public.is_academy_member(((storage.foldername(name))[1])::uuid)` sea verdadero (research R10)
+- [X] T030 [US5] Ejecutar `npm run db:reset` y `npm run db:test` y corregir hasta que T028 pase
 
 **Punto de control**: almacenamiento aislado verificado.
 

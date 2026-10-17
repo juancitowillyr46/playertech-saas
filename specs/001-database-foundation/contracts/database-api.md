@@ -9,6 +9,7 @@ Lo que esta spec expone a las capas superiores (los repositorios de la spec 002 
 | `is_academy_member` | `(p_academy_id uuid) → boolean` | `authenticated` | `true` si el usuario tiene membresía `active` en esa academia y la academia está `active` |
 | `current_academy_id` | `() → uuid` | `authenticated` | La academia del usuario, o `NULL` si no tiene membresía activa o su academia está suspendida |
 | `has_academy_role` | `(p_academy_id uuid, p_roles text[]) → boolean` | `authenticated` | `true` si el usuario es miembro activo con uno de esos roles y la academia está `active` |
+| `storage_object_academy_id` | `(p_name text) → uuid` | `authenticated` | Uso interno de las políticas de Storage: la academia del primer segmento de la ruta, o `NULL` si no es un UUID |
 | `set_primary_venue` | `(p_venue_id uuid) → void` | `authenticated` | Marca la sede como principal y desmarca la anterior. Falla si el usuario no es owner, o si la sede está inactiva o eliminada |
 
 ## Acceso por tabla
@@ -33,7 +34,7 @@ Resumen de la matriz RLS de `docs/architecture/database-schema.md`:
 
 | Bucket | Clave | Leer | Escribir |
 |---|---|---|---|
-| `public-assets` | `{academy_id}/{módulo}/{entity_id}/{file_id}.{ext}` | Público | Miembros de `academy_id` |
+| `public-assets` | `{academy_id}/{módulo}/{entity_id}/{file_id}.{ext}` | Público, **solo por su URL pública**. Listar o descargar por la API requiere ser miembro de `academy_id`, para que nadie pueda enumerar las claves de otras academias | Miembros de `academy_id` |
 | `private-files` | Igual | Miembros de `academy_id` (URL firmada) | Miembros de `academy_id` |
 
 Tras subir un objeto, el cliente registra el archivo en `files` con la misma `storage_key` (ADR-013). La clave debe empezar por el `academy_id` de la fila; si no, la base de datos la rechaza. Los límites de tipo y tamaño los aplica la API de Storage.
