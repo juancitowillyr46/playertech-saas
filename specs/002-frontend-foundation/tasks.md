@@ -1,0 +1,274 @@
+---
+
+description: "Lista de tareas para implementar la base del frontend y el esqueleto de PlayerTech"
+---
+
+# Tareas: Base del frontend y esqueleto de PlayerTech
+
+**Input**: Documentos de diseño de `/specs/002-frontend-foundation/`
+
+**Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/, quickstart.md
+
+**Tests**: Se incluyen tareas de prueba porque la spec las exige (FR-033, FR-034).
+
+**Organización**: Las tareas se agrupan por historia de la spec. La configuración, el cliente de Supabase, los errores, la sesión y el contexto de academia los necesitan varias historias, por eso están en la Fase 2 (fundaciones).
+
+## Formato: `[ID] [P?] [Story] Descripción`
+
+- **[P]**: Puede ejecutarse en paralelo (archivo distinto y sin dependencias pendientes).
+- **[Story]**: Historia de la spec (US1 a US6).
+
+## Convenciones
+
+- Raíz del frontend: `frontend/`. Código en `frontend/src/app/` según la estructura de `plan.md`.
+- Todas las rutas de archivo de las tareas son relativas a la raíz del repositorio.
+- Componentes standalone con signals, detección de cambios sin zone.js (ya configurada) y `ChangeDetectionStrategy.OnPush`. Selectores con prefijo `app-`.
+- Textos de la interfaz en español (Colombia), con el vocabulario de `docs/product/glossary.md`.
+- Estilos solo en los tres sitios de `AGENTS.md`: preset (`core/theme/`), utilidades de Tailwind y SCSS existente del layout. Sin `style` en línea, sin `!important`, sin sobrescribir clases internas de PrimeNG.
+- Las demos de `frontend/src/app/pages/` no se modifican.
+- Pruebas: `*.spec.ts` junto al archivo que prueban, con Vitest y `TestBed`; se ejecutan con `npm test` desde `frontend/`.
+- Requisito previo: **Node 24 LTS** activo (`node --version` ≥ 24; research R1).
+
+---
+
+## Fase 1: Configuración
+
+**Propósito**: Dependencias y herramientas que todas las historias necesitan.
+
+- [ ] T001 Crear `frontend/.nvmrc` con `24` y añadir `"engines": { "node": ">=24" }` a `frontend/package.json` (research R1)
+- [ ] T002 Retirar de `frontend/package.json` las dependencias de Karma y Jasmine (`karma`, `karma-chrome-launcher`, `karma-coverage`, `karma-jasmine`, `karma-jasmine-html-reporter`, `jasmine-core`, `@types/jasmine`) y los plugins de ESLint sin uso (`eslint-plugin-import`, `eslint-plugin-prefer-arrow`, `eslint-plugin-prettier`); retirar `primeclt` si `grep` confirma que nada lo importa; eliminar `frontend/.gitmodules` (research R15)
+- [ ] T003 Instalar con versión exacta en `frontend/`: dependencia `@supabase/supabase-js@2.117.2`; dependencias de desarrollo `vitest@4.1.11`, `jsdom@27.4.0`, `typescript-eslint@8.71.0`; y ejecutar `npx ng add angular-eslint@21.4.0 --skip-confirmation` para instalar `angular-eslint` y crear el target `lint` en `frontend/angular.json` (research R2, R3, R4)
+- [ ] T004 Ejecutar `npm install` en `frontend/` con Node 24 y confirmar que `package-lock.json` queda actualizado sin errores de dependencias
+
+**Punto de control**: dependencias instaladas con Node 24.
+
+---
+
+## Fase 2: Fundaciones (bloqueantes)
+
+**Propósito**: Configuración, cliente, errores, sesión, contexto de academia, tema e idioma que usan todas las historias.
+
+**⚠️ CRÍTICO**: Ninguna historia puede empezar hasta completar esta fase.
+
+- [ ] T005 Crear `frontend/src/environments/environment.ts` (`production: true`, `supabaseUrl: ''`, `supabasePublishableKey: ''`) y `frontend/src/environments/environment.development.ts` (`production: false`, `supabaseUrl: 'http://127.0.0.1:54321'`, `supabasePublishableKey` = valor `PUBLISHABLE_KEY` de `npx supabase status -o env` en la raíz, que es la clave publicable por defecto de Supabase local); añadir `fileReplacements` a la configuración `development` de `frontend/angular.json` (research R5)
+- [ ] T006 [P] Crear `frontend/src/app/core/config/app-config.ts` con el token `APP_CONFIG` y la función `validateAppConfig(env)`, que lanza un `Error` con el mensaje "Configuración de Supabase incompleta: revisa src/environments" si `supabaseUrl` no es una URL `http(s)` válida o `supabasePublishableKey` está vacía (FR-007)
+- [ ] T007 Crear `frontend/src/app/core/supabase/supabase-client.ts` con el token `SUPABASE_CLIENT` y su fábrica `createClient<Database>(url, key, { auth: { flowType: 'pkce', detectSessionInUrl: false, persistSession: true, autoRefreshToken: true } })`, usando `Database` de `database.types.ts` (research R4)
+- [ ] T008 [P] Crear `frontend/src/app/core/errors/app-error.ts`: tipo `AppErrorCode` = `'invalid_credentials' | 'email_not_confirmed' | 'weak_password' | 'link_invalid' | 'other_browser' | 'rate_limited' | 'network' | 'forbidden' | 'unknown'` y clase `AppError extends Error` con `code`, `message` y `cause?` (contracts/app-errors.md)
+- [ ] T009 [P] Crear `frontend/src/app/core/errors/error-messages.ts` con el mensaje en español de cada `AppErrorCode`, copiado literalmente de la tabla de `specs/002-frontend-foundation/contracts/app-errors.md`
+- [ ] T010 Escribir primero `frontend/src/app/core/errors/supabase-error.mapper.spec.ts` (un caso por cada fila de contracts/app-errors.md, más `TypeError` de `fetch` → `network`, PostgreSQL `42501` → `forbidden`, objeto desconocido → `unknown`, y que `cause` conserva el original) y después `frontend/src/app/core/errors/supabase-error.mapper.ts` con `mapSupabaseError(error: unknown): AppError` (research R10)
+- [ ] T011 [P] Crear `frontend/src/app/core/errors/global-error-handler.ts` (`GlobalErrorHandler implements ErrorHandler`: `console.error` del error y `MessageService.add({ severity: 'error', summary: 'Error', detail: <mensaje de unknown> })`) (FR-016)
+- [ ] T012 [P] Crear `frontend/src/app/core/i18n/primeng-es.ts` con la traducción de PrimeNG al español, tipada como `Translation` de `primeng/api` (días, meses, `firstDayOfWeek: 1`, `dateFormat: 'dd/mm/yy'`, botones, filtros, mensajes de vacío, `aria`) (research R11)
+- [ ] T013 [P] Crear `frontend/src/app/core/theme/playertech-preset.ts` con `definePreset(Aura, { semantic: { primary: { 50: '{blue.50}', …, 950: '{blue.950}' } } })` (primario `blue.500` = `rgb(59, 130, 246)`, ADR-015 FE-06) (research R12)
+- [ ] T014 [P] Crear los modelos de `data-model.md`: `frontend/src/app/core/auth/models/auth.models.ts` (`AuthUser`, `AuthSession`, `SignUpInput`), `frontend/src/app/core/academy-context/models/academy-context.models.ts` (`AcademyContext` con `status: 'loading' | 'active' | 'suspended' | 'none' | 'error'`, `CurrentAcademy`) y `frontend/src/app/core/storage/models/storage.models.ts` (`StoredFile`, `UploadFileInput` con `bucket: 'public-assets' | 'private-files'`)
+- [ ] T015 [P] Crear `frontend/src/app/core/auth/data/auth.repository.ts`: clase abstracta `AuthRepository` con las 8 operaciones y firmas de `contracts/repositories.md`
+- [ ] T016 Crear `frontend/src/app/core/auth/data/supabase-auth.repository.ts` (`SupabaseAuthRepository extends AuthRepository`): `signUp` con metadatos `academy_name`, `full_name`, `legal_acceptances.terms`, `legal_acceptances.privacy_policy` y `emailRedirectTo = ${location.origin}/auth/callback`; `requestPasswordReset` con `redirectTo = ${location.origin}/auth/callback?next=/auth/reset-password`; `exchangeCodeForSession` que traduce la ausencia del verificador PKCE (`flow_state_not_found`, mensaje "code verifier") a `other_browser`; cada error pasa por `mapSupabaseError`; filas y sesiones convertidas a los modelos de dominio
+- [ ] T017 Crear `frontend/src/app/core/auth/auth.service.ts` (`AuthService`, `providedIn: 'root'`): signals `session`, `user`, `isAuthenticated` (computed), `ready`; `restore()` (llama a `getSession()`, se suscribe a `onSessionChange`, pone `ready` en `true`), `signIn()`, `signOut()` (limpia el contexto de academia y navega a `/auth/login`) (research R9)
+- [ ] T018 [P] Crear `frontend/src/app/core/academy-context/data/academy-context.repository.ts` (clase abstracta con `loadCurrent(): Promise<AcademyContext>`)
+- [ ] T019 Escribir primero `frontend/src/app/core/academy-context/data/supabase-academy-context.repository.spec.ts` (cliente simulado: sin membresía → `none`; membresía `disabled` → `none`; activa con academia visible → `active` con id y nombre; activa sin academia visible → `suspended`; error de red → rechaza con `AppError` `network`) y después `supabase-academy-context.repository.ts`, que lee la propia fila de `academy_members` (`academy_id`, `status`) y luego `academies` (`id`, `name`, `logo_file_id`) por ese id, según la tabla de research R6
+- [ ] T020 Escribir primero `frontend/src/app/core/academy-context/academy-context.service.spec.ts` (repositorio simulado: estados `loading` → `active`/`suspended`/`none`; error → `error`; `reload()` reintenta; `clear()` vuelve al estado inicial) y después `academy-context.service.ts` (`AcademyContextService`: signals `context`, `academy`, `status`; `load()` idempotente mientras haya un resultado, `reload()`, `clear()`)
+- [ ] T021 Reescribir `frontend/src/app.config.ts`: `providePrimeNG({ theme: { preset: PlayerTechPreset, options: { darkModeSelector: '.app-dark' } }, translation: PRIMENG_ES })`; `LOCALE_ID: 'es-CO'` con `registerLocaleData(localeEsCO)`; `{ provide: ErrorHandler, useClass: GlobalErrorHandler }` y `MessageService`; `APP_CONFIG` y `SUPABASE_CLIENT` a partir de `environment`; `{ provide: AuthRepository, useClass: SupabaseAuthRepository }` y `{ provide: AcademyContextRepository, useClass: SupabaseAcademyContextRepository }`; `provideAppInitializer` que valida la configuración y ejecuta `AuthService.restore()`; conservar las opciones actuales de `provideRouter`
+- [ ] T022 [P] Actualizar `frontend/src/app.component.ts` para incluir `<p-toast />` (de `primeng/toast`) junto al `router-outlet`
+- [ ] T023 [P] Crear `frontend/src/app/shared/components/placeholder-page/placeholder-page.ts` (`app-placeholder-page`, input `title` obligatorio; muestra el título y "Disponible pronto" con utilidades de Tailwind)
+- [ ] T024 Verificar que `npx ng build --configuration development` compila sin errores con las rutas actuales sin cambios
+
+**Punto de control**: el núcleo compila; sesión y contexto de academia funcionan detrás de sus contratos.
+
+---
+
+## Fase 3: Historia 1 — Proyecto con controles de calidad (Prioridad: P1) 🎯 MVP
+
+**Objetivo**: El proyecto se llama PlayerTech y compilación, análisis estático y pruebas funcionan (CA-009 de T-00).
+
+**Prueba independiente**: `npm run build`, `npm run lint` y `npm test -- --watch=false` desde `frontend/` terminan sin errores.
+
+### Implementación de la Historia 1
+
+- [ ] T025 [US1] Renombrar el proyecto: `name` → `playertech-frontend` en `frontend/package.json`; proyecto `sakai-ng` → `playertech` en `frontend/angular.json` (incluidos los `buildTarget`), `outputPath` → `dist/playertech`; en `frontend/src/index.html`, `<title>PlayerTech</title>`, `lang="es"` y sin el `<link rel="icon">` y el `preconnect` externos de PrimeFaces (FR-001, research R15)
+- [ ] T026 [US1] Cambiar el target `test` de `frontend/angular.json` al builder `@angular/build:unit-test` con `runner: 'vitest'`, `tsConfig: 'tsconfig.spec.json'`; actualizar `frontend/tsconfig.spec.json` con `"types": ["vitest/globals"]` y sin tipos de Jasmine; en `frontend/package.json`, scripts `"test": "ng test"` y `"test:ci": "ng test --watch=false"` (FR-004, research R3)
+- [ ] T027 [US1] Reescribir `frontend/eslint.config.js` en formato plano con `typescript-eslint` y `angular-eslint`: `tseslint.configs.recommended`, `angular.configs.tsRecommended`, `angular.configs.templateRecommended`, `angular.configs.templateAccessibility`, `eslint-config-prettier`; `@angular-eslint/component-selector` y `directive-selector` con prefijo `app`; `ignores` para `dist/`, `.angular/`, `node_modules/` y `src/app/pages/**`; script `"lint": "ng lint"` en `frontend/package.json` (FR-003, research R2)
+- [ ] T028 [US1] Añadir a `frontend/eslint.config.js` la regla `no-restricted-imports` que prohíbe `@supabase/supabase-js` y cualquier ruta que termine en `database.types`, con el mensaje "Solo los repositorios Supabase pueden usar el SDK y los tipos generados (ADR-002)", y un bloque que la desactiva para `src/app/core/supabase/**` y `src/app/**/supabase-*.ts` (FR-013, FR-014, research R2)
+- [ ] T029 [US1] Ejecutar `npm run lint` y corregir los errores en el código propio (`src/app/core/`, `src/app/layout/`, `src/app.*.ts`) sin desactivar reglas
+- [ ] T030 [US1] Ejecutar `npm run test:ci` y `npm run build` y corregir hasta que los tres comandos (con `lint`) terminen sin errores
+- [ ] T031 [P] [US1] Reescribir `frontend/README.md` para PlayerTech: requisitos (Node 24, Supabase local de la spec 001), comandos (`start`, `build`, `lint`, `test`, `test:ci`, `check:bundle`), estructura de `src/app/`, enlace a `docs/architecture/frontend.md`, y nota de que la base proviene de SakaiNG (licencia MIT en `LICENSE.md`)
+
+**Punto de control**: controles de calidad en verde (SC-001 parcial; `check:bundle` llega en la Historia 6).
+
+---
+
+## Fase 4: Historia 2 — Acceso protegido según sesión y membresía (Prioridad: P1)
+
+**Objetivo**: Cada situación lleva a su pantalla (CA-008 de T-00).
+
+**Prueba independiente**: pruebas de los guards en verde y sección 2 de `quickstart.md`.
+
+### Pruebas de la Historia 2
+
+- [ ] T032 [P] [US2] Escribir `frontend/src/app/core/auth/guards/auth.guard.spec.ts`: con `AuthService` simulado, espera a `ready`; sin sesión devuelve `UrlTree` `/auth/login?returnUrl=%2Fsettings%2Fvenues` para esa ruta; con sesión devuelve `true` (contracts/routes.md, tabla de guards)
+- [ ] T033 [P] [US2] Escribir `frontend/src/app/core/auth/guards/membership.guard.spec.ts`: con `AcademyContextService` simulado, `active` → `true`; `none` → `/auth/access-denied`; `suspended` → `/auth/suspended`; `error` → `/error` (contracts/routes.md)
+- [ ] T034 [P] [US2] Escribir `frontend/src/app/core/auth/guards/guest.guard.spec.ts`: sin sesión → `true`; con sesión → `/home`
+
+### Implementación de la Historia 2
+
+- [ ] T035 [US2] Crear los guards funcionales `frontend/src/app/core/auth/guards/auth.guard.ts`, `membership.guard.ts` y `guest.guard.ts` según la tabla de `contracts/routes.md`, esperando `AuthService.ready()` con `toObservable` + `filter` + `take(1)` (research R8)
+- [ ] T036 [P] [US2] Crear el layout de autenticación `frontend/src/app/features/auth/auth-layout/auth-layout.ts` según el patrón de `docs/architecture/ui.md`: dos columnas en escritorio (panel de marca con "PlayerTech", propuesta de valor y tres beneficios, fondo `bg-primary`; panel de contenido con `router-outlet`), una sola columna con el panel de marca oculto por debajo de `md` (FR-030)
+- [ ] T037 [P] [US2] Crear `frontend/src/app/features/auth/access-denied/access-denied.ts` y `frontend/src/app/features/auth/suspended/suspended.ts`: título, explicación en lenguaje claro ("Tu cuenta no tiene acceso a una academia" / "Tu academia está suspendida. Tus datos se conservan. Escríbenos para reactivarla.") y botón **Cerrar sesión** con `AuthService.signOut()` (FR-022)
+- [ ] T038 [P] [US2] Crear `frontend/src/app/features/errors/not-found/not-found.ts` (título "Página no encontrada", texto breve y enlace "Volver al inicio" a `/home`) y `frontend/src/app/features/errors/context-error/context-error.ts` (mensaje de `network` y botón **Reintentar** que llama a `AcademyContextService.reload()` y navega a `/home`) (FR-023, caso límite de conexión)
+- [ ] T039 [US2] Crear `frontend/src/app/features/auth/auth.routes.ts` con las rutas públicas de `contracts/routes.md` bajo `AuthLayout`: `login`, `register`, `verify-email`, `forgot-password` con `guestGuard` y `PlaceholderPage` (títulos "Iniciar sesión", "Crear cuenta", "Verifica tu correo", "Recuperar contraseña"); `reset-password` con `PlaceholderPage` ("Nueva contraseña") **sin** `guestGuard`; `access-denied` y `suspended` sin guards (FR-017, FR-020)
+- [ ] T040 [P] [US2] Crear `frontend/src/app/features/home/home.routes.ts` y `frontend/src/app/features/settings/settings.routes.ts` con `PlaceholderPage` ("Inicio"; "Academia" en `academy`; "Sedes" en `venues`)
+- [ ] T041 [US2] Reescribir `frontend/src/app.routes.ts`: `''` → `redirectTo: 'home'`; `auth` → `loadChildren` de `auth.routes`; bajo `AppLayout` con `canActivate: [authGuard, membershipGuard]`, `home` y `settings` con `loadChildren`; `error` → `ContextError` (con `authGuard`); `**` → `NotFound`. Las demos dejan de estar en la raíz (se montan en la Historia 6) (FR-017 a FR-019, FR-023, FR-025)
+- [ ] T042 [US2] Ejecutar `npm run test:ci` y `npm run lint` hasta que T032–T034 pasen
+
+**Punto de control**: rutas protegidas verificadas por pruebas (SC-002).
+
+---
+
+## Fase 5: Historia 3 — Retorno desde los enlaces de correo (Prioridad: P1)
+
+**Objetivo**: `/auth/callback` completa el intercambio PKCE y lleva al lugar correcto.
+
+**Prueba independiente**: pruebas de la pantalla en verde y sección 3 de `quickstart.md`.
+
+### Pruebas de la Historia 3
+
+- [ ] T043 [US3] Escribir `frontend/src/app/features/auth/callback/callback.spec.ts` con `AuthRepository` y `Router` simulados: `?code=x` con éxito → navega a `/home` con `replaceUrl: true`; `?code=x&next=/auth/reset-password` → navega a `/auth/reset-password`; `next=https://malicioso.com` o `next=/settings` → se ignora y navega a `/home`; `?error=access_denied&error_code=otp_expired` → estado `invalid`; sin parámetros → `invalid`; intercambio rechazado con `other_browser` → estado `other_browser`; con `link_invalid` → `invalid` (contracts/routes.md)
+
+### Implementación de la Historia 3
+
+- [ ] T044 [US3] Crear `frontend/src/app/features/auth/callback/callback.ts` según la tabla "Pantalla /auth/callback" de `contracts/routes.md`: estado en un signal (`processing`, `invalid`, `other_browser`); `processing` con `p-progressSpinner` y "Verificando…"; `invalid` con "El enlace venció o ya fue usado." y enlace a `/auth/login`; `other_browser` con el texto literal del contrato y enlaces a `/auth/login` y `/auth/forgot-password`; `next` aceptado solo si empieza por `/home` o `/auth/reset-password`; registrar la ruta `callback` (sin guards) en `frontend/src/app/features/auth/auth.routes.ts` (FR-021, research R7)
+- [ ] T045 [US3] Actualizar `supabase/config.toml`: `additional_redirect_urls = ["http://localhost:4200/auth/callback**"]` (retirar la entrada de `/auth/reset-password`); reiniciar Supabase local con `npm run db:stop` y `npm run db:start` desde la raíz (contracts/routes.md)
+- [ ] T046 [US3] Ejecutar `npm run test:ci` hasta que T043 pase
+
+**Punto de control**: retorno de enlaces verificado por pruebas.
+
+---
+
+## Fase 6: Historia 4 — Navegación base de PlayerTech (Prioridad: P2)
+
+**Objetivo**: Layout adoptado con marca, academia, menú propio, menú de usuario, modo claro/oscuro y español (ADR-015).
+
+**Prueba independiente**: `navigation.spec.ts` en verde y sección 4 de `quickstart.md`.
+
+### Pruebas de la Historia 4
+
+- [ ] T047 [P] [US4] Escribir `frontend/src/app/core/navigation/navigation.spec.ts`: `buildNavigation(false)` devuelve "Inicio" (`/home`) y "Configuración" con "Academia" (`/settings/academy`) y "Sedes" (`/settings/venues`); `buildNavigation(true)` (producción) no incluye la sección "Desarrollo"; `buildNavigation(false)` sí la incluye
+
+### Implementación de la Historia 4
+
+- [ ] T048 [US4] Crear `frontend/src/app/core/navigation/navigation.ts` con `NavigationItem` (`label`, `icon`, `routerLink?`, `items?`) y `buildNavigation(production: boolean): MenuItem[]`: Inicio (`pi pi-home`); Configuración con Academia (`pi pi-building`) y Sedes (`pi pi-map-marker`); y, fuera de producción, Desarrollo con "Inicio de sesión de prueba" (`/dev/login`), "Componentes UI" (`/dev/uikit/formlayout`), "Ejemplo de gestión" (`/dev/pages/crud`) y "Dashboard de ejemplo" (`/dev`) (research R12)
+- [ ] T049 [US4] Modificar `frontend/src/app/layout/component/app.menu.ts` para que el modelo sea `buildNavigation(environment.production)` en lugar de la lista fija de Sakai
+- [ ] T050 [US4] Modificar `frontend/src/app/layout/component/app.topbar.ts`: marca en texto "PlayerTech" (sin el SVG de Sakai) con enlace a `/home`; nombre de la academia desde `AcademyContextService.academy()?.name`; botón claro/oscuro con `aria-label` "Cambiar a modo oscuro" / "Cambiar a modo claro"; menú de usuario con `p-menu` emergente (botón con las iniciales del correo y `aria-label` "Menú de usuario") con la opción "Cerrar sesión" (`AuthService.signOut()`); retirar `AppConfigurator`, el botón de paleta y los botones Calendar, Messages y Profile (FR-026, FR-027)
+- [ ] T051 [US4] Modificar `frontend/src/app/layout/service/layout.service.ts`: configuración inicial con `primary: 'blue'` y `menuMode: 'static'`; leer y guardar `darkTheme` en `localStorage` (clave `playertech.darkTheme`), envuelto en `try/catch`, y aplicar la clase `app-dark` al iniciar (FR-028, FR-032)
+- [ ] T052 [P] [US4] Modificar `frontend/src/app/layout/component/app.footer.ts` para mostrar "PlayerTech"
+- [ ] T053 [US4] Revisar a 360 px de ancho (herramientas del navegador) el layout, el menú desplegable, el menú de usuario y las pantallas públicas: sin desbordamiento horizontal, foco visible, áreas táctiles de al menos 44 px y etiquetas accesibles; corregir en los archivos de `layout/` o con utilidades de Tailwind (FR-031, SC-007)
+- [ ] T054 [US4] Ejecutar `npm run test:ci` y `npm run lint` hasta que T047 pase
+
+**Punto de control**: navegación base completa.
+
+---
+
+## Fase 7: Historia 5 — Capa de datos lista para las historias de usuario (Prioridad: P2)
+
+**Objetivo**: Contrato de almacenamiento y verificación de que la arquitectura se respeta.
+
+**Prueba independiente**: pruebas del repositorio de almacenamiento en verde y el `lint` falla ante una importación prohibida.
+
+### Pruebas de la Historia 5
+
+- [ ] T055 [P] [US5] Escribir `frontend/src/app/core/storage/data/supabase-file-storage.repository.spec.ts` con cliente simulado: `upload` construye la clave `{academyId}/{module}/{entityId}/{fileId}.{ext}` con el `academyId` del contexto, sube al bucket indicado y registra la fila en `files`; si el registro falla, retira el objeto y rechaza con `AppError`; `getUrl` usa URL pública en `public-assets` y URL firmada (3600 s por defecto) en `private-files`; `remove` actualiza `deleted_at` (contracts/repositories.md)
+
+### Implementación de la Historia 5
+
+- [ ] T056 [P] [US5] Crear `frontend/src/app/core/storage/data/file-storage.repository.ts` (clase abstracta con `upload`, `getUrl`, `remove` según `contracts/repositories.md`)
+- [ ] T057 [US5] Crear `frontend/src/app/core/storage/data/supabase-file-storage.repository.ts` según `contracts/repositories.md` y ADR-013 (id con `crypto.randomUUID()`, extensión a partir del tipo MIME `image/png` → `png`, `image/jpeg` → `jpg`), y registrarlo en `frontend/src/app.config.ts` con `{ provide: FileStorageRepository, useClass: SupabaseFileStorageRepository }`
+- [ ] T058 [US5] Verificar la regla de importaciones: añadir temporalmente `import { createClient } from '@supabase/supabase-js';` en `frontend/src/app/features/home/home.routes.ts`, confirmar que `npm run lint` falla con el mensaje de ADR-002 y retirar la línea (SC-005)
+- [ ] T059 [US5] Ejecutar `npm run test:ci` hasta que T055 pase
+
+**Punto de control**: los tres contratos del núcleo implementados y verificados.
+
+---
+
+## Fase 8: Historia 6 — Demos de la plantilla solo en desarrollo (Prioridad: P3)
+
+**Objetivo**: Demos y `/dev/login` solo en desarrollo; producción sin ellos ni secretos (FE-02; CA-007 y CA-008 de T-00).
+
+**Prueba independiente**: `npm run check:bundle` en verde y sección 5 de `quickstart.md`.
+
+### Implementación de la Historia 6
+
+- [ ] T060 [US6] Crear `frontend/src/app/features/dev/dev-login/dev-login.ts`: formulario reactivo tipado (correo, contraseña con `p-password` y opción de mostrar), etiquetas visibles, botón con estado de carga que impide envíos duplicados, error mostrado con `p-message` a partir de `AppError.message`, nota "Solo para desarrollo: usa los usuarios del seed (supabase/README.md)"; tras `AuthService.signIn()`, navega a `returnUrl` o `/home` (FR-035)
+- [ ] T061 [US6] Crear `frontend/src/app/features/dev/dev.routes.ts` (`DEV_ROUTES`): `dev/login` bajo `AuthLayout`; `dev` bajo `AppLayout` sin guards con `''` → `Dashboard`, `uikit` → `loadChildren` de `app/pages/uikit/uikit.routes`, `pages` → `loadChildren` de `app/pages/pages.routes`, `documentation` → `Documentation`, y `landing` → `Landing` (componentes cargados con `loadComponent`) (research R13)
+- [ ] T062 [US6] Añadir a `frontend/src/app.routes.ts` `...(environment.production ? [] : DEV_ROUTES)` antes de la ruta `**`, importando `DEV_ROUTES` de forma que la rama se elimine en producción (FR-024)
+- [ ] T063 [US6] Crear `frontend/scripts/check-bundle.mjs` y el script `"check:bundle": "node scripts/check-bundle.mjs"` en `frontend/package.json`: recorre `dist/playertech/browser/**/*.js`; falla (código 1) si encuentra `service_role`, `sb_secret_` o `SUPABASE_SERVICE`, o textos exclusivos de las demos (`uikit`, `FormLayoutDemo`, `/dev/login`); imprime un resumen (research R14)
+- [ ] T064 [US6] Ejecutar `npm run build` y `npm run check:bundle`; confirmar en la salida de la compilación que no hay fragmentos `uikit-routes` ni `pages-routes` y que el bundle inicial es menor de 1 MB (SC-003, SC-004, research R16)
+
+**Punto de control**: producción sin demos ni secretos.
+
+---
+
+## Fase 9: Pulido y validación transversal
+
+**Propósito**: Documentación, validación de punta a punta y cierre de T-00.
+
+- [ ] T065 [P] Corregir el apartado "Layout" de `docs/architecture/frontend.md`: la adopción del layout ya no es una excepción al principio V (Constitución 3.1.0 en adelante, ADR-015); mencionar el inicio de sesión de desarrollo en `/dev/login` en el apartado de rutas "SOLO DESARROLLO"
+- [ ] T066 [P] Actualizar `AGENTS.md` (sección Comandos, bloque de `frontend/`) con `npm run lint`, `npm run test:ci` y `npm run check:bundle`, e indicar Node 24
+- [ ] T067 Ejecutar de punta a punta `specs/002-frontend-foundation/quickstart.md` (secciones 1 a 6) con Supabase local y registrar los resultados en `frontend/README.md` (sección "Validación")
+- [ ] T068 Revisión básica de experiencia y accesibilidad de las pantallas construidas (callback, acceso denegado, academia suspendida, página no encontrada, error de contexto, layout de autenticación y layout de la aplicación) con `/impeccable audit` en modo revisión, traduciendo cualquier ajuste a los tres sitios de estilos de `AGENTS.md`; la revisión de diseño completa queda para T-01 (principio XIII)
+- [ ] T069 Actualizar `docs/backlog/enablers/T-00-saas-foundation.md`: áreas 7 y 8 implementadas (spec `specs/002-frontend-foundation/`), CA-007, CA-008 y CA-009 verificados, y estado "Terminada" si todo pasa
+
+---
+
+## Dependencias y orden de ejecución
+
+### Por fase
+
+- **Fase 1 (Configuración)**: requiere Node 24. Sin otras dependencias.
+- **Fase 2 (Fundaciones)**: depende de la Fase 1; **bloquea todas las historias**.
+- **Fase 3 (US1)**: depende de la Fase 2. Conviene completarla antes que el resto, porque deja `lint` y `test` funcionando para las demás historias.
+- **Fase 4 (US2)**: depende de la Fase 3.
+- **Fase 5 (US3)**: depende de la Fase 4 (usa `auth.routes.ts` y el layout de autenticación).
+- **Fase 6 (US4)**: depende de la Fase 4 (rutas privadas y `AppLayout` protegido).
+- **Fase 7 (US5)**: depende de la Fase 3; independiente de US2 a US4.
+- **Fase 8 (US6)**: depende de las Fases 4 y 6 (layouts y navegación de desarrollo).
+- **Fase 9 (Pulido)**: depende de todas las historias.
+
+### Dentro de cada historia
+
+Primero las pruebas (deben fallar), después la implementación y por último `npm run test:ci` y `npm run lint`.
+
+## Oportunidades de paralelismo
+
+- Fase 2: T006, T008, T009, T011, T012, T013, T014, T015 y T018 (archivos distintos sin dependencias entre sí); T022 y T023.
+- Fase 4: T032, T033 y T034 (pruebas); T036, T037, T038 y T040 (pantallas).
+- La Fase 7 (US5) puede avanzar en paralelo con las Fases 5 y 6.
+- Fase 9: T065 y T066.
+
+### Ejemplo de paralelismo en la Historia 2
+
+```text
+T032 auth.guard.spec.ts
+T033 membership.guard.spec.ts
+T034 guest.guard.spec.ts
+T036 auth-layout.ts
+T037 access-denied.ts y suspended.ts
+T038 not-found.ts y context-error.ts
+```
+
+## Estrategia de implementación
+
+### MVP primero
+
+1. Fases 1 y 2: dependencias y núcleo.
+2. Fase 3 (US1): controles de calidad en verde.
+3. **Detenerse y validar**: `build`, `lint` y `test:ci` sin errores.
+
+### Entrega incremental (etapas con revisión del responsable)
+
+1. **Etapa 1**: Fases 1 a 3 (núcleo y calidad).
+2. **Etapa 2**: Fases 4, 5, 6 y 8 (acceso protegido, callback, navegación, demos e inicio de sesión de prueba). Al cerrarla, el responsable puede entrar por `/dev/login` con un usuario del seed y recorrer el esqueleto, también desde el celular.
+3. **Etapa 3**: Fases 7 y 9 (almacenamiento, validación de punta a punta, revisión de experiencia y cierre de T-00).
+
+## Notas
+
+- `[P]` = archivos distintos y sin dependencias pendientes.
+- Las pruebas usan dobles de los contratos; ninguna prueba unitaria llama a Supabase real. La integración real se valida con `quickstart.md`.
+- Ante una contradicción entre las tareas, el plan, la Constitución o los ADR, detenerse y resolverla con el flujo de Spec Kit.
