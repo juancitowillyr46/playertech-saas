@@ -177,7 +177,7 @@ Como owner, quiero ver las sedes de mi academia con su tipo, ciudad y estado, pa
 
 **Seguridad**
 
-- **FR-021**: Toda escritura DEBE depender de la autorización de la base de datos (owner de la academia, aislamiento entre academias); la interfaz nunca envía la academia.
+- **FR-021**: Toda escritura DEBE depender de la autorización de la base de datos (owner de la academia, aislamiento entre academias). El usuario nunca elige la academia: sale del contexto de su membresía y la base de datos la valida.
 
 ### Key Entities
 
