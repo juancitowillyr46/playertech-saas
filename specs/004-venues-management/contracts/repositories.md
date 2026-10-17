@@ -39,6 +39,7 @@ Toda operación rechaza con `AppError` (ver [app-errors.md](./app-errors.md)):
 | Regla de la principal (`23514`: desactivar o eliminar la principal, marcar una inactiva) | `rule_violation` |
 | La sede ya no existe, está eliminada o es de otra academia (`PGRST116`) | `not_found` |
 | Usuario sin permiso (`42501`) | `forbidden` |
+| `setPrimary` sobre una sede que ya no existe: `set_primary_venue` responde `42501` a propósito, para no revelar sedes ajenas | `not_found` (el repositorio lo traduce porque conoce la semántica de la función) |
 | Sin conexión | `network` |
 
 ## VenuesService (`features/venues/services/venues.service.ts`)

@@ -24,6 +24,7 @@ Como owner A, en el celular (360 px), en Sedes:
 | «Nueva sede» con el nombre vacío o «   » | «Ingresa el nombre de la sede.» bajo el campo; no se crea (CA-003) |
 | «Nueva sede» → «cancha norte» | «Ya existe una sede con ese nombre.»; no se crea (CA-004) |
 | Medir desde «Nueva sede» hasta el aviso | Menos de 1 minuto (SC-001) |
+| Medir desde tocar «Guardar» hasta el aviso | Menos de 1 s en local (objetivo de rendimiento del plan) |
 
 ## 3. Editar (HU-031, CA-001)
 

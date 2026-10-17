@@ -34,7 +34,7 @@ description: "Lista de tareas para implementar la gestión de sedes (EP-12)"
 
 **Propósito**: Partir de un entorno conocido.
 
-- [ ] T001 Restaurar Supabase local con `npm run db:reset` desde la raíz (academias A y B del seed) y comprobar que `npm run db:test` y `npm run test:ci` en `frontend/` están en verde antes de cambiar nada
+- [ ] T001 Comprobar, **sin borrar datos**, que Supabase local está arriba y que `npm run db:test` (raíz) y `npm run test:ci` (`frontend/`) están en verde antes de cambiar nada. `npm run db:reset` borra las cuentas y academias de prueba del responsable de producto: solo se ejecuta con su autorización (T026)
 
 ---
 
@@ -51,7 +51,7 @@ description: "Lista de tareas para implementar la gestión de sedes (EP-12)"
   - `listVenues` lee también `address` y `directions`;
   - `createVenue` inserta con `academy_id` del contexto y los campos de `VenueInput`, **sin** `created_by`, `is_primary` ni `is_active`, y devuelve la sede creada; sin academia en el contexto rechaza con `forbidden` sin llamar a Supabase;
   - `updateVenue`, `setActive` y `deleteVenue` filtran por `id` y `deleted_at is null` y envían solo sus columnas (`deleted_at` como fecha ISO);
-  - `setPrimary` llama a `rpc('set_primary_venue', { p_venue_id })`;
+  - `setPrimary` llama a `rpc('set_primary_venue', { p_venue_id })` y traduce su `42501` (sede no encontrada) a `not_found`;
   - traducción de `23505`, `23514` y `PGRST116`.
 - [ ] T008 Ampliar `frontend/src/app/features/venues/data/venue.repository.ts` y `supabase-venue.repository.ts` según `contracts/repositories.md` (inyecta `AcademyContextService` para la academia, research R2), hasta que pase T007
 - [ ] T009 Ampliar `frontend/src/app/features/venues/services/venues.service.spec.ts`. Debe cubrir:
@@ -79,7 +79,7 @@ description: "Lista de tareas para implementar la gestión de sedes (EP-12)"
   - error `duplicate` del servidor: el mismo mensaje junto al campo; error de red: `p-message` en el formulario y lo escrito se conserva;
   - doble clic en Guardar crea una sola vez.
 
-  Retirar las pruebas de la maqueta (Guardar deshabilitado y «Disponible próximamente»).
+  Retirar las pruebas de la maqueta (Guardar deshabilitado y «Disponible próximamente»). Las de la confirmación al cerrar con cambios (FR-007) se conservan y siguen en verde.
 - [ ] T012 [US1] Implementar en `venues-page.ts` la creación real según `contracts/ui-contracts.md`: validadores (obligatorio tras recortar y duplicado con `isNameTaken`), errores de campo accesibles con `fieldA11y`, estado de carga en Guardar, error general en `p-message` y aviso con `MessageService`. Debe pasar T011
 
 **Checkpoint**: Registro de sedes completo en el celular y en escritorio.
@@ -150,8 +150,8 @@ description: "Lista de tareas para implementar la gestión de sedes (EP-12)"
 - [ ] T023 Revisar `venues-page.ts` tras las fases 3 a 8: bloqueo de acciones mientras `busy`, sin la maqueta ni sus textos, textos frente al glosario y sin comentarios de la spec 003 que hablen de maqueta
 - [ ] T024 Pasar `/impeccable audit` y `/impeccable polish` sobre la pantalla de Sedes y su formulario a 360 y 1280 px, en ambos modos, con el detector de Impeccable y las mediciones de áreas táctiles y desbordamiento; corregir los hallazgos (FR-019, SC-006)
 - [ ] T025 Ejecutar los controles automáticos de la sección 1 de `quickstart.md` (`lint`, `check:styles`, `test:ci`, `build`, `check:bundle` y `db:test`)
-- [ ] T026 Recorrer las secciones 2 a 7 de `quickstart.md` con las academias A y B (incluidos los casos límite de dos pestañas, sin conexión y doble toque) y anotar los resultados en su sección «Resultados»
-- [ ] T027 Actualizar el backlog: `docs/backlog/user-stories/HU-029`, `HU-030` y `HU-031` con estado y spec implementada, y retirar de HU-030 la nota de «versión de lectura disponible»; actualizar en `docs/architecture/ui.md` la referencia a la pantalla de sedes (ya no es maqueta de escritura)
+- [ ] T026 Pedir autorización al responsable de producto antes de `npm run db:reset` (borra sus datos de prueba) o, si no la da, trabajar sobre los datos existentes; recorrer las secciones 2 a 7 de `quickstart.md` con las academias A y B (incluidos los casos límite de dos pestañas, sin conexión y doble toque) y anotar los resultados en su sección «Resultados»
+- [ ] T027 Actualizar el backlog: `docs/backlog/user-stories/HU-029`, `HU-030` y `HU-031` con estado y spec implementada, y retirar de HU-030 la nota de «versión de lectura disponible»; actualizar en `docs/architecture/ui.md` la referencia a la pantalla de sedes (ya no es maqueta de escritura) y en `docs/architecture/frontend.md` la lista de elementos de `shared/` (`forms/field-a11y.ts`)
 - [ ] T028 Marcar las tareas completadas en este archivo y preparar el resumen para el PR
 
 ---

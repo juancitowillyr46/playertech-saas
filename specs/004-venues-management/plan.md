@@ -31,7 +31,7 @@ Todo descansa en las reglas que la base de datos de la spec 001 ya impone (polí
 
 **Tipo de proyecto**: SPA Angular sobre BaaS
 
-**Objetivos de rendimiento**: aviso visible en menos de 1 s tras confirmar una operación en local; bundle inicial sin crecimiento apreciable (la feature se carga bajo demanda)
+**Objetivos de rendimiento**: aviso visible en menos de 1 s tras confirmar una operación en local (medido en la sección 2 de `quickstart.md`); bundle inicial sin crecimiento apreciable (la feature se carga bajo demanda)
 
 **Restricciones**:
 - Capas página → servicio → repositorio abstracto → implementación Supabase (ADR-002, ADR-009).

@@ -6,7 +6,7 @@ Amplía el catálogo de `specs/002-frontend-foundation/contracts/app-errors.md` 
 |---|---|---|
 | `duplicate` | PostgreSQL `23505`, violación de un índice único | Ya existe un registro con ese nombre. |
 | `rule_violation` | PostgreSQL `23514`, `check_violation` (incluye el error de `set_primary_venue`) | Esta acción no cumple las reglas de la academia. |
-| `not_found` | PostgREST `PGRST116`, ninguna fila afectada | El registro ya no existe o cambió. Actualizamos la información. |
+| `not_found` | PostgREST `PGRST116`, ninguna fila afectada; también el `42501` de `set_primary_venue`, que la función usa para «sede no encontrada» sin revelar sedes ajenas (lo traduce `SupabaseVenueRepository.setPrimary`) | El registro ya no existe o cambió. Actualizamos la información. |
 
 ## Mensajes específicos en Sedes
 

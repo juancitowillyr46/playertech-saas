@@ -128,7 +128,7 @@ Como owner, quiero ver las sedes de mi academia con su tipo, ciudad y estado, pa
 
 - **Dos pestañas o dispositivos**: si la sede cambió o se eliminó en otro lugar entre que se abrió el formulario y se guardó, se informa en español y el listado se actualiza; no se muestra un error técnico.
 - **Nombre duplicado que solo descubre el servidor** (por ejemplo, otra pestaña creó el mismo nombre): se muestra el mismo mensaje de nombre en uso, junto al campo.
-- **Espacios al inicio o al final**: se ignoran al validar y al guardar el nombre, la dirección, la ciudad y las indicaciones; un campo opcional que queda vacío se guarda como vacío.
+- **Espacios al inicio o al final**: se ignoran al validar y al guardar el nombre, la dirección, la ciudad y las indicaciones; un campo opcional que queda vacío se guarda sin valor.
 - **Sin conexión o fallo del servidor al guardar**: el formulario conserva lo escrito, muestra un mensaje en español y permite reintentar.
 - **Doble toque en Guardar o en una acción**: no se crea ni se aplica dos veces.
 - **Única sede de la academia** (la principal): no puede desactivarse ni eliminarse; las acciones lo explican.
@@ -146,7 +146,7 @@ Como owner, quiero ver las sedes de mi academia con su tipo, ciudad y estado, pa
 - **FR-002**: Una sede nueva DEBE crearse activa y no principal.
 - **FR-003**: El owner DEBE poder editar todos los datos de una sede, incluida la principal; el formulario DEBE abrirse con los datos actuales completos.
 - **FR-004**: El nombre DEBE ser obligatorio y único entre las sedes no eliminadas de la academia, sin distinguir mayúsculas ni espacios al inicio y al final; la sede que se edita no cuenta como duplicado de sí misma.
-- **FR-005**: Las validaciones DEBEN mostrarse junto al campo, en español, antes de enviar cuando sea posible; las que solo detecta el servidor DEBEN mostrarse en el mismo lugar con el mismo mensaje.
+- **FR-005**: Las validaciones DEBEN mostrarse junto al campo, en español, al salir del campo y al guardar; las que solo detecta el servidor DEBEN mostrarse en el mismo lugar con el mismo mensaje.
 - **FR-006**: Los nombres de sedes eliminadas DEBEN poder reutilizarse.
 - **FR-007**: Cerrar el formulario con cambios sin guardar DEBE pedir confirmación; sin cambios, DEBE cerrarse sin preguntar.
 
