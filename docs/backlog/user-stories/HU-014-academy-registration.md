@@ -72,13 +72,13 @@ Permitir que una academia se registre por su cuenta y quede creada como un tenan
 - La sede principal se crea con el nombre "Sede principal" y el tipo lugar de entrenamiento.
 - Una persona solo puede pertenecer a una academia.
 - El owner no puede acceder hasta verificar su correo.
+- Desde la pantalla de verificar correo se puede reenviar el correo de verificación, con espera entre intentos y el mismo mensaje exista o no la cuenta (decisión del 2026-10-17, spec 006).
 
 ## Fuera de alcance
 
 - Captcha.
 - Selección de país o zona horaria.
 - Onboarding guiado posterior al registro.
-- Reenvío del correo de verificación desde la interfaz *(a confirmar en la spec)*.
 - Limpieza de registros no verificados (MVP+).
 
 ## Posibles evoluciones
@@ -87,6 +87,8 @@ Ideas del responsable de producto (2026-10-17) para una spec propia (`feat`). Ca
 
 - Pedir en el registro datos de la sede principal, como la dirección.
 - Al terminar el registro, invitar de forma destacada a completar los datos de la sede principal.
+
+Decisión del 2026-10-17: ninguna entra en la spec 006. La invitación a completar la sede la cubre «Completa tu academia» de HU-032 (EP-09); pedir la dirección en el registro queda como `feat` futura.
 
 ## Decisiones relacionadas
 
