@@ -152,6 +152,13 @@ Los nombres deben utilizar el vocabulario definido en:
 docs/product/glossary.md
 ```
 
+### Base de datos y TypeScript
+
+- La base de datos usa `snake_case` en tablas, columnas y funciones (`academy_id`, `deleted_at`, `set_primary_venue`).
+- El código TypeScript usa `camelCase` en propiedades y variables (`academyId`, `deletedAt`), y `PascalCase` en tipos y clases.
+- La traducción entre ambos estilos se hace **solo en la implementación Supabase del repositorio** (`supabase-*.repository.ts`). Los modelos de la feature, los servicios y los componentes nunca ven nombres en `snake_case`.
+- Los tipos generados por `npm run db:types` conservan el `snake_case` y solo se usan dentro de esas implementaciones.
+
 ## UI
 
 Los componentes visuales deben reutilizar PrimeNG, SakaiNG y Tailwind según las reglas definidas en:
