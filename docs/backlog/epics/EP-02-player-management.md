@@ -17,3 +17,7 @@ Centralizar la información básica de los jugadores de la academia.
 |---|---|---|
 | HU-002 | Registrar jugador | Pendiente |
 | HU-003 | Consultar jugadores | Pendiente |
+
+## Decisiones de la ideación (2026-10-18)
+
+ADR-018. Se construye en la **spec 1 (jugadores, acudientes y grupos)** de la Fase 2. Datos básicos con apodo opcional, sin documento ni foto (DEC-36); acudientes en EP-10 (DEC-30).

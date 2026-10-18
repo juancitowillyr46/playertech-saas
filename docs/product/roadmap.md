@@ -31,9 +31,20 @@ Requisitos de operación (ADR-014 y ADR-016) que no son funcionalidades, pero de
 
 ### Fase 2 — Negocio
 
+Ideada el 2026-10-18 (ADR-018). Se construye en cuatro specs:
+
+1. Jugadores, acudientes y grupos.
+2. Actividades (entrenamiento y competencia) en una sede o en una cancha externa del catálogo.
+3. Convocatoria con un mensaje generado por grupo, con su enlace, para compartir en WhatsApp.
+4. Respuesta del acudiente sin registro previo (elige a su jugador; el owner valida el vínculo; hasta 3 cambios antes del cierre) y seguimiento.
+
+Detalle:
+
 - Gestión de acudientes.
 - Gestión de jugadores.
 - Gestión de grupos/categorías.
+- Catálogo de canchas externas.
+- Avisos al owner dentro de la aplicación; las notificaciones push web quedan para el habilitador T-03 (DEC-41).
 - Creación de actividades.
 - Entrenamientos.
 - Competencias.

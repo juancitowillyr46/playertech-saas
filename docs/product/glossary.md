@@ -14,7 +14,8 @@ Este documento define los términos utilizados en PlayerTech para mantener un le
 | **Owner** | Rol del usuario que registró la academia. Es el único rol del MVP y tiene control total sobre su academia. Cada academia tiene exactamente un owner. |
 | **Visitante** | Persona sin sesión que puede registrar una nueva academia. |
 | **Entrenador** | Persona responsable de dirigir actividades deportivas y trabajar con los jugadores. |
-| **Tutor / Padre** | Persona responsable de uno o más jugadores y que puede responder convocatorias en su representación. |
+| **Acudiente** | Persona responsable de uno o más jugadores (madre, padre u otro familiar) que responde convocatorias en su representación. Es el término de la interfaz en Colombia (DEC-30); en documentos anteriores aparece como *tutor*. |
+| **Cancha externa** | Lugar que no pertenece a la academia, normalmente donde se juegan torneos, guardado en el catálogo de canchas de la academia para reutilizarlo en actividades (DEC-32). |
 | **Jugador** | Persona que participa en las actividades deportivas de una academia. |
 
 ## Plataforma SaaS
@@ -51,7 +52,8 @@ Este documento define los términos utilizados en PlayerTech para mantener un le
 | **Competencia** | Actividad deportiva en la que participan jugadores o equipos frente a otros participantes. |
 | **Convocatoria** | Comunicación dirigida a uno o más jugadores para solicitar la confirmación de participación en una actividad. |
 | **Respuesta** | Confirmación registrada por el tutor respecto a la participación del jugador convocado. |
-| **Confirmación** | Respuesta positiva del tutor indicando que el jugador participará en la actividad. |
+| **Confirmación** | Respuesta positiva del acudiente indicando que el jugador participará en la actividad. |
+| **Confirmación provisional** | Respuesta «Sí, provisional»: el jugador probablemente participará, pero depende de algo que el acudiente puede explicar en un comentario (DEC-38). |
 | **Motivo** | Información proporcionada por el tutor cuando indica que el jugador no participará. |
 
 ## Gestión

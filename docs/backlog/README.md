@@ -52,18 +52,16 @@ Estados de una HU: **Pendiente** → **Definida** (lista para especificar) → *
 | 4 | [EP-12 Sedes](epics/EP-12-venues.md) | HU-029, HU-030, HU-031 | MVP |
 | 5 | [T-02 Despliegue del entorno de pruebas](enablers/T-02-deployment.md) (Vercel y Supabase en la nube, sin academias reales) | — | MVP |
 
-### Fase 2 — Negocio (pendiente de ideación)
+### Fase 2 — Negocio (ideada el 2026-10-18, ADR-018)
 
-| Épica | HU actuales | Estado |
-|---|---|---|
-| EP-10 Gestión de acudientes | Por definir | Pendiente |
-| [EP-02 Gestión de jugadores](epics/EP-02-player-management.md) | HU-002, HU-003 | Pendiente de ajuste |
-| [EP-04 Gestión de actividades](epics/EP-04-activity-management.md) | HU-005, HU-006 | Pendiente de ajuste |
-| [EP-05 Convocatorias](epics/EP-05-call-ups.md) | HU-007, HU-008 | Pendiente de ajuste |
-| [EP-08 Comunicación](epics/EP-08-call-up-communication.md) | HU-012, HU-013 | Pendiente de ajuste |
-| [EP-06 Respuesta del acudiente](epics/EP-06-tutor-responses.md) | HU-009, HU-010 | Pendiente de ajuste |
-| [EP-07 Seguimiento de respuestas](epics/EP-07-response-tracking.md) | HU-011 | Pendiente de ajuste |
-| [EP-03 Grupos y categorías](epics/EP-03-groups-and-categories.md) | HU-004 | Pendiente de ajuste |
+Cuatro specs en el orden del flujo (DEC-37). Antes de cada spec se ajustan y se dejan **Definidas** las HU de sus épicas (Definition of Ready).
+
+| Spec | Épicas | HU actuales | Estado |
+|---|---|---|---|
+| 1 — Jugadores, acudientes y grupos | [EP-02 Jugadores](epics/EP-02-player-management.md), [EP-10 Acudientes](epics/EP-10-guardians.md), [EP-03 Grupos](epics/EP-03-groups-and-categories.md) | HU-002, HU-003, HU-004 · acudientes por definir | Ideada |
+| 2 — Actividades y canchas | [EP-04 Actividades](epics/EP-04-activity-management.md), [EP-14 Canchas externas](epics/EP-14-external-fields.md) | HU-005, HU-006 · canchas por definir | Ideada |
+| 3 — Convocatoria y mensaje | [EP-05 Convocatorias](epics/EP-05-call-ups.md), [EP-08 Comunicación](epics/EP-08-call-up-communication.md) | HU-007, HU-008, HU-012, HU-013 | Ideada |
+| 4 — Respuesta y seguimiento | [EP-06 Respuesta del acudiente](epics/EP-06-tutor-responses.md), [EP-07 Seguimiento](epics/EP-07-response-tracking.md) | HU-009, HU-010, HU-011 | Ideada |
 
 ### MVP+
 
@@ -71,5 +69,6 @@ Estados de una HU: **Pendiente** → **Definida** (lista para especificar) → *
 |---|---|
 | EP-11 Equipo y roles | Invitaciones, roles adicionales y gestión de miembros (incluye HU-018) |
 | EP-13 Planes | Cambio de plan, límites y cobro |
+| T-03 Notificaciones push | Push web (PWA) para avisar al owner de respuestas nuevas y acudientes por validar, detrás de una abstracción propia (DEC-41) |
 
 Los IDs de épicas e HU se mantienen estables para conservar la trazabilidad; el orden de construcción lo indica la columna **Orden**.
