@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Grupos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<span style="font-weight: 600;">Academia Los Pinos</span>
+<button style="width: 44px; height: 44px; border: 1px solid #BDBDBD; border-radius: 22px; background: #F2F2F2; font-size: 12px; color: #222222;" aria-label="Cuenta">JR</button>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;">
+<div style="display: flex; align-items: center; justify-content: space-between;">
+<h1 style="margin: 0; font-size: 22px;">Grupos</h1>
+<button style="height: 44px; padding: 0 16px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600;">Crear grupo</button>
+</div>
+<div style="display: flex; flex-direction: column; border: 1px solid #D9D9D9; border-radius: 8px;">
+<a href="Group.dc.html" style="min-height: 56px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; border-bottom: 1px solid #E6E6E6;"><span style="font-weight: 600;">Sub-12</span><span style="color: #555555;">15 jugadores ›</span></a>
+<a href="Group.dc.html" style="min-height: 56px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; border-bottom: 1px solid #E6E6E6;"><span style="font-weight: 600;">Sub-10</span><span style="color: #555555;">9 jugadores ›</span></a>
+<a href="Group.dc.html" style="min-height: 56px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; border-bottom: 1px solid #E6E6E6;"><span style="font-weight: 600;">Torneo Liga</span><span style="color: #555555;">12 jugadores ›</span></a>
+<a href="Group.dc.html" style="min-height: 56px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; text-decoration: none;"><span style="font-weight: 600;">Veteranos</span><span style="color: #555555;">7 jugadores ›</span></a>
+</div>
+<div style="margin-top: 8px; padding: 16px; border: 1px solid #D9D9D9; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);" role="dialog" aria-label="Crear grupo">
+<span style="font-weight: 700;">Crear grupo (diálogo)</span>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 12px; color: #555555;">Nombre del grupo *</span><input style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #333333; border-radius: 8px; font-size: 14px;" value="sub-10"><span style="font-size: 12px; font-weight: 600;">Ya existe un grupo con ese nombre.</span></label>
+<div style="display: flex; gap: 8px; justify-content: flex-end;">
+<button style="height: 44px; padding: 0 14px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;">Cancelar</button>
+<button style="height: 44px; padding: 0 14px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600;">Crear</button>
+</div>
+</div>
+</div>
+<nav style="height: 64px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid #D9D9D9; background: #FAFAFA;" aria-label="Navegación principal">
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #D9D9D9;" aria-hidden="true"></span>Inicio</a>
+<a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #D9D9D9;" aria-hidden="true"></span>Jugadores</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 700; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #333333;" aria-hidden="true"></span>Grupos</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #D9D9D9;" aria-hidden="true"></span>Academia</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Navegación B</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<span style="font-weight: 600;">Academia Los Pinos</span>
+<button style="width: 44px; height: 44px; border: 1px solid #BDBDBD; border-radius: 22px; background: #F2F2F2; font-size: 12px; color: #222222;" aria-label="Cuenta">JR</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid #D9D9D9;" role="tablist">
+<button role="tab" aria-selected="true" style="height: 48px; border: 0; border-bottom: 3px solid #333333; background: #FFFFFF; color: #222222; font-weight: 700;">Jugadores</button>
+<button role="tab" aria-selected="false" style="height: 48px; border: 0; border-bottom: 3px solid transparent; background: #FFFFFF; color: #555555;">Grupos</button>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;">
+<div style="display: flex; align-items: center; justify-content: space-between;">
+<h1 style="margin: 0; font-size: 22px;">Jugadores</h1>
+<button style="height: 44px; padding: 0 16px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600;">Registrar jugador</button>
+</div>
+<div style="height: 44px; border: 1px solid #BDBDBD; border-radius: 8px;" aria-hidden="true"></div>
+<div style="height: 64px; border-radius: 8px; background: #F2F2F2;" aria-hidden="true"></div>
+<div style="height: 64px; border-radius: 8px; background: #F2F2F2;" aria-hidden="true"></div>
+<div style="height: 64px; border-radius: 8px; background: #F2F2F2;" aria-hidden="true"></div>
+<div style="padding: 10px 12px; border: 1px dashed #BDBDBD; border-radius: 8px; color: #555555; font-size: 12px; line-height: 1.5;">Mismo contenido que la opción A, con Grupos como pestaña. Deja un espacio en la barra para Actividades (spec 2), que será la sección más usada.</div>
+</div>
+<nav style="height: 64px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid #D9D9D9; background: #FAFAFA;" aria-label="Navegación principal">
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #D9D9D9;" aria-hidden="true"></span>Inicio</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 700; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #333333;" aria-hidden="true"></span>Jugadores</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; text-decoration: none; color: #555555;"><span style="width: 20px; height: 20px; border-radius: 4px; border: 1px dashed #8C8C8C;" aria-hidden="true"></span>Actividades</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #D9D9D9;" aria-hidden="true"></span>Academia</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
