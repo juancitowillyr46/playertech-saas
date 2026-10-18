@@ -1,12 +1,14 @@
+import { signal } from '@angular/core';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { AuthService } from '../../../core/auth/auth.service';
+import { SignOutReason } from '../../../core/auth/models/auth.models';
 import { AppError } from '../../../core/errors/app-error';
 import { LoginPage } from './login';
 
-async function setup(queryParams: Record<string, string> = {}) {
-    const auth = { signIn: vi.fn().mockResolvedValue(undefined) };
+async function setup(queryParams: Record<string, string> = {}, signOutReason: SignOutReason | null = null) {
+    const auth = { signIn: vi.fn().mockResolvedValue(undefined), signOutReason: signal(signOutReason) };
     const { fixture } = await render(LoginPage, {
         providers: [
             provideRouter([]),
@@ -26,6 +28,20 @@ async function fillAndSubmit(user: ReturnType<typeof userEvent.setup>, email: st
 }
 
 describe('LoginPage', () => {
+    const inactivityNotice = 'Tu sesión se cerró por inactividad. Ingresa de nuevo para continuar.';
+
+    it('avisa que la sesión se cerró por inactividad (HU-015 CA-003)', async () => {
+        await setup({}, 'inactivity');
+
+        expect(screen.getByText(inactivityNotice)).toBeTruthy();
+    });
+
+    it.each([['manual'], [null]] as const)('no muestra el aviso de inactividad tras un cierre %s', async (reason) => {
+        await setup({}, reason);
+
+        expect(screen.queryByText(inactivityNotice)).toBeNull();
+    });
+
     it('exige correo y contraseña antes de enviar', async () => {
         const { auth, user } = await setup();
 

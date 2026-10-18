@@ -46,6 +46,11 @@ export const appConfig: ApplicationConfig = {
         { provide: FileStorageRepository, useClass: SupabaseFileStorageRepository },
         { provide: VenueRepository, useClass: SupabaseVenueRepository },
         { provide: HomeSummaryRepository, useClass: SupabaseHomeSummaryRepository },
-        provideAppInitializer(() => inject(AuthService).restore())
+        provideAppInitializer(async () => {
+            const auth = inject(AuthService);
+
+            await auth.restore();
+            auth.startInactivityWatch();
+        })
     ]
 };

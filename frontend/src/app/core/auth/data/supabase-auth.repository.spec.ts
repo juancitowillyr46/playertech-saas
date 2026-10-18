@@ -124,4 +124,10 @@ describe('SupabaseAuthRepository', () => {
         unsubscribe();
         expect(auth.onAuthStateChange.mock.results[0].value.data.subscription.unsubscribe).toHaveBeenCalled();
     });
+
+    it('cierra la sesión solo en este navegador, sin cerrar los otros dispositivos (HU-015)', async () => {
+        await repository.signOut();
+
+        expect(auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+    });
 });

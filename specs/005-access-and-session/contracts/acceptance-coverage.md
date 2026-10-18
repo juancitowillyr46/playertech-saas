@@ -16,8 +16,8 @@ Para cada criterio, la prueba automática o el paso de validación que lo demues
 | CA-004 Correo sin verificar | Existe: `supabase-error.mapper.spec` (`email_not_confirmed`). QS 3 |
 | CA-005 Acceso protegido | Existe: `auth.guard.spec` «sin sesión dirige al inicio de sesión»; `login.spec` «vuelve a la ruta solicitada» |
 | CA-006 Sesión vigente | Nueva: `auth.service.spec` (restaura la sesión no vencida); `inactivity.service.spec` (regla de vigencia). QS 1 |
-| CA-007 Academia suspendida | Nueva: `membership.guard.spec` → `/auth/suspended`. QS 3 |
-| CA-008 Sin membresía activa | Nueva: `membership.guard.spec` → `/auth/access-denied`. QS 3 |
+| CA-007 Academia suspendida | Existe: `membership.guard.spec` (`it.each`, `suspended` → `/auth/suspended`). QS 3.4 |
+| CA-008 Sin membresía activa | Existe: `membership.guard.spec` (`it.each`, `none` → `/auth/access-denied`). QS 3.5 |
 
 ## HU-015 — Cerrar sesión
 

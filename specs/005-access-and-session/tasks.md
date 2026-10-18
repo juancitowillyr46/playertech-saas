@@ -29,15 +29,15 @@ description: "Lista de tareas para completar el acceso y la sesión (EP-01)"
 
 ## Fase 1: Configuración
 
-- [ ] T001 Añadir `sessionInactivityMinutes` a `AppConfig` y validar en `validateAppConfig` que sea «entero > 0» en frontend/src/app/core/config/app-config.ts. Poner `sessionInactivityMinutes: 60` en frontend/src/environments/environment.ts y en frontend/src/environments/environment.development.ts, con un comentario que indique que se cambia a 2 solo para la validación del quickstart. Actualizar los dobles de `APP_CONFIG` en las pruebas que lo construyan (buscar `APP_CONFIG` en `*.spec.ts`)
-- [ ] T002 [P] Prueba de la validación nueva (valor 0, negativo o decimal falla; 60 pasa) en frontend/src/app/core/config/app-config.spec.ts (crear si no existe)
+- [X] T001 Añadir `sessionInactivityMinutes` a `AppConfig` y validar en `validateAppConfig` que sea «entero > 0» en frontend/src/app/core/config/app-config.ts. Poner `sessionInactivityMinutes: 60` en frontend/src/environments/environment.ts y en frontend/src/environments/environment.development.ts, con un comentario que indique que se cambia a 2 solo para la validación del quickstart. Actualizar los dobles de `APP_CONFIG` en las pruebas que lo construyan (buscar `APP_CONFIG` en `*.spec.ts`)
+- [X] T002 [P] Prueba de la validación nueva (valor 0, negativo o decimal falla; 60 pasa) en frontend/src/app/core/config/app-config.spec.ts (crear si no existe)
 
 ---
 
 ## Fase 2: Fundaciones (bloqueantes)
 
-- [ ] T003 Ampliar `AuthService` en frontend/src/app/core/auth/auth.service.ts según `contracts/session-contracts.md`: tipo `SignOutReason = 'manual' | 'inactivity'`, señal de solo lectura `signOutReason`, `signOut(reason = 'manual')` que guarda el motivo antes de navegar a `/auth/login`. `signIn()` y `completeEmailLink()` borran el motivo. `signOut()` ignora llamadas mientras otra está en curso
-- [ ] T004 [P] Crear frontend/src/app/core/auth/auth.service.spec.ts:
+- [X] T003 Ampliar `AuthService` en frontend/src/app/core/auth/auth.service.ts según `contracts/session-contracts.md`: tipo `SignOutReason = 'manual' | 'inactivity'`, señal de solo lectura `signOutReason`, `signOut(reason = 'manual')` que guarda el motivo antes de navegar a `/auth/login`. `signIn()` y `completeEmailLink()` borran el motivo. `signOut()` ignora llamadas mientras otra está en curso
+- [X] T004 [P] Crear frontend/src/app/core/auth/auth.service.spec.ts:
   - restaurar con y sin sesión;
   - una segunda llamada a `signOut()` mientras la primera está en curso no repite el cierre (doble toque);
   - `signOut()` deja la sesión nula, limpia el contexto de academia y navega a `/auth/login` con motivo `manual`, aunque el repositorio falle;
@@ -54,7 +54,7 @@ description: "Lista de tareas para completar el acceso y la sesión (EP-01)"
 
 **Prueba independiente**: quickstart sección 1 en el celular con `sessionInactivityMinutes: 2`.
 
-- [ ] T005 [US1] Crear frontend/src/app/core/auth/inactivity.service.ts según `contracts/session-contracts.md` y research R2 a R5:
+- [X] T005 [US1] Crear frontend/src/app/core/auth/inactivity.service.ts según `contracts/session-contracts.md` y research R2 a R5:
   - **Hora guardada**: clave `playertech.lastActivityAt` en `localStorage`, con lecturas y escrituras en `try/catch` y respaldo en memoria.
   - **`isExpired()`**: aplica la tabla de vigencia de `data-model.md`. Sin valor → vigente; `ahora − última > minutos × 60 000` → vencida; `última > ahora + 60 000` → vencida.
   - **`markActivity()`**: guarda la hora actual.
@@ -62,10 +62,10 @@ description: "Lista de tareas para completar el acceso y la sesión (EP-01)"
     - Con sesión: escuchadores pasivos `pointerdown`, `keydown`, `wheel` y `scroll` (captura) que llaman a `markActivity()` como mucho una vez cada 5 s; comprobación cada 30 s, en `visibilitychange` (visible), `focus` y `pageshow`.
     - Sin sesión: retira escuchadores e intervalo y borra la clave.
     - Al vencer, llama a `onExpire()` una sola vez por sesión.
-- [ ] T006 [US1] Comprobación al arrancar en frontend/src/app/core/auth/auth.service.ts (research R4): en `restore()`, si hay sesión y `InactivityService.isExpired()`, cerrar **sin navegar**: borrar la sesión local con el repositorio (ignorando su error), dejar la sesión nula y guardar el motivo `inactivity`, antes de marcar `ready`. `authGuard` hace la redirección y conserva `returnUrl`. En `signIn()` y `completeEmailLink()`, llamar a `markActivity()`. Añadir un método que arranca la vigilancia con `inactivity.start(() => this.signOut('inactivity'), this.isAuthenticated)`; la dependencia va solo de `AuthService` a `InactivityService`
-- [ ] T007 [US1] Arrancar la vigilancia en frontend/src/app.config.ts: en el inicializador existente, tras `restore()`, llamar al método de `AuthService` que inicia `InactivityService`. El orden respecto a otros inicializadores no importa porque la vigilancia reacciona a la sesión con un `effect`
-- [ ] T008 [P] [US1] Mostrar el aviso en frontend/src/app/features/auth/login/login.ts: con `auth.signOutReason() === 'inactivity'`, un `p-message` de severidad `info` arriba del formulario con «Tu sesión se cerró por inactividad. Ingresa de nuevo para continuar.»
-- [ ] T009 [P] [US1] Crear frontend/src/app/core/auth/inactivity.service.spec.ts con reloj simulado:
+- [X] T006 [US1] Comprobación al arrancar en frontend/src/app/core/auth/auth.service.ts (research R4): en `restore()`, si hay sesión y `InactivityService.isExpired()`, cerrar **sin navegar**: borrar la sesión local con el repositorio (ignorando su error), dejar la sesión nula y guardar el motivo `inactivity`, antes de marcar `ready`. `authGuard` hace la redirección y conserva `returnUrl`. En `signIn()` y `completeEmailLink()`, llamar a `markActivity()`. Añadir un método que arranca la vigilancia con `inactivity.start(() => this.signOut('inactivity'), this.isAuthenticated)`; la dependencia va solo de `AuthService` a `InactivityService`
+- [X] T007 [US1] Arrancar la vigilancia en frontend/src/app.config.ts: en el inicializador existente, tras `restore()`, llamar al método de `AuthService` que inicia `InactivityService`. El orden respecto a otros inicializadores no importa porque la vigilancia reacciona a la sesión con un `effect`
+- [X] T008 [P] [US1] Mostrar el aviso en frontend/src/app/features/auth/login/login.ts: con `auth.signOutReason() === 'inactivity'`, un `p-message` de severidad `info` arriba del formulario con «Tu sesión se cerró por inactividad. Ingresa de nuevo para continuar.»
+- [X] T009 [P] [US1] Crear frontend/src/app/core/auth/inactivity.service.spec.ts con reloj simulado:
   - vence a los 60 min sin interacción;
   - la interacción reinicia el tiempo;
   - eventos repetidos en 5 s escriben una sola vez;
@@ -76,10 +76,10 @@ description: "Lista de tareas para completar el acceso y la sesión (EP-01)"
   - sin sesión no escucha y borra la clave;
   - solo llama una vez a `signOut('inactivity')`;
   - con `localStorage` que lanza error, sigue funcionando en memoria.
-- [ ] T010 [P] [US1] Ampliar las pruebas:
+- [X] T010 [P] [US1] Ampliar las pruebas:
   - frontend/src/app/core/auth/auth.service.spec.ts: `restore()` con sesión vencida deja la sesión nula y el motivo `inactivity` antes de `ready`, **sin navegar**; con sesión vigente la conserva (CA-006).
   - frontend/src/app/features/auth/login/login.spec.ts: aviso con motivo `inactivity`; sin aviso con motivo `manual` o nulo.
-- [ ] T011 [US1] Correr solo las pruebas de la zona: `npx ng test --watch=false --include src/app/core/auth --include src/app/features/auth/login` desde frontend/
+- [X] T011 [US1] Correr solo las pruebas de la zona: `npx ng test --watch=false --include src/app/core/auth --include src/app/features/auth/login` desde frontend/
 
 **Punto de control**: el cierre por inactividad funciona y está probado; se puede validar en el celular (quickstart 1).
 
@@ -91,8 +91,8 @@ description: "Lista de tareas para completar el acceso y la sesión (EP-01)"
 
 **Prueba independiente**: quickstart sección 2.
 
-- [ ] T012 [US2] Cerrar sesión solo en este dispositivo en frontend/src/app/core/auth/data/supabase-auth.repository.ts: `this.auth.signOut({ scope: 'local' })` (research R7). Añadir la prueba en frontend/src/app/core/auth/data/supabase-auth.repository.spec.ts que comprueba el alcance `local`
-- [ ] T013 [US2] Verificar el botón «atrás» (research R8) con el quickstart 2.2 en el celular y en el escritorio. Solo si muestra datos: en `InactivityService`, con `pageshow` y `event.persisted` sin sesión, recargar la página. Anotar el resultado en specs/005-access-and-session/quickstart.md
+- [X] T012 [US2] Cerrar sesión solo en este dispositivo en frontend/src/app/core/auth/data/supabase-auth.repository.ts: `this.auth.signOut({ scope: 'local' })` (research R7). Añadir la prueba en frontend/src/app/core/auth/data/supabase-auth.repository.spec.ts que comprueba el alcance `local`
+- [X] T013 [US2] Verificar el botón «atrás» (research R8) con el quickstart 2.2 en el celular y en el escritorio. Solo si muestra datos: en `InactivityService`, con `pageshow` y `event.persisted` sin sesión, recargar la página. Anotar el resultado en specs/005-access-and-session/quickstart.md
 
 ---
 
@@ -102,10 +102,10 @@ description: "Lista de tareas para completar el acceso y la sesión (EP-01)"
 
 **Prueba independiente**: quickstart sección 3.
 
-- [ ] T014 [P] [US3] Añadir a frontend/src/app/core/auth/guards/membership.guard.spec.ts:
+- [X] T014 [P] [US3] (Ya cubierto por la spec 002: `it.each` de `membership.guard.spec`.) Añadir a frontend/src/app/core/auth/guards/membership.guard.spec.ts:
   - academia `suspended` → `/auth/suspended` (CA-007);
   - sin membresía (`none`) → `/auth/access-denied` (CA-008).
-- [ ] T015 [US3] Recorrer el quickstart 3 contra Supabase local (estados de 3.4 y 3.5 preparados por SQL y revertidos). Corregir lo que no cumpla en frontend/src/app/features/auth/ y anotarlo en specs/005-access-and-session/quickstart.md
+- [X] T015 [US3] Recorrer el quickstart 3 contra Supabase local (estados de 3.4 y 3.5 preparados por SQL y revertidos). Corregir lo que no cumpla en frontend/src/app/features/auth/ y anotarlo en specs/005-access-and-session/quickstart.md
 
 ---
 
@@ -115,7 +115,7 @@ description: "Lista de tareas para completar el acceso y la sesión (EP-01)"
 
 **Prueba independiente**: quickstart sección 4 con Mailpit.
 
-- [ ] T016 [US4] Recorrer el quickstart 4, incluido 4.6 (enlace abierto con otra sesión iniciada). Corregir lo que no cumpla en frontend/src/app/features/auth/forgot-password/, reset-password/ o callback/ con su prueba, y eliminar al final solo la cuenta de prueba creada en 3.3
+- [X] T016 [US4] Recorrer el quickstart 4, incluido 4.6 (enlace abierto con otra sesión iniciada). Corregir lo que no cumpla en frontend/src/app/features/auth/forgot-password/, reset-password/ o callback/ con su prueba, y eliminar al final solo la cuenta de prueba creada en 3.3
 
 ---
 
@@ -125,17 +125,17 @@ description: "Lista de tareas para completar el acceso y la sesión (EP-01)"
 
 **Prueba independiente**: quickstart sección 5.
 
-- [ ] T017 [US5] Ejecutar `/impeccable audit` y `/impeccable critique` (con `IMPECCABLE_NO_TELEMETRY=1 DO_NOT_TRACK=1`) y el detector sobre frontend/src/app/features/auth/, a 360 px y en escritorio, en modo claro y oscuro. Incluir el aviso de inactividad
-- [ ] T018 [US5] Corregir los hallazgos críticos y altos solo en el preset, en Tailwind o en el layout (AGENTS.md), y correr las pruebas de frontend/src/app/features/auth
+- [X] T017 [US5] Ejecutar `/impeccable audit` y `/impeccable critique` (con `IMPECCABLE_NO_TELEMETRY=1 DO_NOT_TRACK=1`) y el detector sobre frontend/src/app/features/auth/, a 360 px y en escritorio, en modo claro y oscuro. Incluir el aviso de inactividad
+- [X] T018 [US5] Corregir los hallazgos críticos y altos solo en el preset, en Tailwind o en el layout (AGENTS.md), y correr las pruebas de frontend/src/app/features/auth
 
 ---
 
 ## Fase 8: Pulido y cierre
 
-- [ ] T019 Ejecutar **una vez** el conjunto completo desde frontend/: `npm run test:ci`, `npm run lint`, `npm run check:styles`, `npm run build` y `npm run check:bundle`
-- [ ] T020 Validación en el celular del owner: quickstart 1 con `sessionInactivityMinutes: 2`. Al terminar, **regresar el valor a 60** en frontend/src/environments/environment.development.ts
-- [ ] T021 [P] Completar «Resultados» en specs/005-access-and-session/quickstart.md y la columna de cobertura de specs/005-access-and-session/contracts/acceptance-coverage.md
-- [ ] T022 [P] Marcar HU-001, HU-015 y HU-016 como «Terminada (entorno local)» en docs/backlog/user-stories/ y actualizar la tabla de docs/backlog/epics/EP-01-access-and-session.md
+- [X] T019 Ejecutar **una vez** el conjunto completo desde frontend/: `npm run test:ci`, `npm run lint`, `npm run check:styles`, `npm run build` y `npm run check:bundle`
+- [X] T020 Validación en el celular del owner: quickstart 1 con `sessionInactivityMinutes: 2`. Al terminar, **regresar el valor a 60** en frontend/src/environments/environment.development.ts
+- [X] T021 [P] Completar «Resultados» en specs/005-access-and-session/quickstart.md y la columna de cobertura de specs/005-access-and-session/contracts/acceptance-coverage.md
+- [X] T022 [P] Marcar HU-001, HU-015 y HU-016 como «Terminada (entorno local)» en docs/backlog/user-stories/ y actualizar la tabla de docs/backlog/epics/EP-01-access-and-session.md
 
 ---
 

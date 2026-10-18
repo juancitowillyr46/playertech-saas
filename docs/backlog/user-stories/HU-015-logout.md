@@ -1,6 +1,6 @@
 # HU-015 — Cerrar sesión
 
-**Épica:** EP-01 — Acceso y sesión · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-01 — Acceso y sesión · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Terminada (entorno local) · spec 005
 **Spec:** pendiente
 
 ## Historia de usuario

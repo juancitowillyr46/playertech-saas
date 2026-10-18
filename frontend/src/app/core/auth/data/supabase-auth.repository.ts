@@ -44,7 +44,8 @@ export class SupabaseAuthRepository extends AuthRepository {
     }
 
     async signOut(): Promise<void> {
-        const { error } = await this.auth.signOut();
+        // Solo este navegador: cerrar sesión no cierra los otros dispositivos (HU-015).
+        const { error } = await this.auth.signOut({ scope: 'local' });
 
         if (error) {
             throw mapSupabaseError(error);

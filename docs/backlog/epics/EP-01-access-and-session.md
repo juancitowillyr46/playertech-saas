@@ -28,6 +28,6 @@ ADR-012 (DEC-10, DEC-11, DEC-12, DEC-16, DEC-17, DEC-18, DEC-28) y ADR-014.
 
 | ID | Historia | Prioridad | Estado |
 |---|---|---|---|
-| HU-001 | Iniciar sesión | MVP | Definida |
-| HU-015 | Cerrar sesión | MVP | Definida |
-| HU-016 | Recuperar contraseña | MVP | Definida |
+| HU-001 | Iniciar sesión | MVP | Terminada (local) |
+| HU-015 | Cerrar sesión | MVP | Terminada (local) |
+| HU-016 | Recuperar contraseña | MVP | Terminada (local) |

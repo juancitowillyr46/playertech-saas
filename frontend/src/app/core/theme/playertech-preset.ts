@@ -241,6 +241,32 @@ export const PlayerTechPreset = definePreset(Aura, {
                 }
             }
         },
+        // Avisos informativos en tinta, no en el azul de Aura: el blue.500 de Aura sobre
+        // pizarra no llega a 4,5:1 (spec 005, aviso de inactividad).
+        message: {
+            colorScheme: {
+                light: {
+                    info: {
+                        background: '{tinta.50}',
+                        borderColor: '{tinta.200}',
+                        color: '{tinta.800}',
+                        shadow: 'none',
+                        outlined: { color: '{tinta.800}', borderColor: '{tinta.800}' },
+                        simple: { color: '{tinta.800}' }
+                    }
+                },
+                dark: {
+                    info: {
+                        background: '{pizarra.800}',
+                        borderColor: '{tinta.600}',
+                        color: '{tinta.200}',
+                        shadow: 'none',
+                        outlined: { color: '{tinta.200}', borderColor: '{tinta.200}' },
+                        simple: { color: '{tinta.200}' }
+                    }
+                }
+            }
+        },
         datatable: {
             headerCell: {
                 padding: '0.75rem 1rem'

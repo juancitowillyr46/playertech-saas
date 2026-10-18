@@ -71,4 +71,18 @@ Al terminar, eliminar la cuenta de prueba de 3.3 (solo esa) y confirmar que las 
 
 ## Resultados
 
-*(se completa al implementar)*
+Ejecución del 2026-10-17 contra Supabase local, sin `db:reset`.
+
+| Sección | Resultado |
+|---|---|
+| 1. Inactividad (1.1 a 1.7) | ✓ Validada por el owner en su celular con `sessionInactivityMinutes: 2`; el valor volvió a 60. Al reabrir con la sesión vencida se llega a `/auth/login?returnUrl=…` con el aviso |
+| 2. Cerrar sesión | ✓ 2.1 a 2.3 validadas por el owner. El botón «atrás» no muestra datos sin código adicional (R8). 2.4 la cubre la prueba del alcance `local` |
+| 3. Iniciar sesión | ✓ 3.1 a 3.6 automatizadas con un navegador sin interfaz: mensaje genérico idéntico, correo sin verificar, academia suspendida y sin membresía (estados preparados por SQL y revertidos) |
+| 4. Recuperar contraseña | ✓ 4.1 a 4.6. El enlace usado muestra «Enlace no válido» con la opción de pedir otro; un enlace abierto con la sesión del owner A cambia solo la cuenta de prueba |
+| 5. Experiencia y accesibilidad | ✓ Detector de Impeccable sin hallazgos; a 360 px en claro y oscuro, sin desbordamiento y con todos los controles de al menos 44 px en las 7 pantallas. Hallazgo corregido: el aviso informativo usaba el azul de Aura (unos 4:1 en oscuro); ahora usa tinta en el preset (13,4:1 en claro y 9,6:1 en oscuro) |
+
+**Notas**
+
+- Los enlaces de correo usan PKCE: solo funcionan en el navegador que los pidió, y si se piden dos en el mismo navegador, solo sirve el último. La pantalla lo explica (spec 002).
+- Las cuentas de prueba `qa.*@playertech.test` se eliminaron al terminar; las academias A y B quedaron `active`.
+- Conjunto completo (una sola vez): 217 de 219 pruebas pasan. Las 2 que fallaron (`forgot-password.spec`) pasan solas (5/5): es el fallo intermitente bajo carga ya visto en la spec 004. `lint`, `check:styles`, `build` (bundle inicial de 949,8 kB) y `check:bundle` en verde.

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -27,6 +27,8 @@ import { FieldA11y, fieldA11y, passwordPt } from '../../../shared/forms/field-a1
 
         @if (errorMessage()) {
             <p-message severity="error" styleClass="mb-6">{{ errorMessage() }}</p-message>
+        } @else if (endedByInactivity()) {
+            <p-message severity="info" styleClass="mb-6">Tu sesión se cerró por inactividad. Ingresa de nuevo para continuar.</p-message>
         }
 
         <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5" novalidate>
@@ -91,6 +93,7 @@ export class LoginPage {
     });
     protected readonly submitting = signal(false);
     protected readonly errorMessage = signal<string | null>(null);
+    protected readonly endedByInactivity = computed(() => this.auth.signOutReason() === 'inactivity');
 
     protected readonly passwordPt = passwordPt;
 
