@@ -15,8 +15,9 @@ Centralizar la información básica de los jugadores de la academia.
 
 | ID | Historia | Estado |
 |---|---|---|
-| HU-002 | Registrar jugador | Pendiente |
-| HU-003 | Consultar jugadores | Pendiente |
+| HU-002 | Registrar jugador | Definida |
+| HU-003 | Consultar jugadores | Definida |
+| HU-033 | Gestionar jugador (ficha, editar, desactivar, eliminar) | Definida |
 
 ## Decisiones de la ideación (2026-10-18)
 
