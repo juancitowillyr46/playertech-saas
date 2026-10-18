@@ -48,6 +48,9 @@ describe('CallbackPage', () => {
         expect(completeEmailLink).not.toHaveBeenCalled();
         expect(screen.getByText(ERROR_MESSAGES.link_invalid)).toBeTruthy();
         expect(screen.getByRole('link', { name: 'Ir a iniciar sesión' }).getAttribute('href')).toBe('/auth/login');
+        // Enlace vencido o usado: se puede pedir otro de verificación o de recuperación (HU-014, HU-016 CA-005).
+        expect(screen.getByRole('link', { name: 'Reenviar el correo de verificación' }).getAttribute('href')).toBe('/auth/verify-email');
+        expect(screen.getByRole('link', { name: 'Recuperar mi contraseña' }).getAttribute('href')).toBe('/auth/forgot-password');
     });
 
     it('sin parámetros muestra que el enlace no es válido', async () => {
@@ -61,7 +64,7 @@ describe('CallbackPage', () => {
 
         expect(await screen.findByText(ERROR_MESSAGES.other_browser)).toBeTruthy();
         expect(screen.getByRole('link', { name: 'Ir a iniciar sesión' })).toBeTruthy();
-        expect(screen.getByRole('link', { name: 'Solicitar un enlace nuevo' }).getAttribute('href')).toBe('/auth/forgot-password');
+        expect(screen.getByRole('link', { name: 'Recuperar mi contraseña' }).getAttribute('href')).toBe('/auth/forgot-password');
     });
 
     it('si el código fue rechazado muestra que el enlace no es válido', async () => {

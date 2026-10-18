@@ -30,7 +30,7 @@ Como visitante, quiero registrar mi academia y mi cuenta en un solo paso desde e
 2. **Dado** un dato obligatorio vacío, **cuando** intenta registrarse, **entonces** se cumple CA-002 de HU-014: se indican los campos pendientes y no se registra nada.
 3. **Dado** una contraseña de menos de 8 caracteres o una confirmación distinta, **cuando** intenta registrarse, **entonces** se cumple CA-003 de HU-014.
 4. **Dado** que no aceptó alguno de los dos documentos legales, **cuando** intenta registrarse, **entonces** se cumple CA-004 de HU-014.
-5. **Dado** un correo que ya pertenece a una cuenta, **cuando** intenta registrarse, **entonces** se cumple CA-005 de HU-014: ve exactamente lo mismo que en un registro exitoso y no se crea otra academia.
+5. **Dado** un correo que ya pertenece a una cuenta, **cuando** intenta registrarse, **entonces** se cumple CA-005 de HU-014 (cambiado el 2026-10-18): el campo de correo indica que ya existe una cuenta, se ofrece iniciar sesión o recuperar la contraseña y no se crea otra academia.
 
 ---
 
@@ -122,7 +122,7 @@ Como visitante, quiero que el registro y la verificación sean claros y cómodos
 **Registro (HU-014 CA-001 a CA-005, CA-008)**
 
 - **FR-001**: El registro DEBE cumplir CA-001 a CA-005 y CA-008 de HU-014. Lo que la versión básica no cumpla DEBE corregirse en esta spec.
-- **FR-002**: Con un correo ya registrado, el visitante DEBE ver exactamente lo mismo que en un registro exitoso, sin otra academia creada (DEC-12).
+- **FR-002**: Con un correo ya registrado, el registro DEBE indicarlo junto al campo de correo, con enlaces a iniciar sesión y a recuperar la contraseña, sin crear otra academia (CA-005 cambiado el 2026-10-18; excepción a DEC-12).
 - **FR-003**: Ante un fallo del registro, NO DEBE quedar ningún dato parcial, y el formulario DEBE conservar lo escrito, con un mensaje en español para reintentar (DEC-20).
 - **FR-004**: Las aceptaciones DEBEN registrar el documento, su versión y la hora del servidor (DEC-19, regla de HU-014).
 
@@ -156,7 +156,7 @@ Como visitante, quiero que el registro y la verificación sean claros y cómodos
 
 - **SC-001**: Un visitante completa el registro desde el celular en menos de 3 minutos, desde abrir el formulario hasta ver el aviso de verificar su correo.
 - **SC-002**: El 100 % de los registros incompletos o inválidos se rechazan con el problema indicado junto al campo y sin crear datos.
-- **SC-003**: Ningún mensaje del registro ni del reenvío permite saber si un correo está registrado.
+- **SC-003**: Ningún mensaje del reenvío, del inicio de sesión ni de la recuperación permite saber si un correo está registrado. El registro sí lo indica, por la excepción a DEC-12 del 2026-10-18.
 - **SC-004**: El 100 % de las academias registradas y verificadas tienen, en el primer ingreso, nombre, plan Free, sede principal y correo de contacto.
 - **SC-005**: Un owner cuyo correo no llegó puede recibir uno nuevo sin ayuda en menos de 2 minutos.
 - **SC-006**: A 360 px no hay desplazamiento horizontal en el registro ni en la verificación del correo, todos los controles miden al menos 44 px y la auditoría de accesibilidad no deja hallazgos críticos.

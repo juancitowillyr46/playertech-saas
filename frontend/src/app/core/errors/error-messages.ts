@@ -4,6 +4,8 @@ import type { AppErrorCode } from './app-error';
 export const ERROR_MESSAGES: Readonly<Record<AppErrorCode, string>> = {
     invalid_credentials: 'El correo o la contraseña no son correctos.',
     email_not_confirmed: 'Debes verificar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada.',
+    // Excepción a DEC-12 decidida el 2026-10-18 (HU-014 CA-005, spec 006).
+    email_taken: 'Ya existe una cuenta con este correo.',
     weak_password: 'La contraseña debe tener al menos 8 caracteres.',
     link_invalid: 'El enlace venció o ya fue usado.',
     other_browser: 'Abriste el enlace en otro navegador. Si estabas verificando tu correo, ya puedes iniciar sesión. Si estabas recuperando tu contraseña, solicita un enlace nuevo desde el navegador donde lo pediste.',

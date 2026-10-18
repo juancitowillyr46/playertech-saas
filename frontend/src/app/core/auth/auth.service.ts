@@ -73,6 +73,10 @@ export class AuthService {
         return this.repository.requestPasswordReset(email);
     }
 
+    resendVerification(email: string): Promise<void> {
+        return this.repository.resendVerification(email);
+    }
+
     updatePassword(newPassword: string): Promise<void> {
         return this.repository.updatePassword(newPassword);
     }

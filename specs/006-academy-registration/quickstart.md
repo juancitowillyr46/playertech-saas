@@ -15,7 +15,7 @@ Durante el desarrollo: `npx ng test --watch=false --include src/app/features/aut
 | # | Pasos | Resultado esperado |
 |---|---|---|
 | 1.1 | Registrar `qa.<marca>@playertech.test` con todos los datos | Pantalla de verificar correo con ese correo; llega el correo a Mailpit |
-| 1.2 | Registrar de nuevo con `owner.a@playertech.test` y luego con `  OWNER.A@playertech.test ` (mayúsculas y espacios) | Exactamente la misma pantalla que en 1.1 en ambos casos; por SQL, el owner A sigue con una sola academia |
+| 1.2 | Registrar de nuevo con `owner.a@playertech.test` y luego con `  OWNER.A@playertech.test ` (mayúsculas y espacios) | Se queda en el registro con «Ya existe una cuenta con este correo.» junto al campo y enlaces a iniciar sesión y recuperar la contraseña; por SQL, el owner A sigue con una sola academia |
 | 1.3 | Medir el tiempo desde abrir el registro hasta ver verificar correo | Menos de 3 minutos (SC-001) |
 
 ## 2. Verificación y academia lista (CA-006, CA-007)
@@ -47,4 +47,20 @@ Al terminar, eliminar solo las cuentas `qa.*@playertech.test` creadas y comproba
 
 ## Resultados
 
-*(se completa al implementar)*
+Ejecución del 2026-10-18 contra Supabase local, sin `db:reset`, con un navegador sin interfaz a 360 px.
+
+| Sección | Resultado |
+|---|---|
+| 1. Registro | ✓ 1.1. 1.2: primero se encontró que la interfaz mostraba «Ocurrió un error inesperado» con un correo existente. Luego el responsable de producto cambió CA-005 (2026-10-18): ahora el registro muestra «Ya existe una cuenta con este correo.» junto al campo, con enlaces, y no crea nada ✓. 1.3: unos 4 s automatizado; el tiempo humano lo valida el owner (SC-001) |
+| 2. Verificación y academia lista | ✓ El enlace activa la cuenta y entra al inicio; la academia tiene el nombre, plan `free`, «Sede principal» `training_ground` principal y el correo de contacto del registro |
+| 3. Reenvío | ✓ 3.1 y 3.2: espera inicial de 1:00, segundo correo en Mailpit en unos 1,5 s (SC-005) y el enlace reenviado activa la cuenta. ✓ 3.3: mismo mensaje con un correo inexistente (sin correo enviado) y con una cuenta ya verificada. ✓ 3.4: el inicio de sesión ofrece el reenvío con el correo escrito y el enlace usado lleva a verificar correo |
+| 4. Registro atómico | ✓ Registro sin `academy_name` contra Auth: HTTP 500 y ningún usuario ni aceptación restante |
+| 5. Experiencia y accesibilidad | ✓ Detector de Impeccable sin hallazgos; sin desbordamiento a 360 px en claro y oscuro. Las casillas de aceptación miden 28 px, pero su fila (etiqueta incluida) mide 44 px y la etiqueta las marca con clic. El toque emulado no fue concluyente: queda para la prueba del owner en el celular |
+
+**Notas**
+
+- Prueba del owner desde el celular (2026-10-18): los enlaces de los correos pedidos desde el celular volvían a la raíz (`http://localhost:4200`) porque el Auth local no aceptó el retorno con la IP de la red, y apuntaban a `127.0.0.1`, que el celular no abre. Un enlace viejo, ya invalidado por el reenvío, terminaba en la raíz sin explicación. **Corregido en la app**: la raíz lleva `code` o `error` a `/auth/callback`, que muestra «Enlace no válido». El servidor sí invalida el enlace anterior al reenviar (registro de Auth: «One-time token not found»), así que no hace falta una lista negra propia.
+
+- Corrección relacionada con la spec 005: la pantalla de «Enlace no válido» solo ofrecía iniciar sesión, aunque HU-016 CA-005 pide poder solicitar un enlace nuevo. Ahora ofrece «Reenviar el correo de verificación» y «Recuperar mi contraseña».
+- Cuentas `qa.*@playertech.test` eliminadas; las academias A y B siguen `active`.
+- Conjunto completo (una sola vez): 231/231 pruebas, 144 pgTAP, `lint`, `check:styles`, `build` (bundle inicial de 950,1 kB) y `check:bundle` en verde.

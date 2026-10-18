@@ -21,9 +21,19 @@ abstract resendVerification(email: string): Promise<void>;
 | Campo «Correo» | Solo sin parámetro `email`. Obligatorio y con formato de correo; errores junto al campo |
 | Botón «Reenviar correo» | Secundario (`outlined`), ancho completo en el celular, al menos 44 px. Con espera: deshabilitado y con la etiqueta «Reenviar en m:ss». Con envío en curso: estado de carga |
 | Espera | 60 s al llegar con `email` y tras cada envío correcto |
-| Confirmación | `p-message` informativo: «Si tu cuenta está pendiente de verificar, te enviamos un enlace nuevo. Ábrelo desde este mismo navegador.» |
+| Confirmación | `p-message` informativo: «Si tu cuenta está pendiente de verificar, te enviamos un enlace nuevo. Ábrelo desde este mismo navegador. Si ya la verificaste, inicia sesión.» |
 | Error | `p-message` de error con el mensaje del catálogo para `rate_limited` o `network` |
-| Enlace | «Ir a iniciar sesión» (existente) |
+| Pie | «¿Ya tienes una cuenta con este correo?» con «Iniciar sesión» y «Recuperar mi contraseña» |
+
+## Correo ya registrado en el registro (CA-005, cambiado el 2026-10-18)
+
+- `AppErrorCode` nuevo `email_taken`: «Ya existe una cuenta con este correo.»
+- `SupabaseAuthRepository.signUp` lo lanza si Auth responde `user_already_exists` o, con la verificación de correo activa, devuelve una cuenta sin identidades (`user.identities` vacío).
+- El registro marca el campo de correo con el error `taken`, muestra el mensaje y los enlaces «Iniciar sesión» y «Recuperar mi contraseña». El error se borra al cambiar el correo.
+
+## Retorno de enlaces a la raíz
+
+Si Auth no acepta la dirección de retorno, vuelve a la dirección del sitio (la raíz) con `code` o `error`. `rootRedirect` (`core/auth/email-link-redirect.ts`) lleva esos parámetros a `/auth/callback`, que completa el ingreso o muestra «Enlace no válido».
 
 ## Caminos al reenvío (FR-010a)
 

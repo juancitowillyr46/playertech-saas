@@ -22,7 +22,7 @@
 - **Decisión**:
   - El correo viene del parámetro `email` (lo pone el registro). Si falta, se muestra un campo de correo con validación.
   - Botón «Reenviar correo». Tras un envío, o al llegar desde el registro (que acaba de enviar uno), se deshabilita 60 s y muestra «Reenviar en 0:59…». Al terminar vuelve a «Reenviar correo».
-  - Mensaje tras el envío, siempre igual: «Si tu cuenta está pendiente de verificar, te enviamos un enlace nuevo. Ábrelo desde este mismo navegador.»
+  - Mensaje tras el envío, siempre igual: «Si tu cuenta está pendiente de verificar, te enviamos un enlace nuevo. Ábrelo desde este mismo navegador. Si ya la verificaste, inicia sesión.»
   - `rate_limited`: «Espera un momento antes de pedir otro correo.», o el mensaje existente del catálogo si ya lo cubre. `network`: el mensaje del catálogo.
   - El contador vive en la pantalla (signal más intervalo de 1 s, limpiado al destruir). No se guarda entre recargas: el límite del servidor sigue protegiendo.
 - **Motivo**: la espera inicial evita un segundo envío inmediato tras el registro, que el servidor rechazaría (límite por correo), y anticipa ese rechazo con un mensaje claro.

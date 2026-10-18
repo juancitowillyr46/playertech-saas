@@ -29,4 +29,4 @@ ADR-012 (DEC-01, DEC-02, DEC-05, DEC-07, DEC-08, DEC-09, DEC-10, DEC-11, DEC-12,
 
 | ID | Historia | Prioridad | Estado |
 |---|---|---|---|
-| HU-014 | Registrar academia y owner | MVP | Definida |
+| HU-014 | Registrar academia y owner | MVP | Terminada (local) |

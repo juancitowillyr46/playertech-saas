@@ -1,3 +1,4 @@
+import { rootRedirect } from './app/core/auth/email-link-redirect';
 import { Routes } from '@angular/router';
 import { authGuard } from './app/core/auth/guards/auth.guard';
 import { membershipGuard } from './app/core/auth/guards/membership.guard';
@@ -9,7 +10,7 @@ import { AppLayout } from './app/layout/component/app.layout';
  * Los guards mejoran la experiencia; la protección de los datos es RLS.
  */
 export const appRoutes: Routes = [
-    { path: '', pathMatch: 'full', redirectTo: 'home' },
+    { path: '', pathMatch: 'full', redirectTo: rootRedirect },
     { path: 'auth', loadChildren: () => import('./app/features/auth/auth.routes') },
     {
         path: '',
