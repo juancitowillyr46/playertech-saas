@@ -4,13 +4,14 @@ import { FileStorageRepository } from '../../../core/storage/data/file-storage.r
 import { StoredFile } from '../../../core/storage/models/storage.models';
 import { initialsOf } from '../../../shared/pipes/initials.pipe';
 import { HomeSummaryRepository } from '../data/home-summary.repository';
-import { HomeSummary } from '../models/home-summary.models';
+import { HomeSummary, homeTasks } from '../models/home-summary.models';
 
 export type HomeSummaryStatus = 'loading' | 'ready' | 'error';
 
 /**
  * Resumen del inicio (spec 003, contracts/repositories.md): combina el contexto
- * de academia, el resumen del repositorio y la URL del logo.
+ * de academia, el resumen del repositorio, la URL del logo y las tareas de
+ * «Completa tu academia» (spec 007).
  */
 @Injectable()
 export class HomeSummaryService {
@@ -30,13 +31,16 @@ export class HomeSummaryService {
         try {
             const data = await this.repository.loadSummary(academy?.logoFileId ?? null);
             const name = academy?.name ?? '';
+            const tasks = homeTasks(data);
 
             this.summary.set({
                 academyName: name,
                 initials: initialsOf(name),
                 logoUrl: await this.logoUrl(data.logo),
                 planName: data.planName,
-                primaryVenue: data.primaryVenue
+                primaryVenue: data.primaryVenue,
+                tasks,
+                completedCount: tasks.filter((task) => task.done).length
             });
             this.status.set('ready');
         } catch {

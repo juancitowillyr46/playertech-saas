@@ -69,7 +69,7 @@ Contiene elementos reutilizables por varias features. No contiene lógica espec�
 
 Un elemento solo se mueve a `shared/` cuando lo necesita una segunda feature; mientras tanto, permanece en la feature que lo usa (principio IV de la Constitución).
 
-Elementos actuales: `components/page-header` (encabezado común de página), `components/brand-mark` (marca y espacio único del logo), `components/placeholder-page`, `pipes/initials.pipe` (iniciales cuando no hay logo), de la spec 003, y `forms/field-a11y` (asociación accesible entre un campo y su error, usada por el acceso y por Sedes), de la spec 004.
+Elementos actuales: `components/page-header` (encabezado común de página), `components/brand-mark` (marca y espacio único del logo), `pipes/initials.pipe` (iniciales cuando no hay logo), de la spec 003, y `forms/field-a11y` (asociación accesible entre un campo y su error, usada por el acceso y por Sedes), de la spec 004. `components/placeholder-page` se retiró en la spec 007, cuando el perfil de la academia reemplazó su último uso.
 
 ### Features
 

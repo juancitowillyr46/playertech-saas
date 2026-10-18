@@ -1,6 +1,6 @@
 # HU-017 — Consultar y editar el perfil de la academia
 
-**Épica:** EP-09 — Gestión de la academia · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-09 — Gestión de la academia · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Terminada (entorno local) · spec 007
 **Spec:** pendiente
 
 ## Historia de usuario

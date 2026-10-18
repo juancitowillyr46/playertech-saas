@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { AcademyContextRepository } from './data/academy-context.repository';
-import { AcademyContext } from './models/academy-context.models';
+import { AcademyContext, CurrentAcademy } from './models/academy-context.models';
 
 const INITIAL: AcademyContext = { status: 'loading' };
 
@@ -40,6 +40,18 @@ export class AcademyContextService {
     clear(): void {
         this.pending = null;
         this.state.set(INITIAL);
+    }
+
+    /**
+     * Refleja en el contexto un cambio del nombre o del logo sin volver a consultar ni pasar
+     * por `loading`, que los guards interpretarían como carga (spec 007, research R6).
+     */
+    applyAcademyChanges(changes: Partial<Pick<CurrentAcademy, 'name' | 'logoFileId'>>): void {
+        const current = this.state();
+
+        if (current.academy) {
+            this.state.set({ ...current, academy: { ...current.academy, ...changes } });
+        }
     }
 
     private async fetch(): Promise<void> {

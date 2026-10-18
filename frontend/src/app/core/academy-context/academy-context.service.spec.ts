@@ -17,6 +17,23 @@ describe('AcademyContextService', () => {
         service = TestBed.inject(AcademyContextService);
     });
 
+    it('applyAcademyChanges actualiza el nombre y el logo sin cambiar la situación', async () => {
+        loadCurrent.mockResolvedValue(ACTIVE);
+        await service.load();
+
+        service.applyAcademyChanges({ name: 'Academia Norte', logoFileId: 'file-1' });
+
+        expect(service.status()).toBe('active');
+        expect(service.academy()).toEqual({ id: 'academy-a', name: 'Academia Norte', logoFileId: 'file-1' });
+        expect(loadCurrent).toHaveBeenCalledTimes(1);
+    });
+
+    it('applyAcademyChanges sin academia no hace nada', () => {
+        service.applyAcademyChanges({ name: 'X' });
+
+        expect(service.academy()).toBeUndefined();
+    });
+
     it('empieza en loading y sin academia', () => {
         expect(service.status()).toBe('loading');
         expect(service.academy()).toBeUndefined();
