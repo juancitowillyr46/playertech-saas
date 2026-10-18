@@ -663,7 +663,7 @@ El aislamiento físico es **pool**: esquema compartido + `academy_id` + RLS. El 
 | DEC-19 | Dos aceptaciones obligatorias: Términos y Condiciones y Política de Tratamiento de Datos Personales (Ley 1581 de 2012), versionadas |
 | DEC-20 | La academia se crea en el mismo momento del registro, de forma atómica. La limpieza de registros no confirmados queda para el MVP+ |
 | DEC-21 | Campos editables de la academia: nombre, logo, teléfono, correo de contacto, dirección y ciudad. Solo el nombre es obligatorio. El correo de contacto se inicializa con el correo del registro y es editable sin afectar al correo de inicio de sesión |
-| DEC-22 | El logo es JPG o PNG de hasta 1 MB, almacenado de forma portable (ver ADR-013) |
+| DEC-22 | El logo es JPG o PNG, almacenado de forma portable (ver ADR-013). Actualizado el 2026-10-18: el owner elige una imagen de hasta 5 MB; la aplicación la redimensiona (lado mayor de 512 px como máximo) y la comprime antes de guardarla, y lo guardado nunca supera 1 MB. Al reemplazar o retirar el logo se borra la imagen anterior del almacenamiento y se conserva su registro con `deleted_at` |
 | DEC-23 | Campos de sede: nombre, tipo, dirección, ciudad y referencia o indicaciones. Sin enlace de mapas |
 | DEC-24 | La sede principal se crea como "Sede principal", de tipo lugar de entrenamiento |
 | DEC-25 | Se puede cambiar la sede principal; la anterior deja de serlo |
@@ -717,7 +717,7 @@ public-assets/7f3a…c21/academy/7f3a…c21/9b1e…44d.png
 
 ### Implicaciones
 - El tipo y el tamaño se validan también en el servidor: el bucket define tipos MIME permitidos y un tamaño máximo.
-- Al reemplazar un archivo se crea un registro nuevo y el anterior recibe `deleted_at`. La eliminación física queda para una tarea de limpieza en el MVP+.
+- Al reemplazar un archivo se crea un registro nuevo y el anterior recibe `deleted_at`. La eliminación física queda para una tarea de limpieza en el MVP+. **Excepción, el logo** (DEC-22, 2026-10-18): su imagen anterior se borra del almacenamiento en el momento, por la capacidad limitada; el registro se conserva con `deleted_at`.
 - Migrar de proveedor consiste en copiar los objetos conservando sus claves, verificar con `checksum_sha256` y cambiar la implementación del repositorio.
 - Las políticas de Storage autorizan la escritura con `is_academy_member()` aplicado al segmento `academy_id` de la ruta.
 

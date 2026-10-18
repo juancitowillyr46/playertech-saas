@@ -41,13 +41,13 @@
 
 ### CA-006 — Cargar o reemplazar el logo
 
-**Dado** que el owner selecciona una imagen JPG o PNG de hasta 1 MB,
+**Dado** que el owner selecciona una imagen JPG o PNG de hasta 5 MB,
 **cuando** la carga,
 **entonces** el sistema la guarda como logo de la academia y reemplaza el anterior si existía.
 
 ### CA-007 — Logo inválido
 
-**Dado** que el owner selecciona un archivo que no es JPG o PNG, o que supera 1 MB,
+**Dado** que el owner selecciona un archivo que no es JPG o PNG, o que supera 5 MB,
 **cuando** intenta cargarlo,
 **entonces** el sistema indica el problema y conserva el logo actual.
 
@@ -68,7 +68,8 @@
 - Solo el nombre es obligatorio; el resto de datos es opcional.
 - El país y la zona horaria no se muestran ni se editan en el MVP.
 - El plan se muestra solo como consulta.
-- Al reemplazar o retirar el logo, el archivo anterior no se borra físicamente (borrado lógico).
+- El logo se redimensiona (lado mayor de 512 px como máximo) y se comprime antes de guardarlo; lo guardado nunca supera 1 MB (decisión del responsable de producto del 2026-10-18, spec 007).
+- Al reemplazar o retirar el logo, la imagen anterior se borra del almacenamiento y su registro se conserva con fecha de borrado, por la capacidad limitada (decisión del responsable de producto del 2026-10-18, spec 007). Antes: «no se borra físicamente».
 
 ## Fuera de alcance
 
