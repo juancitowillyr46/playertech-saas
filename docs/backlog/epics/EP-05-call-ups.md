@@ -18,3 +18,7 @@ Permitir al administrador convocar jugadores para participar en una actividad.
 |---|---|---|
 | HU-007 | Crear convocatoria | Pendiente |
 | HU-008 | Publicar convocatoria | Pendiente |
+
+## Decisiones de la ideación (2026-10-18)
+
+ADR-018. Se construye en la **spec 3 (convocatoria y mensaje)** de la Fase 2. Un enlace por grupo convocado (DEC-31); fecha límite opcional (DEC-34). Flujo: `docs/product/call-up-flow.md`.

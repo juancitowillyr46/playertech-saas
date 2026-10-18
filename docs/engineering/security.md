@@ -143,6 +143,15 @@ Registro de los riesgos de seguridad que el MVP acepta de forma consciente y de 
 - **Mitigación prevista:** caducidad por inactividad también en el servidor, en la capa propia de sesión o con la función equivalente del proveedor que se use, sin acoplar la aplicación a ella.
 - **Prioridad:** MVP+.
 
+### SEC-03 — Verificación débil del acudiente en la convocatoria
+
+- **Origen:** DEC-31 (ADR-018), ideación de la Fase 2 del 2026-10-18.
+- **Riesgo:** el acudiente responde sin cuenta, desde el enlace del grupo. Si el enlace sale del grupo, alguien podría ver los convocados (nombre e inicial del apellido) y responder por un jugador.
+- **Por qué se acepta:** reemplaza el mensaje manual de hoy (que suele listar los nombres completos en el grupo) sin servicios externos ni cuentas para los acudientes. La respuesta solo afecta la confirmación de una actividad.
+- **Mitigaciones:**
+  - en la spec de la respuesta: enlace impredecible que caduca al cierre; solo nombre e inicial del apellido; cada vínculo nuevo, y cada dispositivo nuevo aunque el celular coincida con un acudiente registrado, queda pendiente hasta que el owner lo valida, y sus respuestas se distinguen; máximo 3 cambios de respuesta por jugador; registro de quién respondió y cuándo;
+  - en el MVP+: código de un solo uso por SMS o WhatsApp, cuando exista la integración oficial.
+
 ## Principio
 
 > Ninguna funcionalidad debe asumir que una validación realizada únicamente en el frontend constituye una protección de seguridad.

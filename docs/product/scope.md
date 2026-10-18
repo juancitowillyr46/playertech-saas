@@ -54,13 +54,13 @@ Las decisiones de la Fase 1 están registradas en ADR-012, ADR-013 y ADR-014 (`d
 
 ### Fase 2 — Negocio
 
-> Esta sección se refinará en la ideación de la Fase 2 (acudientes, sede de la actividad y modelo de convocatoria).
+> Refinada en la ideación del 2026-10-18. Decisiones en `docs/architecture/decisions.md` (ADR-018, DEC-30 a DEC-41).
 
-### Gestión de jugadores
+### Gestión de jugadores y acudientes
 
-- Registro y consulta de jugadores.
-- Asociación de jugadores con grupos o categorías.
-- Un jugador puede pertenecer a más de un grupo.
+- Registro y consulta de jugadores con datos básicos: nombres y apellidos, apodo opcional, fecha de nacimiento, celular propio y activo o inactivo. Sin documento ni foto (DEC-36).
+- Cada jugador puede tener uno o más acudientes (nombre, celular, parentesco). Sin acudiente, el celular del jugador es obligatorio y responde él mismo (DEC-30).
+- Asociación de jugadores con grupos o categorías; un jugador puede pertenecer a más de un grupo.
 
 ### Gestión de grupos
 
@@ -69,7 +69,7 @@ Las decisiones de la Fase 1 están registradas en ADR-012, ADR-013 y ADR-014 (`d
 
 ### Gestión de actividades
 
-El administrador puede crear actividades de la academia.
+El administrador puede crear actividades de la academia. Se realizan en una sede de la academia o en una cancha externa de su catálogo de canchas, reutilizables y que se pueden crear al crear la actividad (DEC-32).
 
 El MVP contempla inicialmente dos tipos:
 
@@ -88,16 +88,19 @@ La convocatoria permite:
 - Compartir un enlace de respuesta.
 - Generar el contenido necesario para comunicar la convocatoria.
 
-El enlace es público y temporal.
+Se comparte **un solo mensaje generado por grupo**, con un enlace secreto y temporal (DEC-31). Los acudientes no necesitan estar registrados: la primera vez eligen a su jugador en la lista de convocados (nombre, inicial del apellido y apodo) y se identifican; el owner valida cada vínculo y cada dispositivo nuevo con un toque, y el dispositivo queda recordado. No se envían códigos por SMS ni por WhatsApp. Flujo en `docs/product/call-up-flow.md`. La convocatoria tiene una fecha límite opcional; sin ella, se cierra al empezar la actividad (DEC-34).
 
 ### Respuesta del tutor
 
 El tutor puede acceder a la convocatoria mediante el enlace recibido y registrar su respuesta:
 
 - **Sí** — confirma la participación.
+- **Sí, provisional** — confirma de forma provisional y puede indicar de qué depende.
 - **No** — no confirma la participación y puede indicar un motivo.
 
-Una vez registrada la respuesta, el enlace deja de estar disponible para modificarla.
+El motivo se elige de una lista fija y es opcional; *Otro* pide un texto de hasta 200 caracteres. Si al cierre la respuesta sigue provisional, queda como provisional (DEC-38).
+
+Puede cambiar la respuesta hasta 3 veces por jugador, siempre antes del cierre (DEC-33). Vale la última, con quién la dio y cuándo.
 
 El MVP no contempla que el tutor tenga que crear una cuenta para responder.
 

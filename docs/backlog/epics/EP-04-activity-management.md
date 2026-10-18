@@ -22,3 +22,7 @@ Permitir al administrador registrar y gestionar las actividades deportivas de la
 |---|---|---|
 | HU-005 | Crear actividad | Pendiente |
 | HU-006 | Consultar actividades | Pendiente |
+
+## Decisiones de la ideación (2026-10-18)
+
+ADR-018. Se construye en la **spec 2 (actividades y canchas)** de la Fase 2. Lugar: sede o cancha externa del catálogo de la academia (DEC-32, EP-14).

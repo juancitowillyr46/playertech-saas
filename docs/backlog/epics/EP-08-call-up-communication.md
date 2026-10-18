@@ -24,3 +24,7 @@ Facilitar al administrador la comunicación de las convocatorias mediante los ca
 |---|---|---|
 | HU-012 | Generar mensaje de convocatoria | Pendiente |
 | HU-013 | Copiar y compartir convocatoria | Pendiente |
+
+## Decisiones de la ideación (2026-10-18)
+
+ADR-018. Se construye en la **spec 3 (convocatoria y mensaje)** de la Fase 2. Un mensaje generado por grupo con su enlace, con botón «Compartir» (abre WhatsApp en el celular) además de «Copiar» (DEC-31).

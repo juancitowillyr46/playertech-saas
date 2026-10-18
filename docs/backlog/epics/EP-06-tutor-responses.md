@@ -10,15 +10,15 @@ El tutor puede:
 
 - Acceder mediante el enlace recibido.
 - Consultar la información de la convocatoria.
-- Confirmar la participación.
+- Confirmar la participación (**Sí**) o confirmarla de forma provisional (**Sí, provisional**, DEC-38).
 - Indicar que no participará.
-- Registrar un motivo cuando no participe.
+- Elegir un motivo opcional de una lista fija para el No o el provisional; *Otro* pide un texto de hasta 200 caracteres (DEC-38).
 
 ## Reglas principales
 
 - El tutor no necesita crear una cuenta.
 - El enlace de convocatoria es temporal.
-- Una vez registrada la respuesta, esta no puede modificarse.
+- La respuesta puede cambiarse hasta 3 veces por jugador, antes del cierre (DEC-33; antes: «no puede modificarse»).
 - Una respuesta afirmativa representa confirmación de participación, no asistencia.
 
 ## Historias de usuario
@@ -27,3 +27,7 @@ El tutor puede:
 |---|---|---|
 | HU-009 | Consultar convocatoria | Pendiente |
 | HU-010 | Responder convocatoria | Pendiente |
+
+## Decisiones de la ideación (2026-10-18)
+
+ADR-018. Se construye en la **spec 4 (respuesta y seguimiento)** de la Fase 2. Primera vez: elige a su jugador en la lista (nombre e inicial) y se identifica; el vínculo queda pendiente de validar. Siguientes veces: dispositivo recordado (DEC-31, SEC-03). Hasta 3 cambios por jugador antes del cierre (DEC-33).
