@@ -669,7 +669,7 @@ El aislamiento físico es **pool**: esquema compartido + `academy_id` + RLS. El 
 | DEC-25 | Se puede cambiar la sede principal; la anterior deja de serlo |
 | DEC-26 | **Desactivar** una sede es reversible y conserva su historial. La sede principal no puede desactivarse |
 | DEC-27 | **Borrado lógico** (`deleted_at`) como convención para las tablas de negocio. Lo eliminado desaparece de la UI y no se borra físicamente |
-| DEC-28 | Cierre de sesión tras 60 minutos sin interacción (ver ADR-014) |
+| DEC-28 | Cierre de sesión tras 60 minutos sin interacción (ver ADR-014). El tiempo cuenta desde la última interacción aunque la aplicación se haya cerrado: al reabrirla después de 60 minutos se piden de nuevo las credenciales. Sin aviso previo al cierre |
 | DEC-29 | En el MVP **no se capturan la IP ni el navegador** en las aceptaciones legales; se registran documento, versión y hora del servidor (spec 001, R4). Si la asesoría legal lo exige, se añadirá una Edge Function de registro. El proveedor de SMTP se decide al configurar el entorno en la nube |
 
 ### Implicaciones
@@ -734,7 +734,11 @@ Ninguna. Ningún componente debe construir URLs de almacenamiento ni llamar dire
 - **Verificación de correo obligatoria** antes del primer acceso, con el mecanismo nativo de Supabase Auth.
 - **Recuperación de contraseña** nativa de Supabase: enlace por correo hacia una página propia de PlayerTech, que debe estar en la lista de redirecciones permitidas de cada entorno.
 - **JWT de 1 hora** (valor por defecto recomendado por Supabase).
-- **Cierre por inactividad de 60 minutos** mediante un temporizador en el frontend que detecta la interacción del usuario.
+- **Cierre por inactividad de 60 minutos** en el frontend, medido por la interacción del usuario (DEC-28):
+  - Se compara la hora actual con la de la última interacción, no se confía en un temporizador: el navegador del celular congela los temporizadores con la pantalla bloqueada o la aplicación en segundo plano.
+  - La hora de la última interacción se conserva en el navegador y la comparten las pestañas. Al reabrir la aplicación después de 60 minutos, la sesión se cierra antes de mostrar datos.
+  - Sin aviso previo con cuenta regresiva: escribir o tocar cuenta como interacción, y en el celular el aviso casi nunca se vería.
+  - Los 60 minutos son fijos en producción y configurables por entorno, para poder verificarlo en desarrollo sin esperar una hora.
 - **SMTP propio obligatorio** en todos los entornos donde se registren usuarios reales.
 
 ### Justificación

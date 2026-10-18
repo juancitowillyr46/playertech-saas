@@ -190,7 +190,7 @@ Reglas:
 
 - `AuthRepository` encapsula registro, inicio y cierre de sesión, recuperación de contraseña y restauración de sesión.
 - La verificación de correo y la recuperación usan el flujo PKCE: Supabase redirige a `/auth/callback`, que completa el intercambio y dirige al usuario a la pantalla correspondiente.
-- `InactivityService` cierra la sesión tras 60 minutos sin interacción del usuario (ADR-014).
+- `InactivityService` cierra la sesión tras 60 minutos sin interacción del usuario, también al reabrir la aplicación (ADR-014, DEC-28). El tiempo viene de la configuración del entorno.
 - La sesión no ofrece la opción "Recordarme", que contradiría el cierre por inactividad.
 
 ## Manejo de errores

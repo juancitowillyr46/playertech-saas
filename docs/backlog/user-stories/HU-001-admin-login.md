@@ -68,6 +68,7 @@ Permitir que solo un usuario con correo verificado, membresía activa y academia
 - La autenticación (quién es) y la membresía (a qué academia pertenece) son conceptos distintos.
 - La academia del usuario se determina por su membresía, nunca por un dato enviado desde la interfaz.
 - Los mensajes de error no revelan si un correo está registrado.
+- La sesión está vigente (CA-006) mientras no pasen 60 minutos desde la última interacción del owner, aunque haya cerrado la aplicación (DEC-28, HU-015).
 
 ## Fuera de alcance
 
