@@ -62,10 +62,10 @@ description: "Lista de tareas para desplegar el entorno de pruebas (T-02)"
 
 **Objetivo**: CA-001 de T-02.
 
-- [ ] T006 [US1] 🧑 Crear el proyecto en supabase.com (plan Free; región recomendada São Paulo) y pasar al agente solo el `ref`, la URL y la clave publicable
-- [ ] T007 [US1] 🧑 En la raíz del repositorio: `npx supabase login`, `npx supabase link --project-ref <ref>` (contraseña de la base de datos en el terminal) y `npm run db:push`. Luego `npx supabase migration list`: las 11 migraciones, en local y en remoto
-- [ ] T008 [US1] 🧑 Ejecutar en el editor SQL del panel la consulta de verificación de docs/engineering/deployment.md: 0 usuarios y 0 academias; 3 planes; 2 documentos legales vigentes; 2 buckets
-- [ ] T009 [US1] 🧑 Configurar la autenticación en el panel según `contracts/deployment.md` (confirmar correo activo, contraseña mínima 8, Site URL y Redirect URLs tras T011) e invitar al equipo del proyecto con los correos que probarán
+- [X] T006 [US1] 🧑 Crear el proyecto en supabase.com (plan Free; región recomendada São Paulo) y pasar al agente solo el `ref`, la URL y la clave publicable
+- [X] T007 [US1] 🧑 En la raíz del repositorio: `npx supabase login`, `npx supabase link --project-ref <ref>` (contraseña de la base de datos en el terminal) y `npm run db:push`. Luego `npx supabase migration list`: las 11 migraciones, en local y en remoto
+- [X] T008 [US1] 🧑 Ejecutar en el editor SQL del panel la consulta de verificación de docs/engineering/deployment.md: 0 usuarios y 0 academias; 3 planes; 2 documentos legales vigentes; 2 buckets
+- [X] T009 [US1] 🧑 Configurar la autenticación en el panel según `contracts/deployment.md` (confirmar correo activo, contraseña mínima 8, Site URL y Redirect URLs tras T011) e invitar al equipo del proyecto con los correos que probarán
 
 ---
 
@@ -73,9 +73,9 @@ description: "Lista de tareas para desplegar el entorno de pruebas (T-02)"
 
 **Objetivo**: CA-002, CA-003 y CA-005 de T-02.
 
-- [ ] T010 [US2] 🤖 Hacer el commit de la rama, subirla y abrir el PR, para que Vercel tenga `vercel.json` y `build:vercel`. Hacer el merge cuando el responsable lo apruebe
-- [ ] T011 [US2] 🧑 Importar el repositorio en vercel.com con los ajustes de `contracts/deployment.md` y las variables `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY` (Production y Preview). Pasar al agente la URL de producción y el patrón de las vistas previas
-- [ ] T012 [US2] 🤖 Verificar desde el PC:
+- [X] T010 [US2] 🤖 Hacer el commit de la rama, subirla y abrir el PR, para que Vercel tenga `vercel.json` y `build:vercel`. Hacer el merge cuando el responsable lo apruebe
+- [X] T011 [US2] 🧑 Importar el repositorio en vercel.com con los ajustes de `contracts/deployment.md` y las variables `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY` (Production y Preview). Pasar al agente la URL de producción y el patrón de las vistas previas
+- [X] T012 [US2] 🤖 Verificar desde el PC:
   - la URL pública responde con HTTPS;
   - `/auth/register` y `/settings/venues` cargan al abrirse directamente (CA-003);
   - los archivos JS publicados no contienen claves privilegiadas: se descargan y se pasa la misma comprobación de `check:bundle` (CA-005).
@@ -86,8 +86,8 @@ description: "Lista de tareas para desplegar el entorno de pruebas (T-02)"
 
 **Objetivo**: CA-004 de T-02.
 
-- [ ] T013 [US3] 🧑 En el celular: registrarse con un correo del equipo, abrir el enlace de verificación en el mismo navegador, iniciar sesión, editar el perfil, subir un logo, crear una sede y recuperar la contraseña. Medir el tiempo del registro (SC-001)
-- [ ] T014 [US3] 🧑 Abrir un PR de prueba y comprobar su vista previa y que el enlace del correo vuelve a ella. Hacer merge de un cambio y medir la publicación (SC-003)
+- [X] T013 [US3] 🧑 En el celular: registrarse con un correo del equipo, abrir el enlace de verificación en el mismo navegador, iniciar sesión, editar el perfil, subir un logo, crear una sede y recuperar la contraseña. Medir el tiempo del registro (SC-001)
+- [ ] T014 (pendiente: se confirma con el próximo PR) [US3] 🧑 Abrir un PR de prueba y comprobar su vista previa y que el enlace del correo vuelve a ella. Hacer merge de un cambio y medir la publicación (SC-003)
 
 ---
 
@@ -105,14 +105,14 @@ description: "Lista de tareas para desplegar el entorno de pruebas (T-02)"
 
   Enlazarla desde docs/engineering/README.md.
 - [X] T016 [P] [US4] 🤖 Actualizar docs/architecture/decisions.md (ADR-016: frontend en Vercel Hobby, configuración por variables, entorno de pruebas y Vercel Pro u otro alojamiento como requisito del piloto con academias que paguen) y docs/architecture/supabase-environments.md (el entorno de pruebas existe; enlace a la guía). Añadir «Vercel Pro u otro alojamiento comercial» a «Antes del piloto» en docs/product/roadmap.md
-- [ ] T017 [US4] 🤖 Verificar el entorno local (CA-006): `npm run db:test` desde la raíz y `npm start` contra Supabase local
+- [X] T017 [US4] 🤖 Verificar el entorno local (CA-006): `npm run db:test` desde la raíz y `npm start` contra Supabase local
 
 ---
 
 ## Fase 7: Pulido y cierre
 
-- [ ] T018 🤖 `npm run lint` y `npm run build` una vez desde frontend/
-- [ ] T019 [P] 🤖 Completar «Resultados» en specs/008-deployment/quickstart.md y marcar T-02 como «Terminado (entorno de pruebas)» con su tabla de avance en docs/backlog/enablers/T-02-deployment.md
+- [X] T018 🤖 `npm run lint` y `npm run build` una vez desde frontend/
+- [X] T019 [P] 🤖 Completar «Resultados» en specs/008-deployment/quickstart.md y marcar T-02 como «Terminado (entorno de pruebas)» con su tabla de avance en docs/backlog/enablers/T-02-deployment.md
 
 ---
 

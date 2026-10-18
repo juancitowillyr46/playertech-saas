@@ -48,6 +48,17 @@ select
 | Minimum password length | 8 |
 | Equipo del proyecto | Invitar los correos que probarán: sin SMTP propio solo ellos reciben correos |
 
+### Plantillas de correo (panel: Authentication → Emails)
+
+Las de `supabase/templates/` solo se aplican solas en Supabase local. En la nube se pegan en el panel, pero **Supabase solo permite editarlas con un plan de pago o con SMTP propio** (comprobado el 2026-10-18). En el entorno de pruebas los correos usan las plantillas por defecto. Se aplicarán junto con el SMTP propio, antes del piloto. Son portables: solo usan variables estándar (`{{ .ConfirmationURL }}`, `{{ .Email }}`, `{{ .Data.full_name }}`).
+
+| Plantilla | Asunto | Cuerpo |
+|---|---|---|
+| Confirm signup | `Confirma tu correo para activar tu academia en PlayerTech` | `supabase/templates/confirmation.html` |
+| Reset Password | `Restablece tu contraseña de PlayerTech` | `supabase/templates/recovery.html` |
+
+Si una plantilla cambia en el repositorio, hay que volver a pegarla en el panel. El remitente es el de Supabase hasta tener SMTP propio.
+
 ### Migraciones nuevas
 
 Tras el merge a `main` de una spec con migraciones: `npm run db:push` desde la raíz, con el proyecto enlazado. Nunca se edita el esquema a mano en el panel (`supabase-environments.md`).
@@ -69,7 +80,7 @@ Tras el merge a `main` de una spec con migraciones: `npm run db:push` desde la r
 
 ## Limitaciones del entorno de pruebas
 
-- **Correo:** sin SMTP propio, Supabase solo envía a los miembros del equipo del proyecto y con un límite bajo por hora.
+- **Correo:** sin SMTP propio, Supabase solo envía a los miembros del equipo del proyecto y con un límite bajo por hora. **Si falta la URL en *Redirect URLs*, los enlaces de los correos vuelven a la *Site URL*** (por defecto `localhost`): configúrala antes del primer registro.
 - **Copias de seguridad:** no hay copias propias (plan Free).
 - **Documentos legales:** sus enlaces son provisionales.
 - **Vercel Hobby:** solo uso no comercial. Antes del piloto con academias que paguen hay que pasar a Vercel Pro u otro alojamiento.
