@@ -1,8 +1,8 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ConfirmationService, MenuItem } from 'primeng/api';
+import { AbstractControl, FormBuilder, FormsModule, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DrawerModule } from 'primeng/drawer';
@@ -17,20 +17,36 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
 import { map } from 'rxjs';
+import { AppError } from '../../../../core/errors/app-error';
+import { ERROR_MESSAGES } from '../../../../core/errors/error-messages';
 import { PageHeader, PageHeaderAction } from '../../../../shared/components/page-header/page-header';
-import { Venue, VENUE_TYPE_LABELS, VenueType } from '../../models/venue.models';
+import { FieldA11y, fieldA11y } from '../../../../shared/forms/field-a11y';
+import { Venue, VenueInput, VENUE_TYPE_LABELS, VenueType } from '../../models/venue.models';
 import { VenuesService, VenueStatusFilter } from '../../services/venues.service';
 
-/** Por debajo de `md` (768 px): tarjetas y formulario a pantalla completa (research R8). */
+/** Por debajo de `md` (768 px): filas regladas y formulario a pantalla completa. */
 const MOBILE_QUERY = '(max-width: 767.98px)';
 
 /** Estados de la sede como sellos de la planilla (DESIGN.md): sin relleno y con borde. */
 const STAMP = 'border-2 border-current uppercase tracking-wider';
 
+/** Mensajes de la pantalla de sedes (contracts/app-errors.md y ui-contracts.md). */
+const MESSAGES = {
+    nameRequired: 'Ingresa el nombre de la sede.',
+    nameTaken: 'Ya existe una sede con ese nombre.',
+    primaryProtected: 'La sede principal no se puede desactivar ni eliminar. Marca otra como principal primero.',
+    primaryMustBeActive: 'Solo una sede activa puede ser la principal. Reactívala primero.'
+};
+
+/** El nombre es obligatorio aunque se escriban solo espacios (CA-003 de HU-029). */
+function requiredTrimmed(control: AbstractControl<string>): ValidationErrors | null {
+    return control.value?.trim() ? null : { required: true };
+}
+
 /**
- * Pantalla modelo de Sedes (spec 003, US5 y US6; contracts/ui-contracts.md): patrón de
- * página de gestión de ui.md con datos reales de solo lectura. La escritura es una
- * maqueta (FR-018a): el formulario se abre, pero no guarda; HU-029 y HU-031 la completan.
+ * Gestión de sedes (spec 004; HU-029, HU-030 y HU-031): patrón de página de gestión
+ * de ui.md. La pantalla solo usa VenuesService; las reglas las impone la base de
+ * datos y aquí se anticipan para dar mensajes claros.
  */
 @Component({
     selector: 'app-venues-page',
@@ -57,7 +73,7 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <app-page-header title="Sedes" description="Lugares donde funciona tu academia.">
-            <p-button appPageHeaderAction label="Nueva sede" icon="pi pi-plus" (onClick)="openCreate()" />
+            <p-button appPageHeaderAction label="Nueva sede" icon="pi pi-plus" [disabled]="venues.busy()" (onClick)="openCreate()" />
         </app-page-header>
 
         @switch (venues.status()) {
@@ -169,7 +185,7 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
 
         <p-menu #rowMenu [model]="rowMenuItems()" [popup]="true" appendTo="body" />
 
-        <!-- Formulario de maqueta (FR-018a): a la derecha en escritorio, a pantalla completa en el celular. -->
+        <!-- Crear y editar: a la derecha en escritorio, a pantalla completa en el celular. -->
         <p-drawer
             [visible]="drawerOpen()"
             position="right"
@@ -188,10 +204,25 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
                 </div>
             </ng-template>
 
-            <form [formGroup]="form" class="flex flex-col gap-5" novalidate (ngSubmit)="$event.preventDefault()">
+            @if (formError(); as message) {
+                <p-message severity="error" styleClass="mb-5">{{ message }}</p-message>
+            }
+
+            <form [formGroup]="form" class="flex flex-col gap-5" novalidate (ngSubmit)="save()">
                 <div class="flex flex-col gap-2">
                     <label for="venueName" class="font-medium">Nombre de la sede</label>
-                    <input pInputText id="venueName" formControlName="name" class="w-full" />
+                    <input
+                        pInputText
+                        id="venueName"
+                        formControlName="name"
+                        class="w-full"
+                        [invalid]="nameInvalid()"
+                        [attr.aria-invalid]="nameA11y()['aria-invalid']"
+                        [attr.aria-describedby]="nameA11y()['aria-describedby']"
+                    />
+                    @if (nameInvalid()) {
+                        <p-message id="venueName-error" severity="error" variant="simple" size="small">{{ nameError() }}</p-message>
+                    }
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="venueType" class="font-medium">Tipo</label>
@@ -212,12 +243,9 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
             </form>
 
             <ng-template #footer>
-                <div class="flex flex-col gap-3">
-                    <p-message severity="info" size="small">Disponible próximamente: aún no se pueden guardar sedes.</p-message>
-                    <div class="flex gap-2">
-                        <p-button label="Cancelar" [outlined]="true" styleClass="w-full" class="flex-1" (onClick)="requestClose()" />
-                        <p-button label="Guardar" [disabled]="true" styleClass="w-full" class="flex-1" />
-                    </div>
+                <div class="flex gap-2">
+                    <p-button label="Cancelar" [outlined]="true" styleClass="w-full" class="flex-1" (onClick)="requestClose()" />
+                    <p-button label="Guardar" styleClass="w-full" class="flex-1" [loading]="venues.busy()" (onClick)="save()" />
                 </div>
             </ng-template>
         </p-drawer>
@@ -228,6 +256,7 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
 export class VenuesPage implements OnInit {
     protected readonly venues = inject(VenuesService);
     private readonly confirmation = inject(ConfirmationService);
+    private readonly messages = inject(MessageService);
 
     protected readonly stamp = STAMP;
     protected readonly isMobile = toSignal(inject(BreakpointObserver).observe(MOBILE_QUERY).pipe(map((state) => state.matches)), { initialValue: false });
@@ -246,23 +275,60 @@ export class VenuesPage implements OnInit {
 
     protected readonly drawerOpen = signal(false);
     protected readonly editing = signal<Venue | null>(null);
+    protected readonly formError = signal<string | null>(null);
+    /** Tras intentar guardar, los errores se muestran aunque el campo no se haya tocado. */
+    private readonly submitted = signal(false);
     private readonly menuVenue = signal<Venue | null>(null);
 
     protected readonly form = inject(FormBuilder).nonNullable.group({
-        name: ['', Validators.required],
+        name: ['', [requiredTrimmed, (control: AbstractControl<string>) => this.nameTakenValidator(control)]],
         type: ['training_ground' as VenueType],
         address: [''],
         city: [''],
         directions: ['']
     });
 
+    /** Estado del campo Nombre; se recalcula con cada cambio del formulario. */
+    private readonly formState = toSignal(this.form.events, { initialValue: null });
+
+    protected readonly nameInvalid = computed(() => {
+        this.formState();
+        const control = this.form.controls.name;
+
+        return control.invalid && (control.touched || this.submitted());
+    });
+
+    protected readonly nameError = computed(() => {
+        this.formState();
+
+        return this.form.controls.name.hasError('required') ? MESSAGES.nameRequired : MESSAGES.nameTaken;
+    });
+
+    protected readonly nameA11y = computed<FieldA11y>(() => fieldA11y('venueName', this.nameInvalid()));
+
+    /** Menú de la sede elegida: las acciones no disponibles se ven deshabilitadas con su motivo (FR-017). */
     protected readonly rowMenuItems = computed<MenuItem[]>(() => {
         const venue = this.menuVenue();
 
+        if (!venue) {
+            return [];
+        }
+
+        const primaryReason = ' (marca otra como principal)';
+        const canBePrimary = venue.isActive && !venue.isPrimary;
+
         return [
-            { label: 'Editar', icon: 'pi pi-pencil', command: () => venue && this.openEdit(venue) },
-            { label: 'Desactivar (próximamente)', icon: 'pi pi-ban', disabled: true },
-            { label: 'Eliminar (próximamente)', icon: 'pi pi-trash', disabled: true }
+            { label: 'Editar', icon: 'pi pi-pencil', command: () => this.openEdit(venue) },
+            {
+                label: 'Marcar como principal' + (venue.isPrimary ? ' (ya es la principal)' : !venue.isActive ? ' (reactívala primero)' : ''),
+                icon: 'pi pi-star',
+                disabled: !canBePrimary,
+                command: () => this.setPrimary(venue)
+            },
+            venue.isActive
+                ? { label: 'Desactivar' + (venue.isPrimary ? primaryReason : ''), icon: 'pi pi-ban', disabled: venue.isPrimary, command: () => this.setActive(venue, false) }
+                : { label: 'Reactivar', icon: 'pi pi-replay', command: () => this.setActive(venue, true) },
+            { label: 'Eliminar' + (venue.isPrimary ? primaryReason : ''), icon: 'pi pi-trash', disabled: venue.isPrimary, command: () => this.confirmRemove(venue) }
         ];
     });
 
@@ -284,26 +350,67 @@ export class VenuesPage implements OnInit {
     }
 
     protected openRowMenu(event: Event, venue: Venue, menu: Menu): void {
+        if (this.venues.busy()) {
+            return;
+        }
+
         this.menuVenue.set(venue);
         menu.toggle(event);
     }
 
     protected openCreate(): void {
         this.editing.set(null);
-        this.form.reset();
+        this.resetForm({ name: '', type: 'training_ground', address: '', city: '', directions: '' });
         this.drawerOpen.set(true);
     }
 
     protected openEdit(venue: Venue): void {
         this.editing.set(venue);
-        this.form.reset({ name: venue.name, type: venue.type, address: '', city: venue.city ?? '', directions: '' });
+        this.resetForm({ name: venue.name, type: venue.type, address: venue.address ?? '', city: venue.city ?? '', directions: venue.directions ?? '' });
         this.drawerOpen.set(true);
+    }
+
+    protected async save(): Promise<void> {
+        if (this.venues.busy()) {
+            return;
+        }
+
+        this.submitted.set(true);
+        this.form.controls.name.updateValueAndValidity();
+        this.form.markAllAsTouched();
+
+        if (this.form.invalid) {
+            return;
+        }
+
+        this.formError.set(null);
+        const editing = this.editing();
+        const input: VenueInput = this.form.getRawValue();
+
+        try {
+            if (editing) {
+                await this.venues.update(editing.id, input);
+            } else {
+                await this.venues.create(input);
+            }
+
+            this.form.markAsPristine();
+            this.closeDrawer();
+            this.notify(editing ? 'Cambios guardados.' : 'Sede creada.');
+        } catch (error) {
+            if (error instanceof AppError && error.code === 'duplicate') {
+                this.form.controls.name.setErrors({ taken: true });
+                return;
+            }
+
+            this.formError.set(this.messageFor(error));
+        }
     }
 
     /** Cerrar con cambios sin guardar pide confirmación (patrón de página de gestión de ui.md). */
     protected requestClose(): void {
         if (!this.form.dirty) {
-            this.drawerOpen.set(false);
+            this.closeDrawer();
             return;
         }
 
@@ -313,7 +420,63 @@ export class VenuesPage implements OnInit {
             acceptLabel: 'Descartar',
             rejectLabel: 'Seguir editando',
             rejectButtonProps: { outlined: true },
-            accept: () => this.drawerOpen.set(false)
+            accept: () => this.closeDrawer()
         });
+    }
+
+    private async setPrimary(venue: Venue): Promise<void> {
+        await this.runAction(() => this.venues.setPrimary(venue), `«${venue.name}» es ahora la sede principal.`, MESSAGES.primaryMustBeActive);
+    }
+
+    private async setActive(venue: Venue, active: boolean): Promise<void> {
+        await this.runAction(() => this.venues.setActive(venue, active), active ? 'Sede reactivada.' : 'Sede desactivada.', MESSAGES.primaryProtected);
+    }
+
+    /** Eliminar no se revierte desde la interfaz: pide confirmación explícita (CA-004 de HU-031). */
+    private confirmRemove(venue: Venue): void {
+        this.confirmation.confirm({
+            header: `¿Eliminar «${venue.name}»?`,
+            message: 'Dejará de aparecer en PlayerTech. Esta acción no se puede deshacer desde la aplicación.',
+            acceptLabel: 'Eliminar',
+            rejectLabel: 'Cancelar',
+            acceptButtonProps: { severity: 'danger' },
+            rejectButtonProps: { outlined: true },
+            accept: () => void this.runAction(() => this.venues.remove(venue), 'Sede eliminada.', MESSAGES.primaryProtected)
+        });
+    }
+
+    private async runAction(action: () => Promise<void>, success: string, ruleMessage: string): Promise<void> {
+        try {
+            await action();
+            this.notify(success);
+        } catch (error) {
+            const detail = error instanceof AppError && error.code === 'rule_violation' ? ruleMessage : this.messageFor(error);
+
+            this.messages.add({ severity: 'error', summary: 'No se pudo completar la acción', detail, life: 6000 });
+        }
+    }
+
+    private notify(summary: string): void {
+        this.messages.add({ severity: 'success', summary, life: 4000 });
+    }
+
+    private messageFor(error: unknown): string {
+        return error instanceof AppError ? error.message : ERROR_MESSAGES.unknown;
+    }
+
+    private nameTakenValidator(control: AbstractControl<string>): ValidationErrors | null {
+        const name = control.value ?? '';
+
+        return name.trim() && this.venues?.isNameTaken(name, this.editing()?.id) ? { taken: true } : null;
+    }
+
+    private closeDrawer(): void {
+        this.drawerOpen.set(false);
+    }
+
+    private resetForm(value: { name: string; type: VenueType; address: string; city: string; directions: string }): void {
+        this.submitted.set(false);
+        this.formError.set(null);
+        this.form.reset(value);
     }
 }

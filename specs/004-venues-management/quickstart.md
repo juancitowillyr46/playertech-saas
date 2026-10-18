@@ -73,4 +73,18 @@ Mediciones a 360 y 1280 px en ambos modos (sin desbordes, controles de 44 px o m
 
 ## Resultados
 
-*Se completa al terminar la implementación.*
+Validación del 2026-10-17 contra Supabase local, **sin `db:reset`** (se conservaron los datos de prueba del responsable de producto), con un recorrido automatizado en el celular (360 px) sobre la academia A del seed que deja la sede principal como estaba y elimina sus sedes de prueba.
+
+| Sección | Resultado |
+|---|---|
+| §1 Controles automáticos | `lint`, `check:styles`, 190 pruebas de Vitest, `build` (bundle inicial de 946,7 KB), `check:bundle` y 144 pgTAP en verde |
+| §2 Registrar | CA-001 y CA-002 (aviso «Sede creada.», activa, no principal, «Lugar de entrenamiento»), CA-003 (nombre vacío o con espacios) y CA-004 (duplicado sin distinguir mayúsculas). Desde «Guardar» hasta el aviso, con el refresco del listado incluido: 0,24 a 0,43 s en tres mediciones (objetivo del plan: menos de 1 s) |
+| §3 Editar | CA-001 de HU-031: datos completos precargados, «Cambios guardados.», el propio nombre no es duplicado |
+| §4 Sede principal | CA-005 (Desactivar y Eliminar deshabilitados con «(marca otra como principal)»), CA-006 (aviso y la nueva principal primero) y CA-007 («(reactívala primero)») |
+| §5 Desactivar, reactivar y eliminar | CA-002, CA-003 y CA-004, con confirmación que nombra la sede; el nombre eliminado se reutiliza (FR-006) |
+| §6 Consulta y aislamiento | HU-030 CA-001 a CA-004 en las pruebas de pantalla; CA-005: el owner B no ve las sedes de A |
+| §7 Casos límite | Dos pestañas (sede eliminada mientras se editaba): mensaje «El registro ya no existe o cambió…» y listado actualizado. Sin conexión y doble toque: cubiertos por pruebas de pantalla y servicio |
+| §8 Experiencia y accesibilidad | Sin desbordes a 360 y 1280 px en ambos modos; controles de 44 px o más; detector de Impeccable sin hallazgos. Corregido el botón de peligro: `red.600` (4,83:1) en lugar de `red.500` (3,76:1) |
+
+**Notas:**
+- **pgTAP y el seed:** las pruebas de aislamiento y suspensión cuentan todas las filas de la academia A del seed, incluidas las eliminadas. Una validación manual que cree sedes en esa academia (aunque las elimine) las hace fallar hasta borrar esas filas o ejecutar `db:reset`.

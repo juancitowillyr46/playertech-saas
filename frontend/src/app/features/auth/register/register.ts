@@ -10,7 +10,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AppError } from '../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../core/errors/error-messages';
 import { CurrentLegalDocuments } from '../../../core/legal/models/legal.models';
-import { checkboxPt, FieldA11y, fieldA11y, passwordPt } from '../forms/field-a11y';
+import { checkboxPt, FieldA11y, fieldA11y, passwordPt } from '../../../shared/forms/field-a11y';
 import { RegistrationService } from '../services/registration.service';
 import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-match';
 

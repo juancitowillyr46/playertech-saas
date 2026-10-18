@@ -102,7 +102,8 @@ npm start              # servidor de desarrollo en http://localhost:4200, contra
 npm run build          # compilación de producción
 npm run lint           # análisis estático (incluye la regla de capas de ADR-002)
 npm test               # pruebas con Vitest en modo observación
-npm run test:ci        # pruebas una sola vez
+npm run test:ci        # pruebas una sola vez (todo el conjunto, antes del commit o del PR)
+npm run test:changed   # solo las pruebas de lo que cambió respecto a main (mientras se desarrolla)
 npm run check:bundle   # sin claves privilegiadas ni demos en la compilación de producción
 npm run check:styles   # sin !important, sin selectores .p-* ni colores fijos en plantillas
 ```

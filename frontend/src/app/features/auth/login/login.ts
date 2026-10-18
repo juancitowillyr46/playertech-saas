@@ -8,7 +8,7 @@ import { PasswordModule } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AppError } from '../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../core/errors/error-messages';
-import { FieldA11y, fieldA11y, passwordPt } from '../forms/field-a11y';
+import { FieldA11y, fieldA11y, passwordPt } from '../../../shared/forms/field-a11y';
 
 /**
  * Inicio de sesión (Historia 7 de la spec 002; rediseño Planilla de la spec 003).

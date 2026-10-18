@@ -190,6 +190,24 @@ export const PlayerTechPreset = definePreset(Aura, {
                 label: {
                     fontWeight: '600'
                 }
+            },
+            // Peligro (eliminar): red.600 da 4,83:1 con texto blanco; el red.500 de Aura, 3,76:1.
+            colorScheme: {
+                light: {
+                    root: {
+                        danger: {
+                            background: '{red.600}',
+                            hoverBackground: '{red.700}',
+                            activeBackground: '{red.800}',
+                            borderColor: '{red.600}',
+                            hoverBorderColor: '{red.700}',
+                            activeBorderColor: '{red.800}',
+                            color: '#ffffff',
+                            hoverColor: '#ffffff',
+                            activeColor: '#ffffff'
+                        }
+                    }
+                }
             }
         },
         select: {

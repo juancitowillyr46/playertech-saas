@@ -10,6 +10,7 @@
         "test": "ng test",
         "lint": "ng lint",
         "test:ci": "ng test --watch=false",
+        "test:changed": "node scripts/test-changed.mjs",
         "check:bundle": "node scripts/check-bundle.mjs",
         "check:styles": "node scripts/check-styles.mjs"
     },

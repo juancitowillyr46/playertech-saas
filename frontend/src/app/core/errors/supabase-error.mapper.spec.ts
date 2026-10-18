@@ -33,6 +33,17 @@ describe('mapSupabaseError', () => {
         expect(mapSupabaseError(postgrestError).code).toBe('forbidden');
     });
 
+    it.each([
+        ['23505', 'duplicate'],
+        ['23514', 'rule_violation'],
+        ['PGRST116', 'not_found']
+    ] as const)('traduce el código de la base de datos %s a %s (spec 004)', (code, expected) => {
+        const result = mapSupabaseError({ code, message: 'postgrest', details: null, hint: null });
+
+        expect(result.code).toBe(expected);
+        expect(result.message).toBe(ERROR_MESSAGES[expected]);
+    });
+
     it('traduce un fallo de fetch a network', () => {
         expect(mapSupabaseError(new TypeError('Failed to fetch')).code).toBe('network');
     });

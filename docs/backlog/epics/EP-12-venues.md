@@ -29,6 +29,6 @@ ADR-012 (DEC-04, DEC-05, DEC-23, DEC-24, DEC-25, DEC-26, DEC-27).
 
 | ID | Historia | Prioridad | Estado |
 |---|---|---|---|
-| HU-029 | Registrar sede | MVP | Definida |
-| HU-030 | Consultar sedes | MVP | Definida |
-| HU-031 | Gestionar sede (editar, desactivar, eliminar y marcar como principal) | MVP | Definida |
+| HU-029 | Registrar sede | MVP | Terminada (local) |
+| HU-030 | Consultar sedes | MVP | Terminada (local) |
+| HU-031 | Gestionar sede (editar, desactivar, eliminar y marcar como principal) | MVP | Terminada (local) |
