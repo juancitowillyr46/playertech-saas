@@ -6,7 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AppError } from '../../../core/errors/app-error';
-import { FieldA11y, fieldA11y } from '../forms/field-a11y';
+import { FieldA11y, fieldA11y } from '../../../shared/forms/field-a11y';
 
 /** Errores que sí se muestran: no revelan si la cuenta existe (DEC-12). */
 const VISIBLE_ERRORS = new Set(['rate_limited', 'network']);

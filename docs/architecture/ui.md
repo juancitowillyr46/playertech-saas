@@ -128,7 +128,7 @@ No se incluyen selección múltiple, acciones masivas ni exportación, salvo que
 
 **Maqueta de funciones aún no disponibles:** se muestran, pero deshabilitadas, con «Disponible próximamente» o «(próximamente)»; nunca simulan guardar.
 
-La primera implementación del patrón es la gestión de sedes (`features/venues/venues-page`, spec 003), hoy con lectura real y escritura de maqueta. Las piezas que se repitan se extraen a `shared/components/` cuando aparezca la segunda gestión.
+La primera implementación completa del patrón es la gestión de sedes (`features/venues/pages/venues-page`, specs 003 y 004): menú de fila con las acciones no disponibles deshabilitadas y su motivo en texto, confirmación solo para eliminar y aviso tras cada operación. Las piezas que se repitan se extraen a `shared/components/` cuando aparezca la segunda gestión.
 
 ## Patrón: inicio con tareas pendientes
 

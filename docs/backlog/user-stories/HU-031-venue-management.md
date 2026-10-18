@@ -1,7 +1,7 @@
 # HU-031 — Gestionar sede
 
-**Épica:** EP-12 — Sedes · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
-**Spec:** pendiente
+**Épica:** EP-12 — Sedes · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Terminada (entorno local)
+**Spec:** [`specs/004-venues-management/`](../../../specs/004-venues-management/spec.md) (**implementada**; validación en su `quickstart.md`)
 
 ## Historia de usuario
 

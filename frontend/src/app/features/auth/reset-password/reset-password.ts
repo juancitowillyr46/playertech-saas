@@ -7,7 +7,7 @@ import { PasswordModule } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AppError } from '../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../core/errors/error-messages';
-import { passwordPt } from '../forms/field-a11y';
+import { passwordPt } from '../../../shared/forms/field-a11y';
 import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-match';
 
 /**

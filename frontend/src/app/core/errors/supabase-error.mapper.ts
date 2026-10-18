@@ -12,7 +12,11 @@ const CODE_MAP: Readonly<Record<string, AppErrorCode>> = {
     pkce_code_verifier_not_found: 'other_browser',
     over_email_send_rate_limit: 'rate_limited',
     over_request_rate_limit: 'rate_limited',
-    '42501': 'forbidden'
+    '42501': 'forbidden',
+    // Reglas de la base de datos (spec 004): índice único, check y ninguna fila afectada.
+    '23505': 'duplicate',
+    '23514': 'rule_violation',
+    PGRST116: 'not_found'
 };
 
 /**

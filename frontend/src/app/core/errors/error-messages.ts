@@ -10,5 +10,9 @@ export const ERROR_MESSAGES: Readonly<Record<AppErrorCode, string>> = {
     rate_limited: 'Hiciste demasiados intentos. Espera unos minutos y vuelve a intentarlo.',
     network: 'No pudimos conectarnos. Revisa tu conexión e inténtalo de nuevo.',
     forbidden: 'No tienes permiso para realizar esta acción.',
+    // Gestiones de datos (spec 004, contracts/app-errors.md).
+    duplicate: 'Ya existe un registro con ese nombre.',
+    rule_violation: 'Esta acción no cumple las reglas de la academia.',
+    not_found: 'El registro ya no existe o cambió. Actualizamos la información.',
     unknown: 'Ocurrió un error inesperado. Inténtalo de nuevo.'
 };
