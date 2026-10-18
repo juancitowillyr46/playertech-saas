@@ -1,7 +1,20 @@
 # T-02 — Despliegue del entorno de pruebas
 
-**Tipo:** Habilitador técnico (*enabler*) · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definido
+**Tipo:** Habilitador técnico (*enabler*) · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Terminado (entorno de pruebas)
 **Spec:** [`specs/008-deployment/`](../../../specs/008-deployment/spec.md) · Guía: [`docs/engineering/deployment.md`](../../engineering/deployment.md)
+
+## Avance
+
+Entorno de pruebas: **https://playertech-saas.vercel.app** · Supabase `ztibxfmcysicwfrypbef`.
+
+| Criterio | Estado | Evidencia |
+|---|---|---|
+| CA-001 — Base de datos en la nube | ✅ | 11 migraciones aplicadas con `db:push`, sin el seed; RLS y permisos verificados con la clave publicable |
+| CA-002 — Frontend publicado | ✅ | Vercel desde `main` con HTTPS. La vista previa de los PR se confirma en el próximo PR |
+| CA-003 — Rutas de la aplicación | ✅ | Las rutas internas cargan al abrirse directamente |
+| CA-004 — Flujo de cuenta | ✅ | Registro, verificación e inicio de sesión validados en el celular. Recuperación: pendiente por el cupo de correo (se confirma con SMTP propio) |
+| CA-005 — Sin secretos en el cliente | ✅ | `check:bundle` en cada compilación de Vercel; los JS publicados solo tienen la URL del proyecto |
+| CA-006 — Desarrollo local intacto | ✅ | `config.toml` y `environment.ts` sin cambios en el repositorio |
 
 ## Propósito
 
@@ -21,7 +34,7 @@ Publicar PlayerTech en la nube como **entorno de pruebas** para el equipo: el fr
   - guía de despliegue y verificación.
 - **No incluye** (queda en «Antes del piloto» del roadmap):
   - SMTP propio y dominio propio;
-  - correos con la identidad en la nube;
+  - correos con la identidad en la nube. Supabase solo permite editar las plantillas con un plan de pago o con SMTP propio, comprobado el 2026-10-18; se aplicarán junto con el SMTP propio;
   - copias de seguridad propias;
   - documentos legales definitivos;
   - mitigaciones de SEC-01.

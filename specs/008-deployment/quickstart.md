@@ -40,4 +40,18 @@
 
 ## Resultados
 
-*(se completa al implementar)*
+Ejecución del 2026-10-18. Entorno de pruebas: https://playertech-saas.vercel.app con el proyecto de Supabase `ztibxfmcysicwfrypbef`.
+
+| Sección | Resultado |
+|---|---|
+| 1. Repositorio | ✓ Pruebas del script 5/5. `build:vercel` falla sin variables y compila con ellas, pasando `check:bundle`. `environment.ts` sin cambios en el repositorio. `vercel.json` (heredado de SakaiNG) conservado |
+| 2. Backend | ✓ El responsable ejecutó `supabase login`, `link` y `db:push`: 11 migraciones, iguales en local y en remoto. `link` no pidió la contraseña: la CLI usa la sesión para crear un rol temporal. Verificado con la clave publicable: documentos legales vigentes legibles; academias y planes con permiso denegado sin sesión |
+| 3. Frontend | ✓ Publicado en Vercel desde `main`, con HTTPS y HSTS. La compilación generó la configuración y pasó `check:bundle` |
+| 4. Verificación | ✓ 4.2: las 6 rutas internas cargan la app al abrirse directamente. ✓ La app arranca en un navegador real y lee los documentos legales de la nube, sin errores. ✓ 4.3 y 4.4, validados por el responsable en el celular: registro, verificación, inicio de sesión, perfil, logo y sede. ⏳ 4.5 recuperación: el correo incluido de Supabase agotó su cupo por hora («Hiciste demasiados intentos», mensaje correcto de la app); queda por confirmar en la nube con SMTP propio (el flujo está validado en local, spec 005). ⏳ 4.7 y 4.8: vista previa de un PR y tiempo de publicación, a confirmar en el próximo PR |
+
+**Hallazgos de la prueba en la nube**
+
+- El primer enlace de verificación volvió a `localhost`: la URL de Vercel aún no estaba en *Redirect URLs*, y Supabase usa la *Site URL* por defecto. Se configuró y se documentó en la guía. La cuenta sí quedó verificada.
+- Las plantillas de correo con la identidad no se pueden editar en el plan gratuito sin SMTP propio: se aplicarán con el SMTP, antes del piloto.
+- CA-006 (local intacto): `db:test` falló al principio (137 de 144) porque la validación de la spec 007 dejó registros de archivos y un logo en la academia A del seed, y pgTAP la necesita limpia. No era un fallo del código. Se limpiaron por la API de Storage y por SQL, y quedó en 144/144. `config.toml` y `environment.ts` siguen sin cambios.
+- Tema oscuro al abrir: la app sigue la preferencia del dispositivo (T-01, CA-006) y cada dirección guarda la elección del usuario por separado.
