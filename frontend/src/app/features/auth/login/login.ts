@@ -26,7 +26,12 @@ import { FieldA11y, fieldA11y, passwordPt } from '../../../shared/forms/field-a1
         </div>
 
         @if (errorMessage()) {
-            <p-message severity="error" styleClass="mb-6">{{ errorMessage() }}</p-message>
+            <p-message severity="error" styleClass="mb-6">
+                {{ errorMessage() }}
+                @if (unverifiedEmail(); as email) {
+                    <a routerLink="/auth/verify-email" [queryParams]="{ email }" class="mt-2 flex min-h-11 items-center font-semibold underline underline-offset-4">Reenviar el correo de verificación</a>
+                }
+            </p-message>
         } @else if (endedByInactivity()) {
             <p-message severity="info" styleClass="mb-6">Tu sesión se cerró por inactividad. Ingresa de nuevo para continuar.</p-message>
         }
@@ -93,6 +98,8 @@ export class LoginPage {
     });
     protected readonly submitting = signal(false);
     protected readonly errorMessage = signal<string | null>(null);
+    /** Con el correo sin verificar, lleva al reenvío con el correo ya escrito (spec 006). */
+    protected readonly unverifiedEmail = signal<string | null>(null);
     protected readonly endedByInactivity = computed(() => this.auth.signOutReason() === 'inactivity');
 
     protected readonly passwordPt = passwordPt;
@@ -126,14 +133,16 @@ export class LoginPage {
 
         this.submitting.set(true);
         this.errorMessage.set(null);
+        this.unverifiedEmail.set(null);
+
+        const { email, password } = this.form.getRawValue();
 
         try {
-            const { email, password } = this.form.getRawValue();
-
             await this.auth.signIn(email.trim(), password);
             await this.router.navigateByUrl(this.safeReturnUrl());
         } catch (error) {
             this.errorMessage.set(error instanceof AppError ? error.message : ERROR_MESSAGES.unknown);
+            this.unverifiedEmail.set(error instanceof AppError && error.code === 'email_not_confirmed' ? email.trim() : null);
         } finally {
             this.submitting.set(false);
         }

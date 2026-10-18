@@ -17,4 +17,8 @@ export class RegistrationService {
     register(input: SignUpInput): Promise<void> {
         return this.auth.signUp(input);
     }
+
+    resendVerification(email: string): Promise<void> {
+        return this.auth.resendVerification(email);
+    }
 }

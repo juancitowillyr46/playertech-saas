@@ -1,6 +1,6 @@
 # HU-014 — Registrar academia y owner
 
-**Épica:** EP-00 — Alta de academia · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-00 — Alta de academia · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Terminada (entorno local) · spec 006
 **Spec:** pendiente
 
 > **Versión básica disponible:** la spec 002 (`specs/002-frontend-foundation/`, Historia 7) construyó una versión básica funcional de esta pantalla en `frontend/src/app/features/auth/`. Esta HU la **completa** con todos sus criterios de aceptación y la revisión de diseño de T-01; no la reemplaza.
@@ -43,7 +43,9 @@ Permitir que una academia se registre por su cuenta y quede creada como un tenan
 
 **Dado** que el correo ya pertenece a una cuenta existente,
 **cuando** el visitante intenta registrarse,
-**entonces** el sistema muestra el mismo mensaje que en un registro exitoso, sin revelar que el correo existe, y no crea una nueva academia.
+**entonces** el sistema indica junto al correo que ya existe una cuenta con ese correo, ofrece iniciar sesión o recuperar la contraseña, y no crea una nueva academia.
+
+> Criterio cambiado el 2026-10-18 por decisión del responsable de producto (spec 006): antes mostraba el mismo mensaje que un registro exitoso. Es una excepción a DEC-12 con riesgo aceptado (ver `docs/architecture/decisions.md`).
 
 ### CA-006 — Verificación de correo
 
@@ -72,13 +74,14 @@ Permitir que una academia se registre por su cuenta y quede creada como un tenan
 - La sede principal se crea con el nombre "Sede principal" y el tipo lugar de entrenamiento.
 - Una persona solo puede pertenecer a una academia.
 - El owner no puede acceder hasta verificar su correo.
+- Desde la pantalla de verificar correo se puede reenviar el correo de verificación, con espera entre intentos y el mismo mensaje exista o no la cuenta (decisión del 2026-10-17, spec 006).
+- La pantalla de verificar correo ofrece, al pie, iniciar sesión o recuperar la contraseña a quien ya tenga cuenta (decisión del 2026-10-18).
 
 ## Fuera de alcance
 
 - Captcha.
 - Selección de país o zona horaria.
 - Onboarding guiado posterior al registro.
-- Reenvío del correo de verificación desde la interfaz *(a confirmar en la spec)*.
 - Limpieza de registros no verificados (MVP+).
 
 ## Posibles evoluciones
@@ -87,6 +90,8 @@ Ideas del responsable de producto (2026-10-17) para una spec propia (`feat`). Ca
 
 - Pedir en el registro datos de la sede principal, como la dirección.
 - Al terminar el registro, invitar de forma destacada a completar los datos de la sede principal.
+
+Decisión del 2026-10-17: ninguna entra en la spec 006. La invitación a completar la sede la cubre «Completa tu academia» de HU-032 (EP-09); pedir la dirección en el registro queda como `feat` futura.
 
 ## Decisiones relacionadas
 

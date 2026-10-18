@@ -113,6 +113,36 @@ Las validaciones del frontend mejoran la experiencia del usuario, pero no consti
 
 Las restricciones importantes deben aplicarse también en la capa de datos o servicio correspondiente.
 
+## Riesgos aceptados y mejoras pendientes
+
+Registro de los riesgos de seguridad que el MVP acepta de forma consciente y de las mejoras previstas para una iteración futura. Cada mejora se especifica en su propia spec cuando se priorice.
+
+**Criterio común:** las mitigaciones se diseñan **independientes del proveedor de autenticación** (hoy Supabase Auth). Se implementan en una capa propia de PlayerTech (servidor o servicios propios, detrás de las abstracciones de ADR-009) y no con funciones exclusivas del proveedor, para poder cambiarlo sin perder los controles. La spec de cada mejora define esa capa.
+
+### SEC-01 — Enumeración de cuentas en el registro
+
+- **Origen:** excepción a DEC-12 decidida el 2026-10-18 (HU-014 CA-005, spec 006). El registro indica «Ya existe una cuenta con este correo».
+- **Riesgo:** cualquiera puede averiguar si un correo tiene cuenta en PlayerTech probando registrarlo. Facilita correos de suplantación dirigidos a owners reales.
+- **Por qué se acepta:** claridad para el owner, que de otro modo espera un correo que nunca llega. El dato que se filtra es de bajo valor: muchas academias publican su correo de contacto.
+- **Lo que sigue protegido:** el inicio de sesión, la recuperación de contraseña y el reenvío de la verificación no revelan si una cuenta existe (DEC-12).
+- **Mitigaciones previstas:**
+
+| # | Mitigación | Qué evita | Prioridad |
+|---|---|---|---|
+| 1 | Autenticación del dominio de correo (SPF, DKIM, DMARC) al configurar el envío real | Que se suplante el remitente de PlayerTech | Antes del piloto |
+| 2 | Aviso en los correos: «PlayerTech nunca te pedirá tu contraseña por correo» | Que el owner caiga en una suplantación | Antes del piloto |
+| 3 | Límite de intentos de registro e inicio de sesión por origen, en la capa propia | La enumeración y los ataques automatizados masivos | Antes del piloto |
+| 4 | Captcha en el registro, verificado en el servidor propio, con un proveedor intercambiable | La automatización de pruebas de correos | Antes del piloto |
+| 5 | Flujo neutral con aviso: el registro siempre dice «Revisa tu correo» y, si la cuenta ya existía, se envía al dueño real un correo para iniciar sesión o recuperar la contraseña. Elimina la excepción a DEC-12 sin perder la claridad | La enumeración, por completo | MVP+, si el volumen o el tipo de cliente lo justifica |
+| 6 | Segundo factor (MFA) para los owners | El acceso aunque roben la contraseña | MVP+ |
+
+### SEC-02 — Cierre por inactividad solo en el cliente
+
+- **Origen:** ADR-014 y DEC-28 (spec 005).
+- **Riesgo:** el cierre por inactividad lo hace la aplicación. El token de renovación sigue válido en el servidor hasta que la aplicación cierra la sesión.
+- **Mitigación prevista:** caducidad por inactividad también en el servidor, en la capa propia de sesión o con la función equivalente del proveedor que se use, sin acoplar la aplicación a ella.
+- **Prioridad:** MVP+.
+
 ## Principio
 
 > Ninguna funcionalidad debe asumir que una validación realizada únicamente en el frontend constituye una protección de seguridad.

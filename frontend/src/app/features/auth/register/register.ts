@@ -67,6 +67,12 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
                         <p-message id="email-error" severity="error" variant="simple" size="small">Ingresa tu correo.</p-message>
                     } @else if (showError('email', 'email')) {
                         <p-message id="email-error" severity="error" variant="simple" size="small">Ingresa un correo válido.</p-message>
+                    } @else if (showError('email', 'taken')) {
+                        <p-message id="email-error" severity="error" variant="simple" size="small">Ya existe una cuenta con este correo.</p-message>
+                        <div class="flex flex-wrap gap-x-4">
+                            <a routerLink="/auth/login" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Iniciar sesión</a>
+                            <a routerLink="/auth/forgot-password" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Recuperar mi contraseña</a>
+                        </div>
                     }
                 </div>
 
@@ -211,7 +217,12 @@ export class RegisterPage implements OnInit {
             });
             await this.router.navigateByUrl(`/auth/verify-email?email=${encodeURIComponent(email)}`);
         } catch (error) {
-            this.errorMessage.set(toMessage(error));
+            if (error instanceof AppError && error.code === 'email_taken') {
+                // Junto al campo; se borra al cambiar el correo porque los validadores se recalculan.
+                this.form.controls.email.setErrors({ taken: true });
+            } else {
+                this.errorMessage.set(toMessage(error));
+            }
         } finally {
             this.submitting.set(false);
         }

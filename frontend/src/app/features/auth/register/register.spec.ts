@@ -98,6 +98,33 @@ describe('RegisterPage', () => {
         expect(navigate).toHaveBeenCalledWith('/auth/verify-email?email=ana%40playertech.test');
     });
 
+    it('con un correo ya registrado lo indica junto al campo y ofrece ingresar o recuperar (HU-014 CA-005)', async () => {
+        const { auth, navigate, user } = await setup();
+        auth.signUp.mockRejectedValue(new AppError('email_taken'));
+
+        await fillValidForm(user);
+        await user.click(screen.getByRole('button', { name: 'Crear cuenta' }));
+
+        expect(await screen.findByText('Ya existe una cuenta con este correo.')).toBeTruthy();
+        expect(screen.getByRole('link', { name: 'Iniciar sesión' }).getAttribute('href')).toBe('/auth/login');
+        expect(screen.getByRole('link', { name: 'Recuperar mi contraseña' }).getAttribute('href')).toBe('/auth/forgot-password');
+        expect(screen.getByLabelText('Correo').getAttribute('aria-invalid')).toBe('true');
+        expect(navigate).not.toHaveBeenCalled();
+
+        await user.type(screen.getByLabelText('Correo'), 'x');
+        expect(screen.queryByText('Ya existe una cuenta con este correo.')).toBeNull();
+    });
+
+    it('un doble toque en Crear cuenta registra una sola vez', async () => {
+        const { auth, user } = await setup();
+        auth.signUp.mockReturnValue(new Promise(() => undefined));
+
+        await fillValidForm(user);
+        await user.dblClick(screen.getByRole('button', { name: 'Crear cuenta' }));
+
+        expect(auth.signUp).toHaveBeenCalledTimes(1);
+    });
+
     it('muestra el error del registro', async () => {
         const { auth, user } = await setup();
         auth.signUp.mockRejectedValue(new AppError('weak_password'));

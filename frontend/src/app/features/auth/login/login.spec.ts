@@ -114,6 +114,17 @@ describe('LoginPage', () => {
         await fillAndSubmit(user, 'owner.a@playertech.test', 'mala-clave');
 
         expect(await screen.findByText('El correo o la contraseña no son correctos.')).toBeTruthy();
+        expect(screen.queryByRole('link', { name: 'Reenviar el correo de verificación' })).toBeNull();
+    });
+
+    it('con el correo sin verificar ofrece reenviar la verificación a ese correo (spec 006)', async () => {
+        const { auth, user } = await setup();
+        auth.signIn.mockRejectedValue(new AppError('email_not_confirmed'));
+
+        await fillAndSubmit(user, 'nueva@playertech.test', 'Segura-2026');
+
+        const link = await screen.findByRole('link', { name: 'Reenviar el correo de verificación' });
+        expect(link.getAttribute('href')).toBe('/auth/verify-email?email=nueva@playertech.test');
     });
 
     it('deshabilita el botón mientras se envía', async () => {

@@ -653,7 +653,7 @@ El aislamiento físico es **pool**: esquema compartido + `academy_id` + RLS. El 
 | DEC-09 | Las aceptaciones legales se registran con datos de auditoría: documento, versión y fecha y hora del servidor |
 | DEC-10 | Verificación de correo obligatoria, con el mecanismo nativo de Supabase, encapsulada para poder cambiar de estrategia (ver ADR-014) |
 | DEC-11 | Contraseña de mínimo 8 caracteres, con campo de confirmación |
-| DEC-12 | Mensajes genéricos que no revelan si un correo está registrado |
+| DEC-12 | Mensajes genéricos que no revelan si un correo está registrado. **Excepción** (2026-10-18, spec 006): el registro indica que ya existe una cuenta con ese correo (HU-014 CA-005), por claridad para el owner. Riesgo aceptado: permite averiguar si un correo tiene cuenta. El inicio de sesión, la recuperación y el reenvío siguen sin revelarlo. Mitigaciones previstas en `docs/engineering/security.md` (SEC-01) |
 | DEC-13 | Sin captcha en el MVP; se reevalúa si aparece abuso |
 | DEC-14 | Se permiten nombres de academia duplicados; el `slug` se genera único automáticamente |
 | DEC-15 | País **Colombia (CO)** y zona horaria **America/Bogota**, internos y no visibles en la UI por ahora |

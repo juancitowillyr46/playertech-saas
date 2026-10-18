@@ -19,4 +19,6 @@ Reglas:
 - El registro de una cuenta con un correo ya existente no produce un error distinguible (DEC-12): la pantalla de HU-014 muestra el mismo mensaje que en un registro correcto.
 - El `GlobalErrorHandler` usa el mensaje de `unknown` para cualquier error no controlado.
 
+> **Ampliado en la spec 006:** se añadió `email_taken` para el registro con un correo existente (excepción a DEC-12). Detalle en [`specs/006-academy-registration/contracts/resend-contracts.md`](../../006-academy-registration/contracts/resend-contracts.md).
+
 > **Ampliado en la spec 004:** se añadieron los códigos genéricos `duplicate` (`23505`), `rule_violation` (`23514`) y `not_found` (`PGRST116`), para las gestiones de datos. Detalle en [`specs/004-venues-management/contracts/app-errors.md`](../../004-venues-management/contracts/app-errors.md).

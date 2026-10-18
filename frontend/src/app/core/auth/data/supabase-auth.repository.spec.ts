@@ -19,6 +19,7 @@ function createAuthMock() {
         signInWithPassword: vi.fn().mockResolvedValue({ data: { session: supabaseSession }, error: null }),
         signOut: vi.fn().mockResolvedValue({ error: null }),
         resetPasswordForEmail: vi.fn().mockResolvedValue({ data: {}, error: null }),
+        resend: vi.fn().mockResolvedValue({ data: {}, error: null }),
         updateUser: vi.fn().mockResolvedValue({ data: {}, error: null }),
         exchangeCodeForSession: vi.fn().mockResolvedValue({ data: { session: supabaseSession }, error: null }),
         getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
@@ -79,6 +80,50 @@ describe('SupabaseAuthRepository', () => {
         auth.resetPasswordForEmail.mockResolvedValue({ data: null, error: authError('over_email_send_rate_limit') });
 
         await expect(repository.requestPasswordReset('owner@playertech.test')).rejects.toMatchObject({ code: 'rate_limited' });
+    });
+
+    describe('con un correo ya registrado (HU-014 CA-005)', () => {
+        const input = { email: 'owner@playertech.test', password: 'Segura-2026', academyName: 'A', fullName: 'B', legalAcceptances: { terms: 'v1', privacyPolicy: 'v1' } };
+
+        it('traduce el error de Auth a email_taken', async () => {
+            auth.signUp.mockResolvedValue({ data: {}, error: authError('user_already_exists') });
+
+            await expect(repository.signUp(input)).rejects.toMatchObject({ code: 'email_taken' });
+        });
+
+        it('detecta la cuenta sin identidades que Auth devuelve con la verificación activa', async () => {
+            auth.signUp.mockResolvedValue({ data: { user: { id: 'x', identities: [] } }, error: null });
+
+            await expect(repository.signUp(input)).rejects.toMatchObject({ code: 'email_taken' });
+        });
+
+        it('un registro nuevo (con identidades) resuelve sin error', async () => {
+            auth.signUp.mockResolvedValue({ data: { user: { id: 'x', identities: [{ id: 'i' }] } }, error: null });
+
+            await expect(repository.signUp(input)).resolves.toBeUndefined();
+        });
+    });
+
+    it('reenvía la verificación con retorno a /auth/callback', async () => {
+        await repository.resendVerification('owner@playertech.test');
+
+        expect(auth.resend).toHaveBeenCalledWith({
+            type: 'signup',
+            email: 'owner@playertech.test',
+            options: { emailRedirectTo: `${location.origin}/auth/callback` }
+        });
+    });
+
+    it('resuelve el reenvío aunque Supabase informe un error que revelaría la cuenta (DEC-12)', async () => {
+        auth.resend.mockResolvedValue({ data: null, error: authError('email_address_invalid') });
+
+        await expect(repository.resendVerification('nadie@playertech.test')).resolves.toBeUndefined();
+    });
+
+    it('rechaza el reenvío si hay demasiados intentos', async () => {
+        auth.resend.mockResolvedValue({ data: null, error: authError('over_email_send_rate_limit') });
+
+        await expect(repository.resendVerification('owner@playertech.test')).rejects.toMatchObject({ code: 'rate_limited' });
     });
 
     it('convierte la sesión de Supabase en el modelo de dominio al iniciar sesión', async () => {

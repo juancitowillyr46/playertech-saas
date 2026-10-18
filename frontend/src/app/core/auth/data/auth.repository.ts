@@ -14,6 +14,9 @@ export abstract class AuthRepository {
     /** Resuelve igual exista o no la cuenta (DEC-12). */
     abstract requestPasswordReset(email: string): Promise<void>;
 
+    /** Reenvía el correo de verificación. Resuelve igual exista o no la cuenta (DEC-12). */
+    abstract resendVerification(email: string): Promise<void>;
+
     /** Requiere la sesión temporal de recuperación. */
     abstract updatePassword(newPassword: string): Promise<void>;
 

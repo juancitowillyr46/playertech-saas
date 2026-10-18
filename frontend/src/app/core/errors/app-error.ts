@@ -4,6 +4,7 @@ import { ERROR_MESSAGES } from './error-messages';
 export type AppErrorCode =
     | 'invalid_credentials'
     | 'email_not_confirmed'
+    | 'email_taken'
     | 'weak_password'
     | 'link_invalid'
     | 'other_browser'

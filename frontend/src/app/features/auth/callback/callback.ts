@@ -31,13 +31,17 @@ const ALLOWED_NEXT = ['/home', '/auth/reset-password'];
                 <p class="m-0 mb-8 leading-relaxed">{{ messages.other_browser }}</p>
                 <div class="flex flex-col">
                     <a routerLink="/auth/login" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Ir a iniciar sesión</a>
-                    <a routerLink="/auth/forgot-password" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Solicitar un enlace nuevo</a>
+                    <a routerLink="/auth/forgot-password" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Recuperar mi contraseña</a>
                 </div>
             }
             @default {
                 <h1 class="m-0 mb-6 border-b-2 border-(--p-text-color) pb-4 text-3xl">Enlace no válido</h1>
                 <p class="m-0 mb-8 leading-relaxed">{{ messages.link_invalid }}</p>
-                <a routerLink="/auth/login" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Ir a iniciar sesión</a>
+                <div class="flex flex-col">
+                    <a routerLink="/auth/verify-email" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Reenviar el correo de verificación</a>
+                    <a routerLink="/auth/forgot-password" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Recuperar mi contraseña</a>
+                    <a routerLink="/auth/login" class="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4">Ir a iniciar sesión</a>
+                </div>
             }
         }
     `
