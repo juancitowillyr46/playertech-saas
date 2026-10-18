@@ -61,6 +61,12 @@ El ambiente de pruebas debe utilizar datos controlados y reproducibles.
 
 ---
 
+## Entorno de pruebas en la nube (actual)
+
+Desde la spec 008 (habilitador T-02) existe un proyecto de Supabase en la nube para pruebas del equipo, sin academias reales y sin el seed, con el frontend en Vercel. Las migraciones se aplican con `npm run db:push` y la configuración del frontend llega por variables de entorno. Guía: `docs/engineering/deployment.md`.
+
+---
+
 ## Production
 
 El ambiente de producción contiene los datos reales utilizados por las academias.

@@ -26,6 +26,7 @@ Requisitos de operación (ADR-014 y ADR-016) que no son funcionalidades, pero de
 - Correos de autenticación con la identidad de PlayerTech (T-01, CA-007) aplicados en la nube y probados con el SMTP real.
 - Prueba del registro en el celular con una persona que no conozca la aplicación (SC-006 de la spec 003: menos de 3 minutos, sin ayuda).
 - Copias de seguridad propias de la base de datos y procedimiento de restauración.
+- Alojamiento del frontend apto para uso comercial (Vercel Pro u otro): el entorno de pruebas usa Vercel Hobby, de uso no comercial (ADR-016).
 - Documentos legales definitivos (Términos y Condiciones y Política de Tratamiento de Datos) publicados en su URL final.
 
 ### Fase 2 — Negocio

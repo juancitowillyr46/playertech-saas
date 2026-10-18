@@ -18,6 +18,7 @@ docs/architecture/
 | [git.md](./git.md) | Estrategia de ramas, commits y control de cambios |
 | [testing.md](./testing.md) | Estrategia de pruebas |
 | [security.md](./security.md) | Principios y prácticas de seguridad |
+| [deployment.md](./deployment.md) | Despliegue en la nube: Supabase, Vercel y verificación |
 
 ## Principios
 

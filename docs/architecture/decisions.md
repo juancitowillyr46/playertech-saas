@@ -805,6 +805,7 @@ La adopción de `layout/` se registró inicialmente como excepción controlada a
 - El entorno en la nube usa el **plan Free** durante el desarrollo y el piloto.
 - **Antes de cargar datos reales** de academias deben existir: copias de seguridad propias, SMTP propio (ADR-014) y un dominio propio verificado para el envío de correo.
 - Se pasa al **plan Pro** cuando ocurra cualquiera de estas condiciones: hay academias que dependen del producto o pagan por él, se necesitan backups gestionados, o el proyecto se acerca a los límites del plan Free.
+- **Entorno de pruebas** (2026-10-18, habilitador T-02, spec 008): el frontend se publica en **Vercel** (plan Hobby) desde GitHub, con despliegue automático de `main` y vistas previas de los PR. La configuración pública (URL y clave publicable) llega como variables de entorno de Vercel, no en el código. El plan Hobby es de **uso no comercial**: antes del piloto con academias que paguen se pasa a Vercel Pro u otro alojamiento. Guía: `docs/engineering/deployment.md`.
 
 ### Justificación
 Todo lo que usa la Fase 1 (PostgreSQL, Auth, Storage, RLS, SMTP propio) está disponible en el plan Free, y sus límites (500 MB de base de datos, 1 GB de almacenamiento, 5 GB de transferencia al mes, 50.000 usuarios activos al mes, 2 proyectos activos) superan con margen lo que necesita un piloto. Las funciones exclusivas de Pro que el diseño necesitaba ya tienen alternativa: el cierre por inactividad se hace en el frontend (ADR-014).

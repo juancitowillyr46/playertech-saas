@@ -50,6 +50,7 @@ Estados de una HU: **Pendiente** → **Definida** (lista para especificar) → *
 | 2 | [EP-01 Acceso y sesión](epics/EP-01-access-and-session.md) | HU-001, HU-015, HU-016 | MVP |
 | 3 | [EP-09 Gestión de la academia](epics/EP-09-academy-management.md) | HU-032, HU-017 · HU-018 (MVP+) | MVP |
 | 4 | [EP-12 Sedes](epics/EP-12-venues.md) | HU-029, HU-030, HU-031 | MVP |
+| 5 | [T-02 Despliegue del entorno de pruebas](enablers/T-02-deployment.md) (Vercel y Supabase en la nube, sin academias reales) | — | MVP |
 
 ### Fase 2 — Negocio (pendiente de ideación)
 

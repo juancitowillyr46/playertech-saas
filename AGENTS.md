@@ -93,6 +93,7 @@ npm run db:start   # levanta Supabase local
 npm run db:reset   # aplica migraciones y seed desde cero
 npm run db:test    # pruebas pgTAP
 npm run db:types   # tipos TypeScript para el frontend
+npm run db:push    # aplica las migraciones al proyecto enlazado en la nube, sin el seed (docs/engineering/deployment.md)
 ```
 
 Desde `frontend/` (Node 24 LTS, ver `frontend/.nvmrc`):
