@@ -827,6 +827,49 @@ Los límites del plan Free pueden cambiar: se confirman en la página de precios
 
 ---
 
+## ADR-017: Portabilidad del backend
+
+**Estado:** Aceptada · **Fecha:** 2026-10-18 · **Fase:** 1 — Fundación SaaS
+
+### Contexto
+PlayerTech usa Supabase para la autenticación (Supabase Auth), la autorización (RLS en PostgreSQL), el acceso a los datos (API automática, PostgREST) y los archivos (Storage). El responsable de producto contempla, a futuro, un backend propio (por ejemplo, Symfony en PHP) que asuma la autenticación y la autorización. Esta ADR no planifica esa migración: fija qué se mantiene hoy y qué reglas la mantienen barata.
+
+### Decisión
+- **La Fase 2 sigue con Supabase**, incluida la API automática (decisión del responsable de producto del 2026-10-18). No se construye un backend propio por ahora.
+- **Si se migra**, el camino recomendado para la autorización es **híbrido**: las reglas de negocio pasan al backend (por ejemplo, voters de Symfony) y **RLS se conserva como red de seguridad del aislamiento entre academias** (principio VIII). El backend indica a PostgreSQL el usuario de cada petición con una variable de sesión de la transacción, y las funciones de autorización la leen en lugar del token de Supabase.
+- **Reglas de portabilidad** que toda spec cumple desde ahora (las revisa `/speckit-analyze`):
+  1. El usuario actual se obtiene en la base de datos **solo a través de las funciones de autorización** (`is_academy_member`, `has_academy_role`, `current_academy_id`) o de una función propia equivalente. No se añaden usos nuevos de `auth.uid()` en políticas, valores por defecto ni funciones.
+  2. La lógica de negocio va en funciones SQL o en el frontend detrás de servicios. Las funciones exclusivas de Supabase (Edge Functions, Realtime, hooks de Auth) solo se usan detrás de una abstracción propia y justificadas en el plan de la spec.
+  3. El SDK de Supabase solo aparece en las implementaciones `supabase-*.repository.ts` (regla de lint de ADR-002) y sus errores se traducen siempre a `AppErrorCode`.
+  4. No se añaden referencias nuevas al esquema `auth` más allá del identificador del usuario.
+  5. Los controles de seguridad nuevos se diseñan independientes del proveedor (`docs/engineering/security.md`).
+
+### Qué es portable y qué está acoplado
+
+| Pieza | Situación | Al migrar |
+|---|---|---|
+| Frontend (pantallas, servicios, modelos, errores) | Portable: solo los repositorios conocen Supabase (ADR-009) | Implementaciones nuevas de los repositorios contra la API propia |
+| Contraseñas | Portables: bcrypt, que Symfony (PasswordHasher) admite | Se migran sin pedir cambio de contraseña |
+| Esquema de datos, índices y restricciones | Portable: PostgreSQL estándar | Se conserva (Doctrine sobre la misma base) |
+| Autenticación (registro, verificación, recuperación, sesión) | Acoplada a Supabase Auth | Symfony Security, con verificación y recuperación propias y JWT con renovación o sesión |
+| Autorización | En la base de datos (RLS y funciones) | Camino híbrido de esta ADR |
+| Acceso a datos | API automática (PostgREST) | **Es el mayor costo**: un endpoint por recurso, que crece con cada épica |
+| Registro atómico | Trigger sobre `auth.users` (spec 001) | Servicio del backend en una transacción |
+| Archivos | Supabase Storage detrás de `FileStorageRepository` (ADR-013) | S3 o similar, sin cambios en el frontend |
+
+### Estado actual (deuda de portabilidad conocida)
+Revisión de las migraciones del 2026-10-18:
+- `auth.uid()` aparece en las tres funciones de autorización y, además, en 7 políticas RLS (registros propios de `profiles` y `legal_acceptances`, autoría en Storage), como valor por defecto de `created_by` en `files` y `venues` y en el trigger del registro.
+- Seis tablas tienen claves foráneas a `auth.users` (`profiles`, `academies`, `academy_members`, `files`, `venues`, `legal_acceptances`).
+
+**Mejora prevista (sin fecha):** una función propia `current_user_id()` que envuelva `auth.uid()` y reemplace sus usos directos en una migración. Así, al migrar, solo cambiaría esa función. Las claves a `auth.users` se resolverán en la migración con una tabla de usuarios propia.
+
+### Consecuencias
+- Hoy no hay costo adicional: se sigue con Supabase y las reglas solo limitan nuevos acoplamientos.
+- El costo de una migración futura crece con cada recurso nuevo servido por la API automática. La decisión de migrar debe tomarse con ese inventario a la vista.
+
+---
+
 ## Referencia rápida
 
 | Decisión | Válida | Reconsiderar |

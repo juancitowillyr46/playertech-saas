@@ -52,7 +52,8 @@ La forma de invocar los comandos depende del agente (en Claude Code: `/speckit-s
 - **Capas en el frontend:** página/componente → service → repositorio (clase abstracta) → implementación Supabase. Ningún componente usa el SDK de Supabase.
 - **Sin secretos en el cliente:** solo valores públicos de Supabase; nunca la `service role key`.
 - **Borrado lógico** (`deleted_at`) en las tablas de negocio.
-- Detalle: ADR-012 a ADR-015 y `docs/architecture/frontend.md`.
+- **Portabilidad del backend:** sin usos nuevos de `auth.uid()` fuera de las funciones de autorización, sin referencias nuevas al esquema `auth` y sin funciones exclusivas de Supabase sin una abstracción propia (ADR-017).
+- Detalle: ADR-012 a ADR-017 y `docs/architecture/frontend.md`.
 
 ## Diseño y estilos
 
