@@ -21,3 +21,6 @@ export interface SignUpInput {
         readonly privacyPolicy: string;
     };
 }
+
+/** Por qué se cerró la sesión: el inicio de sesión avisa solo tras la inactividad (DEC-28). */
+export type SignOutReason = 'manual' | 'inactivity';

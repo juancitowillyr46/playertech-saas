@@ -1,6 +1,6 @@
 # HU-015 — Cerrar sesión
 
-**Épica:** EP-01 — Acceso y sesión · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-01 — Acceso y sesión · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Terminada (entorno local) · spec 005
 **Spec:** pendiente
 
 ## Historia de usuario
@@ -36,12 +36,14 @@
 ## Reglas de negocio
 
 - La inactividad se mide por la interacción del usuario, no por la actividad técnica de la aplicación.
+- El tiempo de inactividad sigue corriendo con la aplicación cerrada o en segundo plano: al volver después de 60 minutos, se piden de nuevo las credenciales (DEC-28).
+- No hay aviso previo al cierre por inactividad (DEC-28).
 - Cerrar sesión en un dispositivo no cierra las sesiones de otros dispositivos.
 
 ## Fuera de alcance
 
 - Cerrar la sesión en todos los dispositivos.
-- Aviso previo con cuenta regresiva antes del cierre por inactividad *(a confirmar en la spec)*.
+- Aviso previo con cuenta regresiva antes del cierre por inactividad (descartado en DEC-28).
 
 ## Decisiones relacionadas
 

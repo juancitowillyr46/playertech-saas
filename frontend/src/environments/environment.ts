@@ -6,5 +6,7 @@
 export const environment = {
     production: true,
     supabaseUrl: '',
-    supabasePublishableKey: ''
+    supabasePublishableKey: '',
+    // Cierre de sesión por inactividad (DEC-28): fijo en producción.
+    sessionInactivityMinutes: 60
 };

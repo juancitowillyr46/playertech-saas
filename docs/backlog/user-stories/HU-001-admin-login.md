@@ -1,6 +1,6 @@
 # HU-001 — Iniciar sesión
 
-**Épica:** EP-01 — Acceso y sesión · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-01 — Acceso y sesión · **Fase:** 1 — Fundación SaaS · **Prioridad:** MVP · **Estado:** Terminada (entorno local) · spec 005
 **Spec:** pendiente (el borrador anterior `001-admin-login` está archivado en `docs/archive/`)
 
 > **Versión básica disponible:** la spec 002 (`specs/002-frontend-foundation/`, Historia 7) construyó una versión básica funcional de esta pantalla en `frontend/src/app/features/auth/`. Esta HU la **completa** con todos sus criterios de aceptación y la revisión de diseño de T-01; no la reemplaza.
@@ -68,6 +68,7 @@ Permitir que solo un usuario con correo verificado, membresía activa y academia
 - La autenticación (quién es) y la membresía (a qué academia pertenece) son conceptos distintos.
 - La academia del usuario se determina por su membresía, nunca por un dato enviado desde la interfaz.
 - Los mensajes de error no revelan si un correo está registrado.
+- La sesión está vigente (CA-006) mientras no pasen 60 minutos desde la última interacción del owner, aunque haya cerrado la aplicación (DEC-28, HU-015).
 
 ## Fuera de alcance
 
