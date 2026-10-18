@@ -9,7 +9,9 @@ import { HomeSummaryRepository } from '../../data/home-summary.repository';
 import { HomeSummaryData } from '../../models/home-summary.models';
 import { HomePage } from './home-page';
 
-const SUMMARY: HomeSummaryData = { planName: 'Free', primaryVenue: { name: 'Sede Chapinero', city: 'Bogotá' }, logo: null };
+const SUMMARY: HomeSummaryData = { planName: 'Free', primaryVenue: { name: 'Sede Chapinero', city: 'Bogotá', address: null }, logo: null, contact: { phone: null, address: null } };
+const LOGO = { id: 'file-1', bucket: 'public-assets', storageKey: 'a/academy/a/file-1.png', mimeType: 'image/png', sizeBytes: 900 } as const;
+const COMPLETE: HomeSummaryData = { ...SUMMARY, primaryVenue: { name: 'Sede Chapinero', city: 'Bogotá', address: 'Calle 1' }, logo: LOGO, contact: { phone: '300', address: 'Carrera 7' } };
 
 async function setup(loadSummary: () => Promise<HomeSummaryData> = () => Promise.resolve(SUMMARY)) {
     const load = vi.fn(loadSummary);
@@ -58,12 +60,28 @@ describe('HomePage', () => {
         expect(screen.getByText('Free')).toBeTruthy();
     });
 
-    it('«Completa tu academia» lista tres tareas con su enlace y sin contador', async () => {
+    it('«Completa tu academia» muestra el progreso y el estado de cada tarea (HU-032 CA-002)', async () => {
         await setup();
 
         const section = screen.getByRole('region', { name: 'Completa tu academia' });
+        expect(within(section).getByText('1 de 4')).toBeTruthy();
+        expect(within(section).getByText('Completa')).toBeTruthy();
+        expect(within(section).getAllByText('Pendiente')).toHaveLength(3);
+    });
+
+    it('solo las tareas pendientes enlazan con la pantalla donde se completan (HU-032 CA-003)', async () => {
+        await setup(() => Promise.resolve({ ...SUMMARY, logo: LOGO }));
+
+        const section = screen.getByRole('region', { name: 'Completa tu academia' });
         const links = within(section).getAllByRole('link');
-        expect(links.map((link) => link.getAttribute('href'))).toEqual(['/settings/academy', '/settings/academy', '/settings/venues']);
-        expect(within(section).queryByText(/de 3/)).toBeNull();
+        expect(links.map((link) => link.getAttribute('href'))).toEqual(['/settings/venues', '/settings/academy']);
+        expect(within(section).getByRole('link', { name: /Dirección de la sede principal/ })).toBeTruthy();
+        expect(within(section).getByText('2 de 4')).toBeTruthy();
+    });
+
+    it('con las cuatro tareas completas no muestra la tarjeta (HU-032 CA-004)', async () => {
+        await setup(() => Promise.resolve(COMPLETE));
+
+        expect(screen.queryByRole('region', { name: 'Completa tu academia' })).toBeNull();
     });
 });

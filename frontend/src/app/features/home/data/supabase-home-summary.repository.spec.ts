@@ -7,7 +7,7 @@ interface QueryResult {
     error: unknown;
 }
 
-type Table = 'subscriptions' | 'venues' | 'files';
+type Table = 'subscriptions' | 'venues' | 'academies' | 'files';
 
 /** Cliente simulado: cualquier cadena de filtros termina en maybeSingle con el resultado de la tabla. */
 function setup(results: Partial<Record<Table, QueryResult>>) {
@@ -38,17 +38,20 @@ function setup(results: Partial<Record<Table, QueryResult>>) {
 }
 
 describe('SupabaseHomeSummaryRepository', () => {
-    it('devuelve el plan activo y la sede principal', async () => {
+    it('devuelve el plan activo, la sede principal y el contacto de la academia', async () => {
         const { repository, calls } = setup({
             subscriptions: { data: { plans: { name: 'Free' } }, error: null },
-            venues: { data: { name: 'Sede Principal', city: 'Bogotá' }, error: null }
+            venues: { data: { name: 'Sede Principal', city: 'Bogotá', address: 'Calle 10' }, error: null },
+            academies: { data: { contact_phone: '300 000 0000', address: 'Carrera 7' }, error: null }
         });
 
         await expect(repository.loadSummary(null)).resolves.toEqual({
             planName: 'Free',
-            primaryVenue: { name: 'Sede Principal', city: 'Bogotá' },
-            logo: null
+            primaryVenue: { name: 'Sede Principal', city: 'Bogotá', address: 'Calle 10' },
+            logo: null,
+            contact: { phone: '300 000 0000', address: 'Carrera 7' }
         });
+        expect(calls['academies.select']).toContainEqual(['contact_phone, address']);
         expect(calls['subscriptions.eq']).toContainEqual(['status', 'active']);
         expect(calls['venues.eq']).toContainEqual(['is_primary', true]);
         expect(calls['venues.is']).toContainEqual(['deleted_at', null]);
@@ -57,7 +60,7 @@ describe('SupabaseHomeSummaryRepository', () => {
     it('sin suscripción activa ni sede principal devuelve null en ambos', async () => {
         const { repository } = setup({});
 
-        await expect(repository.loadSummary(null)).resolves.toEqual({ planName: null, primaryVenue: null, logo: null });
+        await expect(repository.loadSummary(null)).resolves.toEqual({ planName: null, primaryVenue: null, logo: null, contact: { phone: null, address: null } });
     });
 
     it('sin logoFileId no consulta files', async () => {

@@ -126,6 +126,24 @@ describe('SupabaseFileStorageRepository', () => {
         expect(bucketApi.remove).not.toHaveBeenCalled();
     });
 
+    it('purga: marca deleted_at y después borra el objeto (DEC-22)', async () => {
+        const { repository, update, bucketApi } = setup();
+
+        await repository.purge(STORED);
+
+        expect(update).toHaveBeenCalledWith({ deleted_at: expect.any(String) });
+        expect(bucketApi.remove).toHaveBeenCalledWith([STORED.storageKey]);
+        expect(update.mock.invocationCallOrder[0]).toBeLessThan(bucketApi.remove.mock.invocationCallOrder[0]);
+    });
+
+    it('purga: si no puede marcar el registro, no borra el objeto', async () => {
+        const { repository, updateEq, bucketApi } = setup();
+        updateEq.mockResolvedValue({ error: { code: '42501', message: 'denied' } });
+
+        await expect(repository.purge(STORED)).rejects.toBeInstanceOf(AppError);
+        expect(bucketApi.remove).not.toHaveBeenCalled();
+    });
+
     it('sin academia en el contexto rechaza la subida', async () => {
         const mock = createClient();
         TestBed.configureTestingModule({

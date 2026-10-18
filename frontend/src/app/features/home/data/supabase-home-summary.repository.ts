@@ -10,9 +10,11 @@ export class SupabaseHomeSummaryRepository extends HomeSummaryRepository {
     private readonly client = inject(SUPABASE_CLIENT);
 
     async loadSummary(logoFileId: string | null): Promise<HomeSummaryData> {
-        const [subscription, venue, logo] = await Promise.all([
+        // Sin filtro por academia: RLS limita cada tabla a la del miembro (una sola fila).
+        const [subscription, venue, academy, logo] = await Promise.all([
             this.client.from('subscriptions').select('plans(name)').eq('status', 'active').maybeSingle(),
-            this.client.from('venues').select('name, city').eq('is_primary', true).is('deleted_at', null).maybeSingle(),
+            this.client.from('venues').select('name, city, address').eq('is_primary', true).is('deleted_at', null).maybeSingle(),
+            this.client.from('academies').select('contact_phone, address').maybeSingle(),
             logoFileId ? this.loadLogo(logoFileId) : Promise.resolve(null)
         ]);
 
@@ -24,10 +26,15 @@ export class SupabaseHomeSummaryRepository extends HomeSummaryRepository {
             throw mapSupabaseError(venue.error);
         }
 
+        if (academy.error) {
+            throw mapSupabaseError(academy.error);
+        }
+
         return {
             planName: subscription.data?.plans?.name ?? null,
-            primaryVenue: venue.data ? { name: venue.data.name, city: venue.data.city } : null,
-            logo
+            primaryVenue: venue.data ? { name: venue.data.name, city: venue.data.city, address: venue.data.address } : null,
+            logo,
+            contact: { phone: academy.data?.contact_phone ?? null, address: academy.data?.address ?? null }
         };
     }
 

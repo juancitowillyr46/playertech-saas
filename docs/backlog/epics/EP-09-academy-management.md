@@ -29,6 +29,6 @@ ADR-012 (DEC-07, DEC-15, DEC-21, DEC-22) y ADR-013.
 
 | ID | Historia | Prioridad | Estado |
 |---|---|---|---|
-| HU-032 | Inicio de la academia | MVP | Definida |
-| HU-017 | Consultar y editar el perfil de la academia | MVP | Definida |
+| HU-032 | Inicio de la academia | MVP | Terminada (local) |
+| HU-017 | Consultar y editar el perfil de la academia | MVP | Terminada (local) |
 | HU-018 | Invitar a otro usuario a la academia | MVP+ | Pendiente |

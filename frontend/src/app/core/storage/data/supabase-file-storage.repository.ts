@@ -5,6 +5,7 @@ import { mapSupabaseError } from '../../errors/supabase-error.mapper';
 import { SUPABASE_CLIENT } from '../../supabase/supabase-client';
 import { StorageBucket, StoredFile, UploadFileInput } from '../models/storage.models';
 import { FileStorageRepository } from './file-storage.repository';
+import { randomUuid } from './random-uuid';
 
 const DEFAULT_SIGNED_URL_SECONDS = 3600;
 
@@ -27,7 +28,7 @@ export class SupabaseFileStorageRepository extends FileStorageRepository {
         }
 
         // Clave portable (ADR-013): la academia primero y el UUID del archivo como nombre físico.
-        const fileId = crypto.randomUUID();
+        const fileId = randomUuid();
         const extension = EXTENSIONS[input.file.type] ?? 'bin';
         const storageKey = `${academyId}/${input.module}/${input.entityId}/${fileId}.${extension}`;
         const bucket = this.client.storage.from(input.bucket);
@@ -87,6 +88,16 @@ export class SupabaseFileStorageRepository extends FileStorageRepository {
 
     async remove(file: StoredFile): Promise<void> {
         const { error } = await this.client.from('files').update({ deleted_at: new Date().toISOString() }).eq('id', file.id);
+
+        if (error) {
+            throw mapSupabaseError(error);
+        }
+    }
+
+    async purge(file: StoredFile): Promise<void> {
+        await this.remove(file);
+
+        const { error } = await this.client.storage.from(file.bucket).remove([file.storageKey]);
 
         if (error) {
             throw mapSupabaseError(error);

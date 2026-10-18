@@ -14,6 +14,8 @@ import { SupabaseAuthRepository } from './app/core/auth/data/supabase-auth.repos
 import { APP_CONFIG, validateAppConfig } from './app/core/config/app-config';
 import { LegalDocumentsRepository } from './app/core/legal/data/legal-documents.repository';
 import { SupabaseLegalDocumentsRepository } from './app/core/legal/data/supabase-legal-documents.repository';
+import { AcademyProfileRepository } from './app/features/academy-profile/data/academy-profile.repository';
+import { SupabaseAcademyProfileRepository } from './app/features/academy-profile/data/supabase-academy-profile.repository';
 import { HomeSummaryRepository } from './app/features/home/data/home-summary.repository';
 import { SupabaseHomeSummaryRepository } from './app/features/home/data/supabase-home-summary.repository';
 import { SupabaseVenueRepository } from './app/features/venues/data/supabase-venue.repository';
@@ -46,6 +48,7 @@ export const appConfig: ApplicationConfig = {
         { provide: FileStorageRepository, useClass: SupabaseFileStorageRepository },
         { provide: VenueRepository, useClass: SupabaseVenueRepository },
         { provide: HomeSummaryRepository, useClass: SupabaseHomeSummaryRepository },
+        { provide: AcademyProfileRepository, useClass: SupabaseAcademyProfileRepository },
         provideAppInitializer(async () => {
             const auth = inject(AuthService);
 

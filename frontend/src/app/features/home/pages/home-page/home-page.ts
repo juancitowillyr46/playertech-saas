@@ -5,13 +5,12 @@ import { MessageModule } from 'primeng/message';
 import { SkeletonModule } from 'primeng/skeleton';
 import { PageHeader } from '../../../../shared/components/page-header/page-header';
 import { HomeSummaryService } from '../../services/home-summary.service';
-import { RECOMMENDED_TASKS } from '../../models/home-summary.models';
 
 /**
  * Pantalla modelo de Inicio (spec 003, US5; patrón «inicio con tareas pendientes» de
  * ui.md). El resumen es real y de solo lectura (CA-001 de HU-032). «Completa tu
- * academia» es una maqueta: lista las tareas recomendadas sin calcular su estado ni
- * mostrar progreso, que llegan con HU-032 (FR-018a).
+ * academia» muestra el estado de cada tarea y el progreso, y desaparece con todas
+ * completas (CA-002 a CA-004 de HU-032, spec 007). Es informativa: no bloquea nada.
  */
 @Component({
     selector: 'app-home-page',
@@ -67,25 +66,38 @@ import { RECOMMENDED_TASKS } from '../../models/home-summary.models';
             }
         }
 
-        <section class="mt-8" aria-labelledby="complete-academy">
-            <h2 id="complete-academy" class="m-0 text-xl">Completa tu academia</h2>
-            <p class="m-0 mt-1 text-muted-color">Con estos datos tu academia queda lista para trabajar.</p>
-            <ul class="m-0 mt-3 list-none border-t border-(--p-content-border-color) p-0">
-                @for (task of tasks; track task.label) {
-                    <li class="border-b border-(--p-content-border-color)">
-                        <a [routerLink]="task.route" class="flex min-h-14 items-center justify-between gap-3 py-2 font-semibold text-(--p-text-color) hover:text-primary">
-                            <span>{{ task.label }}</span>
-                            <i class="pi pi-angle-right text-muted-color" aria-hidden="true"></i>
-                        </a>
-                    </li>
-                }
-            </ul>
-        </section>
+        @if (home.summary(); as summary) {
+            @if (summary.completedCount < summary.tasks.length) {
+                <section class="mt-8" aria-labelledby="complete-academy">
+                    <div class="flex items-baseline justify-between gap-3">
+                        <h2 id="complete-academy" class="m-0 text-xl">Completa tu academia</h2>
+                        <span class="shrink-0 font-semibold">{{ summary.completedCount }} de {{ summary.tasks.length }}</span>
+                    </div>
+                    <p class="m-0 mt-1 text-muted-color">Con estos datos tu academia queda lista para trabajar.</p>
+                    <ul class="m-0 mt-3 list-none border-t border-(--p-content-border-color) p-0">
+                        @for (task of summary.tasks; track task.key) {
+                            <li class="border-b border-(--p-content-border-color)">
+                                @if (task.done || !task.route) {
+                                    <div class="flex min-h-14 items-center justify-between gap-3 py-2 text-muted-color">
+                                        <span class="flex items-center gap-3"><i class="pi pi-check-circle text-primary" aria-hidden="true"></i>{{ task.label }}</span>
+                                        <span class="shrink-0 text-sm font-semibold">Completa</span>
+                                    </div>
+                                } @else {
+                                    <a [routerLink]="task.route" class="flex min-h-14 items-center justify-between gap-3 py-2 font-semibold text-(--p-text-color) hover:text-primary">
+                                        <span class="flex items-center gap-3"><i class="pi pi-circle text-muted-color" aria-hidden="true"></i>{{ task.label }}</span>
+                                        <span class="flex shrink-0 items-center gap-2 text-sm text-muted-color">Pendiente<i class="pi pi-angle-right" aria-hidden="true"></i></span>
+                                    </a>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </section>
+            }
+        }
     `
 })
 export class HomePage implements OnInit {
     protected readonly home = inject(HomeSummaryService);
-    protected readonly tasks = RECOMMENDED_TASKS;
 
     ngOnInit(): void {
         void this.home.load();

@@ -14,4 +14,11 @@ export abstract class FileStorageRepository {
 
     /** Borrado lógico en `files`; el objeto físico se conserva hasta la limpieza del MVP+. */
     abstract remove(file: StoredFile): Promise<void>;
+
+    /**
+     * Borrado lógico en `files` y borrado del objeto físico. Solo para archivos sin historial
+     * útil, como el logo (DEC-22, excepción de ADR-013). Primero marca el registro, para que un
+     * fallo nunca deje un registro vigente sin objeto.
+     */
+    abstract purge(file: StoredFile): Promise<void>;
 }
