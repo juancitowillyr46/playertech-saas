@@ -32,7 +32,7 @@
 ### CA-005 — Editar y retirar
 **Dado** un acudiente vinculado,
 **cuando** el owner edita sus datos, o lo retira de ese jugador y confirma,
-**entonces** se actualiza, o deja de estar vinculado con ese jugador. Si no le quedan jugadores, deja de mostrarse (borrado lógico).
+**entonces** se actualiza, o deja de estar vinculado con ese jugador. Si no le quedan jugadores, deja de mostrarse en las fichas (borrado lógico del vínculo), pero la persona se conserva y puede asignarse de nuevo (HU-035).
 
 ### CA-006 — Autorización de datos
 **Dado** que el owner registra los datos de un acudiente,
@@ -59,4 +59,4 @@
 
 ## Decisiones relacionadas
 
-ADR-018: DEC-30, DEC-31, DEC-39 y DEC-40.
+ADR-018: DEC-30, DEC-31, DEC-39 y DEC-40. Asignar un acudiente ya registrado (en lugar de escribir su celular de nuevo): HU-035 (DEC-43).

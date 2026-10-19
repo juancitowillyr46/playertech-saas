@@ -24,6 +24,7 @@ Registrar a las personas que responden por cada jugador, para enviarles sus conv
 | ID | Historia | Estado |
 |---|---|---|
 | HU-034 | Acudientes del jugador (registro por el owner) | Terminada |
+| HU-035 | Asignar un acudiente ya registrado (DEC-43) | Definida |
 
 Los acudientes que nacen desde el enlace y la validación de vínculos se definen antes de la spec 4.
 
