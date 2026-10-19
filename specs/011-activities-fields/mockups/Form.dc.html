@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Nueva actividad: datos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;" role="dialog" aria-label="Nueva actividad">
+<div style="height: 56px; padding: 0 8px 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<h1 style="margin: 0; font-size: 18px;">Nueva actividad</h1>
+<a href="Main.dc.html" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px;" aria-label="Cerrar">✕</a>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow: hidden;">
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 6px;">
+<legend style="padding: 0; margin-bottom: 6px; font-weight: 600;">Tipo</legend>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+<label style="min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #BDBDBD; border-radius: 8px;"><input type="radio" name="type">Entrenamiento</label>
+<label style="min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 2px solid #333333; border-radius: 8px; font-weight: 600;"><input type="radio" name="type" checked>Competencia</label>
+</div>
+</fieldset>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Fecha</span><input style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #BDBDBD; border-radius: 8px; font-size: 14px;" value="24/10/2026"></label>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Inicio</span><input style="height: 44px; box-sizing: border-box; padding: 0 8px; border: 1px solid #BDBDBD; border-radius: 8px; font-size: 14px; width: 100%;" value="9:00 a. m."></label>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Fin <span style="font-weight: 400; color: #555555;">(opc.)</span></span><input style="height: 44px; box-sizing: border-box; padding: 0 8px; border: 1px solid #BDBDBD; border-radius: 8px; font-size: 14px; width: 100%;" value="10:30 a. m."></label>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Citación <span style="font-weight: 400; color: #555555;">(opc.)</span></span><input style="height: 44px; box-sizing: border-box; padding: 0 8px; border: 1px solid #BDBDBD; border-radius: 8px; font-size: 14px; width: 100%;" value="8:15 a. m."></label>
+</div>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Rival <span style="font-weight: 400; color: #555555;">(opcional)</span></span><input style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #BDBDBD; border-radius: 8px; font-size: 14px;" value="Club Norte"></label>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Torneo <span style="font-weight: 400; color: #555555;">(opcional)</span></span><input style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #BDBDBD; border-radius: 8px; font-size: 14px;" value="Torneo Liga"></label>
+<a href="FormRepeat.dc.html" style="color: #555555; font-size: 12px;">Sigue: lugar, observaciones y repetir →</a>
+</div>
+<div style="padding: 12px 16px; border-top: 1px solid #D9D9D9; display: flex; gap: 8px;">
+<button style="flex-grow: 1; height: 48px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;">Cancelar</button>
+<button style="flex-grow: 1; height: 48px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600;">Guardar</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -14,11 +14,6 @@
 **cuando** el owner cambia sus datos y guarda,
 **entonces** se actualiza con las mismas validaciones de HU-005 (CA-003).
 
-### CA-006 — Actividad pasada
-**Dado** una actividad que ya pasó,
-**cuando** el owner la abre,
-**entonces** ve sus datos pero no puede editarla ni cancelarla; solo eliminarla.
-
 ### CA-002 — Cancelar y reactivar
 **Dado** una actividad programada,
 **cuando** el owner la cancela y confirma,
@@ -38,6 +33,11 @@
 **Dado** una actividad generada por repetición,
 **cuando** el owner la edita, cancela o elimina,
 **entonces** el cambio afecta solo a esa actividad.
+
+### CA-006 — Actividad pasada
+**Dado** una actividad que ya pasó,
+**cuando** el owner la abre,
+**entonces** ve sus datos pero no puede editarla ni cancelarla; solo eliminarla.
 
 ## Reglas de negocio
 

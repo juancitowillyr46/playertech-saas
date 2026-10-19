@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Actividades</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<span style="font-weight: 600;">Academia Los Pinos</span>
+<button style="width: 44px; height: 44px; border: 1px solid #BDBDBD; border-radius: 22px; background: #F2F2F2; font-size: 12px; color: #222222;" aria-label="Cuenta">JR</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));" role="tablist">
+<button role="tab" aria-selected="true" style="height: 48px; border: 0; border-bottom: 3px solid #333333; background: #FFFFFF; color: #222222; font-weight: 700;">Actividades</button>
+<a href="Fields.dc.html" role="tab" aria-selected="false" style="height: 48px; display: flex; align-items: center; justify-content: center; border-bottom: 3px solid transparent; color: #555555; text-decoration: none;">Canchas</a>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden;">
+<div style="display: flex; align-items: center; justify-content: space-between;">
+<h1 style="margin: 0; font-size: 22px;">Actividades</h1>
+<a href="Form.dc.html" style="height: 44px; padding: 0 14px; display: flex; align-items: center; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600; text-decoration: none;">Nueva actividad</a>
+</div>
+<div style="display: flex; gap: 8px;">
+<div style="display: flex; border: 1px solid #BDBDBD; border-radius: 8px; overflow: hidden;">
+<button style="height: 40px; padding: 0 12px; border: 0; background: #333333; color: #FFFFFF; font-weight: 600;">Próximas</button>
+<button style="height: 40px; padding: 0 12px; border: 0; background: #FFFFFF; color: #222222;">Pasadas</button>
+</div>
+<button style="height: 40px; padding: 0 12px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;">Tipo: Todas ▾</button>
+</div>
+<span style="margin-top: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; color: #555555;">HOY · DOMINGO 18 DE OCTUBRE</span>
+<a href="Detail.dc.html" style="min-height: 60px; padding: 8px 4px; display: flex; gap: 12px; align-items: center; border-top: 1px solid #D9D9D9; border-bottom: 1px solid #E6E6E6; text-decoration: none;">
+<span style="width: 52px; font-weight: 700;">4:00 p. m.</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;"><span style="font-weight: 600;">Entrenamiento</span><span style="font-size: 12px; color: #555555;">Sede Norte</span></span>
+</a>
+<span style="margin-top: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; color: #555555;">MARTES 20 DE OCTUBRE</span>
+<a href="Detail.dc.html" style="min-height: 60px; padding: 8px 4px; display: flex; gap: 12px; align-items: center; border-top: 1px solid #D9D9D9; border-bottom: 1px solid #E6E6E6; text-decoration: none;">
+<span style="width: 52px; font-weight: 700;">4:00 p. m.</span>
+<span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-weight: 600;">Entrenamiento</span><span style="font-size: 12px; color: #555555;">Sede Norte</span></span>
+</a>
+<span style="margin-top: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; color: #555555;">SÁBADO 24 DE OCTUBRE</span>
+<a href="Detail.dc.html" style="min-height: 60px; padding: 8px 4px; display: flex; gap: 12px; align-items: center; border-top: 1px solid #D9D9D9; border-bottom: 1px solid #E6E6E6; text-decoration: none;">
+<span style="width: 52px; font-weight: 700;">9:00 a. m.</span>
+<span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-weight: 600;">Competencia vs. Club Norte</span><span style="font-size: 12px; color: #555555;">Cancha El Salitre · Torneo Liga</span></span>
+</a>
+<a href="Detail.dc.html" style="min-height: 60px; padding: 8px 4px; display: flex; gap: 12px; align-items: center; border-bottom: 1px solid #E6E6E6; text-decoration: none; color: #555555;">
+<span style="width: 52px; font-weight: 700;">3:00 p. m.</span>
+<span style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Entrenamiento <span style="margin-left: 6px; padding: 1px 6px; border: 2px solid #555555; font-size: 10px; letter-spacing: 0.08em;">CANCELADA</span></span><span style="font-size: 12px;">Sede Norte</span></span>
+</a>
+</div>
+<nav style="height: 64px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid #D9D9D9; background: #FAFAFA;" aria-label="Navegación principal">
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #D9D9D9;" aria-hidden="true"></span>Inicio</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #D9D9D9;" aria-hidden="true"></span>Jugadores</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 700; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #333333;" aria-hidden="true"></span>Actividades</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #D9D9D9;" aria-hidden="true"></span>Academia</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; text-decoration: none;"><span style="width: 20px; height: 20px; border-radius: 4px; background: #D9D9D9;" aria-hidden="true"></span>Sedes</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
