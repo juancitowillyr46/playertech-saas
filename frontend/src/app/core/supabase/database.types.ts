@@ -250,8 +250,6 @@ export type Database = {
             guardian_links: {
                 Row: {
                     academy_id: string;
-                    consent_at: string;
-                    consent_document_id: string;
                     created_at: string;
                     created_by: string;
                     deleted_at: string | null;
@@ -264,8 +262,6 @@ export type Database = {
                 };
                 Insert: {
                     academy_id: string;
-                    consent_at?: string;
-                    consent_document_id: string;
                     created_at?: string;
                     created_by?: string;
                     deleted_at?: string | null;
@@ -278,8 +274,6 @@ export type Database = {
                 };
                 Update: {
                     academy_id?: string;
-                    consent_at?: string;
-                    consent_document_id?: string;
                     created_at?: string;
                     created_by?: string;
                     deleted_at?: string | null;
@@ -304,19 +298,14 @@ export type Database = {
                         isOneToOne: false;
                         referencedRelation: 'players';
                         referencedColumns: ['academy_id', 'id'];
-                    },
-                    {
-                        foreignKeyName: 'guardian_links_consent_document_id_fkey';
-                        columns: ['consent_document_id'];
-                        isOneToOne: false;
-                        referencedRelation: 'legal_documents';
-                        referencedColumns: ['id'];
                     }
                 ];
             };
             guardians: {
                 Row: {
                     academy_id: string;
+                    consent_at: string;
+                    consent_document_id: string;
                     created_at: string;
                     created_by: string;
                     deleted_at: string | null;
@@ -327,6 +316,8 @@ export type Database = {
                 };
                 Insert: {
                     academy_id: string;
+                    consent_at?: string;
+                    consent_document_id: string;
                     created_at?: string;
                     created_by?: string;
                     deleted_at?: string | null;
@@ -337,6 +328,8 @@ export type Database = {
                 };
                 Update: {
                     academy_id?: string;
+                    consent_at?: string;
+                    consent_document_id?: string;
                     created_at?: string;
                     created_by?: string;
                     deleted_at?: string | null;
@@ -351,6 +344,13 @@ export type Database = {
                         columns: ['academy_id'];
                         isOneToOne: false;
                         referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    },
+                    {
+                        foreignKeyName: 'guardians_consent_document_id_fkey';
+                        columns: ['consent_document_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'legal_documents';
                         referencedColumns: ['id'];
                     }
                 ];
@@ -652,6 +652,7 @@ export type Database = {
                     link_id: string;
                 }[];
             };
+            assign_guardians: { Args: { p_assignments: Json; p_player_id: string }; Returns: number };
             current_academy_id: { Args: Record<PropertyKey, never>; Returns: string };
             current_user_id: { Args: Record<PropertyKey, never>; Returns: string };
             find_player_by_identity: {

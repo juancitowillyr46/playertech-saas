@@ -11,11 +11,13 @@ import { TagModule } from 'primeng/tag';
 import { AppError } from '../../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../../core/errors/error-messages';
 import { ageOn, todayInColombia } from '../../../../shared/text/search-text';
+import { CopyGuardiansDrawer } from '../../components/copy-guardians-drawer/copy-guardians-drawer';
 import { GuardianDrawer } from '../../components/guardian-drawer/guardian-drawer';
+import { GuardianPickerDrawer } from '../../components/guardian-picker-drawer/guardian-picker-drawer';
 import { PlayerFormDrawer } from '../../components/player-form-drawer/player-form-drawer';
 import { GroupsNotSavedError } from '../../data/player.repository';
-import { Guardian, PlayerInput, RELATIONSHIP_LABELS } from '../../models/player.models';
-import { PlayerDetailService } from '../../services/player-detail.service';
+import { Guardian, GuardianAssignment, PlayerInput, PlayerSummary, RELATIONSHIP_LABELS } from '../../models/player.models';
+import { GuardianChoice, PlayerDetailService } from '../../services/player-detail.service';
 
 const STAMP = 'border-2 border-current uppercase tracking-wider';
 
@@ -25,7 +27,7 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
  */
 @Component({
     selector: 'app-player-page',
-    imports: [DatePipe, RouterLink, ButtonModule, ConfirmDialogModule, MenuModule, MessageModule, SkeletonModule, TagModule, PlayerFormDrawer, GuardianDrawer],
+    imports: [DatePipe, RouterLink, ButtonModule, ConfirmDialogModule, MenuModule, MessageModule, SkeletonModule, TagModule, PlayerFormDrawer, GuardianDrawer, GuardianPickerDrawer, CopyGuardiansDrawer],
     providers: [PlayerDetailService, ConfirmationService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
@@ -81,9 +83,12 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
                     </section>
 
                     <section aria-labelledby="guardians-title">
-                        <div class="mb-3 flex items-center justify-between gap-3">
-                            <h2 id="guardians-title" class="m-0 text-xl">Acudientes</h2>
-                            <p-button label="Agregar acudiente" icon="pi pi-plus" [disabled]="detail.busy()" (onClick)="openGuardian(null)" />
+                        <h2 id="guardians-title" class="m-0 mb-3 text-xl">Acudientes</h2>
+                        <div class="mb-3 flex gap-2">
+                            <p-button label="Agregar acudiente" icon="pi pi-plus" class="flex-1 sm:flex-none" styleClass="w-full" [disabled]="detail.busy()" (onClick)="addGuardian()" />
+                            @if (siblings().length > 0) {
+                                <p-button label="Copiar de un hermano" icon="pi pi-copy" [outlined]="true" class="flex-1 sm:flex-none" styleClass="w-full" [disabled]="detail.busy()" (onClick)="copyOpen.set(true)" />
+                            }
                         </div>
                         @if (detail.guardians().length === 0) {
                             <p class="m-0 border-y border-(--p-content-border-color) py-6 text-muted-color">Aún no tiene acudientes.</p>
@@ -112,6 +117,16 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
             }
         }
 
+        <app-guardian-picker-drawer
+            [open]="pickerOpen()"
+            [options]="guardianOptions()"
+            [playerName]="detail.player()?.firstNames ?? ''"
+            [busy]="detail.busy()"
+            (assign)="assignGuardian($event)"
+            (registerNew)="registerNewGuardian()"
+            (closed)="pickerOpen.set(false)"
+        />
+        <app-copy-guardians-drawer [open]="copyOpen()" [siblings]="siblings()" [playerName]="detail.player()?.firstNames ?? ''" (saved)="copied($event)" (closed)="copyOpen.set(false)" />
         <app-guardian-drawer [open]="guardianOpen()" [guardian]="editingGuardian()" [playerName]="detail.player()?.firstNames ?? ''" (saved)="guardianSaved($event)" (closed)="guardianOpen.set(false)" />
 
         <p-menu #playerMenu [model]="playerMenuItems" [popup]="true" appendTo="body" />
@@ -133,6 +148,10 @@ export class PlayerPage implements OnInit {
     protected readonly editOpen = signal(false);
     protected readonly formError = signal<string | null>(null);
     protected readonly guardianOpen = signal(false);
+    protected readonly pickerOpen = signal(false);
+    protected readonly copyOpen = signal(false);
+    protected readonly guardianOptions = signal<readonly GuardianChoice[]>([]);
+    protected readonly siblings = signal<readonly PlayerSummary[]>([]);
     protected readonly editingGuardian = signal<Guardian | null>(null);
     private readonly menuGuardian = signal<Guardian | null>(null);
 
@@ -156,7 +175,7 @@ export class PlayerPage implements OnInit {
     });
 
     ngOnInit(): void {
-        void this.detail.load(this.id());
+        void this.detail.load(this.id()).then(() => this.loadSiblings());
     }
 
     protected relationshipLabel(guardian: Guardian): string {
@@ -207,9 +226,56 @@ export class PlayerPage implements OnInit {
         }
     }
 
+    /** Con acudientes en la academia abre el selector (DEC-43); si no, el registro (CA-006 de HU-035). */
+    protected async addGuardian(): Promise<void> {
+        try {
+            const options = await this.detail.guardianOptions();
+            this.guardianOptions.set(options);
+
+            if (options.length > 0) {
+                this.pickerOpen.set(true);
+            } else {
+                this.openGuardian(null);
+            }
+        } catch (error) {
+            this.messages.add({ severity: 'error', summary: 'No se pudo completar la acción', detail: this.messageFor(error), life: 6000 });
+        }
+    }
+
+    protected registerNewGuardian(): void {
+        this.pickerOpen.set(false);
+        this.openGuardian(null);
+    }
+
+    protected async assignGuardian(assignment: GuardianAssignment): Promise<void> {
+        const name = this.guardianOptions().find((option) => option.guardianId === assignment.guardianId)?.fullName ?? 'El acudiente';
+
+        try {
+            await this.detail.assignGuardians([assignment]);
+            this.pickerOpen.set(false);
+            this.notify(`${name} quedó como acudiente de ${this.detail.player()?.firstNames ?? 'este jugador'}.`);
+        } catch (error) {
+            this.messages.add({ severity: 'error', summary: 'No se pudo completar la acción', detail: this.messageFor(error), life: 6000 });
+        }
+    }
+
+    protected copied(message: string): void {
+        this.copyOpen.set(false);
+        this.notify(message);
+    }
+
     protected guardianSaved(message: string): void {
         this.guardianOpen.set(false);
         this.notify(message);
+    }
+
+    /** Otros jugadores con acudientes; sin ellos no se ofrece «Copiar de un hermano». */
+    private async loadSiblings(): Promise<void> {
+        try {
+            this.siblings.set(await this.detail.siblings());
+        } catch {
+            this.siblings.set([]);
+        }
     }
 
     private confirmRemove(): void {

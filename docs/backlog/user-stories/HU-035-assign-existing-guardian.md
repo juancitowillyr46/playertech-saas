@@ -1,7 +1,7 @@
 # HU-035 — Asignar un acudiente ya registrado
 
-**Épica:** EP-10 — Gestión de acudientes · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
-**Spec:** spec 010 (ajustes de acudientes)
+**Épica:** EP-10 — Gestión de acudientes · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local)
+**Spec:** [`specs/010-guardian-assignment/`](../../../specs/010-guardian-assignment/spec.md) (**implementada**; validación en su `quickstart.md`)
 
 ## Historia de usuario
 

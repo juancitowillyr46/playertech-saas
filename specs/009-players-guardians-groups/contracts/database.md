@@ -1,5 +1,7 @@
 # Contrato de base de datos
 
+> **Spec 010**: la autorización de datos pasa de `guardian_links` a `guardians` y se añade `assign_guardians`. Ver `specs/010-guardian-assignment/contracts/database.md`.
+
 Columnas en `data-model.md`. Aquí: permisos, políticas y funciones.
 
 ## Permisos por columna (`authenticated`)

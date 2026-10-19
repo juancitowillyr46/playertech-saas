@@ -261,7 +261,7 @@ description: "Lista de tareas para jugadores, acudientes y grupos (Fase 2, spec 
 - [X] T041 Recorrer `quickstart.md` contra Supabase local con el owner A y el owner B (aislamiento, paso 6) y anotar los resultados en su sección final
 - [X] T042 Restaurar la academia A del seed: eliminar por SQL los jugadores, grupos, integrantes, acudientes y vínculos creados, y confirmar `npm run db:test` en verde con el total actualizado antes de decirlo restaurado
 - [X] T043 [P] Marcar HU-002, HU-003, HU-033, HU-004 y HU-034 como «Implementada» (estados de `docs/backlog/README.md`) y actualizar `contracts/acceptance-coverage.md` con los nombres reales de las pruebas
-- [ ] T044 Tras el merge y con autorización del responsable, aplicar la migración en la nube de pruebas con `npm run db:push` (`docs/engineering/deployment.md`). La ejecuta el responsable si requiere su sesión de `supabase login`
+- [X] T044 Tras el merge y con autorización del responsable, aplicar la migración en la nube de pruebas con `npm run db:push` (`docs/engineering/deployment.md`). La ejecuta el responsable si requiere su sesión de `supabase login`
 
 ---
 

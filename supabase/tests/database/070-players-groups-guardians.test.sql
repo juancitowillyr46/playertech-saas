@@ -172,11 +172,13 @@ select is(
   1, 'guardians: una sola persona para los dos jugadores'
 );
 
+-- Desde la spec 010 la autorización está en la persona (DEC-39 ajustada).
 select is(
   (select count(*)::int from public.guardian_links l
+   join public.guardians g on g.id = l.guardian_id
    where l.status = 'validated'
-     and l.consent_document_id = (select id from public.legal_documents where type = 'privacy_policy' and is_current)),
-  2, 'guardian_links: validados y con la versión vigente de la Política'
+     and g.consent_document_id = (select id from public.legal_documents where type = 'privacy_policy' and is_current)),
+  2, 'guardian_links: validados, y la persona con la versión vigente de la Política'
 );
 
 select throws_ok(
@@ -233,7 +235,7 @@ select tests.clear_authentication();
 select throws_ok(
   $$insert into public.group_members (academy_id, group_id, player_id, created_by)
     values (tests.academy_of('academia-a'),
-            (select id from public.groups where name = 'Sub-12' and deleted_at is null),
+            (select id from public.groups where name = 'Sub-12' and deleted_at is null and academy_id = tests.academy_of('academia-a')),
             (select id from public.players where academy_id = tests.academy_of('academia-b')),
             tests.owner_of('academia-a'))$$,
   '23503', null, 'group_members: no mezcla academias'

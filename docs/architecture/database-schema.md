@@ -278,17 +278,18 @@ academies ─┬─< players ─┬─< group_members >─┬─ groups
 | `players` | Jugador: nombres, apellidos, apodo, fecha de nacimiento, celular opcional, activo | Lógico. Único por nombre normalizado y fecha (DEC-42) |
 | `groups` | Grupo con nombre único por academia | Lógico. Al eliminarlo, un trigger quita sus integrantes |
 | `group_members` | Jugador en un grupo | **Físico** (relación sin historia, excepción del plan) |
-| `guardians` | Acudiente: la persona, única por celular en la academia | Lógico |
-| `guardian_links` | Vínculo acudiente-jugador: parentesco, estado y autorización de datos (DEC-39, DEC-40) | Lógico |
+| `guardians` | Acudiente: la persona, única por celular en la academia, con **su autorización de datos** (DEC-39 ajustada, spec 010) | Lógico |
+| `guardian_links` | Vínculo acudiente-jugador: parentesco y estado (DEC-40) | Lógico |
 
 | Función | Uso |
 |---|---|
 | `current_user_id()` | Usuario actual para `created_by` y políticas (ADR-017) |
 | `normalize_name(text)` | Comparar nombres sin mayúsculas, tildes ni espacios |
 | `find_player_by_identity(...)` | Detectar el jugador ya registrado |
-| `add_player_guardian(...)` | Única vía para crear acudientes y vínculos; exige la autorización y guarda la Política vigente |
+| `add_player_guardian(...)` | Registra a un acudiente nuevo (o reutiliza la persona por su celular) y lo vincula; exige la autorización y la guarda en la persona |
+| `assign_guardians(...)` | Asigna acudientes ya registrados a un jugador, validados y sin duplicar (spec 010, DEC-43) |
 
-RLS: leen los miembros de la academia y escribe el owner; `guardians` y `guardian_links` solo se insertan con `add_player_guardian`.
+RLS: leen los miembros de la academia y escribe el owner; `guardians` y `guardian_links` solo se insertan con `add_player_guardian` y `assign_guardians`. Cambios de la spec 010: [`specs/010-guardian-assignment/data-model.md`](../../specs/010-guardian-assignment/data-model.md).
 
 ---
 

@@ -31,6 +31,7 @@ async function setup(options: { player?: Partial<Record<string, ReturnType<typeo
         updatePlayer: vi.fn().mockResolvedValue(undefined),
         setActive: vi.fn().mockResolvedValue(undefined),
         deletePlayer: vi.fn().mockResolvedValue(undefined),
+        listPlayers: vi.fn().mockResolvedValue([SAMUEL]),
         ...options.player
     };
     const guardians = {
@@ -40,6 +41,8 @@ async function setup(options: { player?: Partial<Record<string, ReturnType<typeo
         updateGuardian: vi.fn().mockResolvedValue(undefined),
         updateRelationship: vi.fn().mockResolvedValue(undefined),
         removeFromPlayer: vi.fn().mockResolvedValue(undefined),
+        listGuardians: vi.fn().mockResolvedValue([]),
+        assign: vi.fn().mockResolvedValue(1),
         ...options.guardian
     };
     const messages = { add: vi.fn() };
@@ -191,4 +194,82 @@ describe('PlayerPage', { timeout: 20_000 }, () => {
 
         expect(guardians.removeFromPlayer).toHaveBeenCalledWith('l1');
     });
+
+    describe('acudientes ya registrados (spec 010, HU-035)', () => {
+        const OPTIONS = [
+            { guardianId: 'gd1', fullName: 'Carlos Vargas', phone: '3157779876', players: [{ playerId: 'p1', name: 'Samuel V.', relationship: 'father' }] },
+            { guardianId: 'gd2', fullName: 'Diana Gómez', phone: '3105551234', players: [{ playerId: 'p2', name: 'Mateo R.', relationship: 'mother' }] }
+        ];
+        const MATEO: PlayerSummary = { ...SAMUEL, id: 'p2', firstNames: 'Mateo', lastNames: 'Ruiz', nickname: null, guardianCount: 2 };
+
+        it('elige un acudiente de la lista y lo asigna sin pedir la autorización (CA-001 a CA-004)', async () => {
+            const { user, guardians, messages } = await setup({ guardian: { listGuardians: vi.fn().mockResolvedValue(OPTIONS) } });
+
+            await user.click(screen.getByRole('button', { name: 'Agregar acudiente' }));
+            const dialog = await screen.findByRole('dialog', { name: 'Agregar acudiente de Samuel' });
+            const list = within(dialog).getByRole('list', { name: 'Acudientes de la academia' });
+            expect(within(list).getByRole('button', { name: /Carlos Vargas/ }).hasAttribute('disabled')).toBe(true);
+            expect(within(list).getByText('Ya es acudiente de Samuel')).toBeTruthy();
+            expect(within(list).getByText('Mamá de Mateo R.')).toBeTruthy();
+
+            await user.type(within(dialog).getByRole('searchbox', { name: 'Buscar acudiente' }), '310 555');
+            expect(within(list).queryByText(/Carlos/)).toBeNull();
+            await user.click(within(list).getByRole('button', { name: /Diana Gómez/ }));
+            expect(within(dialog).queryByLabelText(/El acudiente autoriza/)).toBeNull();
+            await user.click(within(dialog).getByLabelText('Mamá'));
+            await user.click(within(dialog).getByRole('button', { name: 'Asignar a Samuel' }));
+
+            expect(guardians.assign).toHaveBeenCalledWith('p1', [{ guardianId: 'gd2', relationship: 'mother' }]);
+            expect(toasts(messages)).toContain('Diana Gómez quedó como acudiente de Samuel.');
+        });
+
+        it('«Registrar un acudiente nuevo» abre el formulario con la autorización (CA-006)', async () => {
+            const { user } = await setup({ guardian: { listGuardians: vi.fn().mockResolvedValue(OPTIONS) } });
+
+            await user.click(screen.getByRole('button', { name: 'Agregar acudiente' }));
+            const picker = await screen.findByRole('dialog', { name: 'Agregar acudiente de Samuel' });
+            await user.click(within(picker).getByRole('button', { name: 'Registrar un acudiente nuevo' }));
+
+            expect(await screen.findByLabelText(/El acudiente autoriza/)).toBeTruthy();
+        });
+
+        it('copia los acudientes de un hermano con el parentesco del hermano y omite los ya vinculados (CA-005)', async () => {
+            const { user, guardians, messages } = await setup({
+                player: { listPlayers: vi.fn().mockResolvedValue([SAMUEL, MATEO]) },
+                guardian: {
+                    listByPlayer: vi.fn((id: string) =>
+                        Promise.resolve(
+                            id === 'p1'
+                                ? [CARLOS]
+                                : [
+                                      { ...CARLOS, linkId: 'l7' },
+                                      { linkId: 'l8', guardianId: 'gd2', fullName: 'Diana Gómez', phone: '3105551234', relationship: 'mother', otherPlayers: [] },
+                                      { linkId: 'l9', guardianId: 'gd3', fullName: 'Luz Ruiz', phone: '3201112233', relationship: 'grandparent', otherPlayers: [] }
+                                  ]
+                        )
+                    ),
+                    assign: vi.fn().mockResolvedValue(1)
+                }
+            });
+
+            await user.click(screen.getByRole('button', { name: 'Copiar de un hermano' }));
+            const dialog = await screen.findByRole('dialog', { name: 'Copiar acudientes de un hermano' });
+            await user.click(within(dialog).getByRole('button', { name: /Mateo R\./ }));
+
+            const list = await within(dialog).findByRole('list', { name: 'Acudientes del hermano' });
+            expect(within(list).getByText('Ya es acudiente de Samuel')).toBeTruthy();
+            await user.click(within(list).getByRole('checkbox', { name: /Luz Ruiz/ }));
+            await user.click(within(dialog).getByRole('button', { name: 'Asignar 1 acudiente' }));
+
+            expect(guardians.assign).toHaveBeenCalledWith('p1', [{ guardianId: 'gd2', relationship: 'mother' }]);
+            expect(toasts(messages)).toContain('1 acudiente asignado a Samuel.');
+        });
+
+        it('sin hermanos con acudientes no ofrece copiar', async () => {
+            await setup();
+
+            expect(screen.queryByRole('button', { name: 'Copiar de un hermano' })).toBeNull();
+        });
+    });
 });
+

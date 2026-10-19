@@ -37,4 +37,12 @@ Maquetas aprobadas y pantallas a 360 px y en escritorio, en claro y oscuro; cont
 
 ## Resultados
 
-*(se completa al implementar)*
+**2026-10-18, Supabase local:**
+
+| Paso | Resultado |
+|---|---|
+| Automáticas | pgTAP 194/194 (14 nuevas); Vitest de `players` 57/57; lint, `check:styles` y compilación de producción en verde |
+| 1 | Traslado verificado con datos de la spec 009: cada acudiente quedó con la autorización de su primer vínculo |
+| 2 a 4 | El responsable validó desde su celular: «Validado todo conforme» |
+| 5 | Ajustes de la validación: el calendario ya no se abre al enfocar la fecha (solo con su botón) y hay separación entre las pestañas y el título. Detector de Impeccable sin hallazgos (solo código) |
+| Seed | La academia A queda limpia. La prueba 35 de `070` dependía de no haber otro grupo «Sub-12» en la base local; ahora filtra por la academia A |

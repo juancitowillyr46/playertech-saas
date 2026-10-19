@@ -15,7 +15,7 @@ const TABS = [
     imports: [RouterLink, RouterOutlet, TabsModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <p-tabs [value]="active()" styleClass="mb-5">
+        <p-tabs [value]="active()" class="mb-5 block">
             <p-tablist>
                 @for (tab of tabs; track tab.route) {
                     <p-tab [value]="tab.route" [routerLink]="tab.route">{{ tab.label }}</p-tab>

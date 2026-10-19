@@ -88,4 +88,43 @@ describe('SupabaseGuardianRepository', () => {
         expect(args('is', 'guardian_links')).toContainEqual(['deleted_at', null]);
         await expect(repository.removeFromPlayer('l1')).rejects.toMatchObject({ code: 'not_found' });
     });
+
+    it('listGuardians: acudientes no eliminados con los jugadores activos que acompañan (DEC-43)', async () => {
+        const row = {
+            id: 'gd1',
+            full_name: 'Carlos Vargas',
+            phone: '3157779876',
+            guardian_links: [
+                { player_id: 'p1', relationship: 'father', deleted_at: null, players: player('Samuel', 'Vargas') },
+                { player_id: 'p2', relationship: 'father', deleted_at: '2026-10-01T00:00:00Z', players: player('Retirado', 'Y') },
+                { player_id: 'p3', relationship: 'other', deleted_at: null, players: player('Inactivo', 'X', false) }
+            ]
+        };
+        const { repository, from, args } = setup([{ data: [row], error: null }]);
+
+        expect(await repository.listGuardians()).toEqual([{ guardianId: 'gd1', fullName: 'Carlos Vargas', phone: '3157779876', players: [{ playerId: 'p1', name: 'Samuel V.', relationship: 'father' }] }]);
+        expect(from).toHaveBeenCalledWith('guardians');
+        expect(args('is')).toContainEqual(['deleted_at', null]);
+    });
+
+    it('assign: llama a assign_guardians y devuelve cuántos asignó; 42501 se traduce a not_found', async () => {
+        const { repository, rpc } = setup([
+            { data: 2, error: null },
+            { data: null, error: pgError('42501') }
+        ]);
+        const assignments = [
+            { guardianId: 'gd1', relationship: 'mother' },
+            { guardianId: 'gd2', relationship: 'father' }
+        ] as const;
+
+        expect(await repository.assign('p2', assignments)).toBe(2);
+        expect(rpc).toHaveBeenCalledWith('assign_guardians', {
+            p_player_id: 'p2',
+            p_assignments: [
+                { guardian_id: 'gd1', relationship: 'mother' },
+                { guardian_id: 'gd2', relationship: 'father' }
+            ]
+        });
+        await expect(repository.assign('p2', assignments)).rejects.toMatchObject({ code: 'not_found' });
+    });
 });

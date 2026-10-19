@@ -45,6 +45,24 @@ export interface Guardian {
     readonly otherPlayers: readonly string[];
 }
 
+/** Acudiente de la academia con los jugadores activos que acompaña (spec 010, DEC-43). */
+export interface GuardianOption {
+    readonly guardianId: string;
+    readonly fullName: string;
+    readonly phone: string;
+    readonly players: readonly { readonly playerId: string; readonly name: string; readonly relationship: Relationship }[];
+}
+
+export interface GuardianAssignment {
+    readonly guardianId: string;
+    readonly relationship: Relationship;
+}
+
+/** «Papá de Samuel V. · Mamá de Mateo R.» */
+export function accompaniesLabel(option: GuardianOption): string {
+    return option.players.map((player) => `${RELATIONSHIP_LABELS[player.relationship]} de ${player.name}`).join(' · ');
+}
+
 export interface GuardianInput {
     readonly fullName: string;
     readonly phone: string;
