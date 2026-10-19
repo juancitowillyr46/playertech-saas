@@ -18,6 +18,7 @@ export const appRoutes: Routes = [
         canActivate: [authGuard, membershipGuard],
         children: [
             { path: 'home', loadChildren: () => import('./app/features/home/home.routes') },
+            { path: 'players', loadChildren: () => import('./app/features/players/players.routes') },
             { path: 'settings', loadChildren: () => import('./app/features/settings/settings.routes') }
         ]
     },

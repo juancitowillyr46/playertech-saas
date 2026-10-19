@@ -20,6 +20,12 @@ import { HomeSummaryRepository } from './app/features/home/data/home-summary.rep
 import { SupabaseHomeSummaryRepository } from './app/features/home/data/supabase-home-summary.repository';
 import { SupabaseVenueRepository } from './app/features/venues/data/supabase-venue.repository';
 import { VenueRepository } from './app/features/venues/data/venue.repository';
+import { GroupRepository } from './app/features/groups/data/group.repository';
+import { SupabaseGroupRepository } from './app/features/groups/data/supabase-group.repository';
+import { GuardianRepository } from './app/features/players/data/guardian.repository';
+import { PlayerRepository } from './app/features/players/data/player.repository';
+import { SupabaseGuardianRepository } from './app/features/players/data/supabase-guardian.repository';
+import { SupabasePlayerRepository } from './app/features/players/data/supabase-player.repository';
 import { FileStorageRepository } from './app/core/storage/data/file-storage.repository';
 import { SupabaseFileStorageRepository } from './app/core/storage/data/supabase-file-storage.repository';
 import { GlobalErrorHandler } from './app/core/errors/global-error-handler';
@@ -47,6 +53,9 @@ export const appConfig: ApplicationConfig = {
         { provide: LegalDocumentsRepository, useClass: SupabaseLegalDocumentsRepository },
         { provide: FileStorageRepository, useClass: SupabaseFileStorageRepository },
         { provide: VenueRepository, useClass: SupabaseVenueRepository },
+        { provide: PlayerRepository, useClass: SupabasePlayerRepository },
+        { provide: GuardianRepository, useClass: SupabaseGuardianRepository },
+        { provide: GroupRepository, useClass: SupabaseGroupRepository },
         { provide: HomeSummaryRepository, useClass: SupabaseHomeSummaryRepository },
         { provide: AcademyProfileRepository, useClass: SupabaseAcademyProfileRepository },
         provideAppInitializer(async () => {

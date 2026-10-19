@@ -1,7 +1,7 @@
 # HU-002 — Registrar jugador
 
-**Épica:** EP-02 — Gestión de jugadores · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
-**Spec:** spec 1 de la Fase 2 (jugadores, acudientes y grupos)
+**Épica:** EP-02 — Gestión de jugadores · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local)
+**Spec:** [`specs/009-players-guardians-groups/`](../../../specs/009-players-guardians-groups/spec.md) (**implementada**; validación en su `quickstart.md`)
 
 ## Historia de usuario
 

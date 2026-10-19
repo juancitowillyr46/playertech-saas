@@ -15,7 +15,7 @@ Permitir organizar a los jugadores de acuerdo con la estructura deportiva de la 
 
 | ID | Historia | Estado |
 |---|---|---|
-| HU-004 | Gestionar grupos | Definida |
+| HU-004 | Gestionar grupos | Terminada |
 
 ## Decisiones de la ideación (2026-10-18)
 

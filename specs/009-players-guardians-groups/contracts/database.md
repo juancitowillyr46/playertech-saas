@@ -30,7 +30,7 @@ Columnas en `data-model.md`. Aquí: permisos, políticas y funciones.
 
 ### `add_player_guardian(p_player_id uuid, p_full_name text, p_phone text, p_relationship text, p_consent boolean) returns table (guardian_id uuid, link_id uuid, guardian_existed boolean, guardian_name text)`
 
-`security invoker` (las políticas de inserción en `guardians` y `guardian_links` se crean solo para esta vía, con `has_academy_role(... 'owner')`).
+`security definer`: es la única vía para insertar en `guardians` y `guardian_links` (sin permiso de inserción para `authenticated`) y comprueba explícitamente `has_academy_role(academia del jugador, 'owner')`; si no, `42501`.
 
 1. Rechaza con `22023` si `p_consent` no es `true`, y con `23514` si el parentesco no es válido (`self` no se admite por esta vía).
 2. Toma `academy_id` del jugador (la política de lectura exige que sea de la academia del usuario).

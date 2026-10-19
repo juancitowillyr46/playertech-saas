@@ -47,4 +47,11 @@ Maquetas aprobadas (R9) y pantallas implementadas a 360 px y en escritorio, en c
 
 ## Resultados
 
-*(se completa al implementar)*
+**2026-10-18, Supabase local:**
+
+| Paso | Resultado |
+|---|---|
+| Automáticas | pgTAP 180/180 (36 nuevas); Vitest de la spec 118/118; lint, `check:styles` y compilación de producción en verde |
+| 1 a 6 | El responsable recorrió los pasos desde su celular (red local): «Todo perfecto» |
+| 7 | Revisión de Impeccable (análisis automático del código y revisión manual): se corrigieron cuatro botones `small` por debajo de 44 px y el área táctil de los integrantes del grupo. El análisis con la página en ejecución no se hizo, porque las pantallas requieren sesión |
+| Restauración | Se borraron los 3 jugadores, 2 grupos, 3 integrantes, 2 acudientes y 2 vínculos de la validación. pgTAP 180/180 |

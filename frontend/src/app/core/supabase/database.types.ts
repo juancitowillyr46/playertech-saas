@@ -170,6 +170,191 @@ export type Database = {
                     }
                 ];
             };
+            group_members: {
+                Row: {
+                    academy_id: string;
+                    created_at: string;
+                    created_by: string;
+                    group_id: string;
+                    player_id: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    created_at?: string;
+                    created_by?: string;
+                    group_id: string;
+                    player_id: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    created_at?: string;
+                    created_by?: string;
+                    group_id?: string;
+                    player_id?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'group_members_academy_id_group_id_fkey';
+                        columns: ['academy_id', 'group_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'groups';
+                        referencedColumns: ['academy_id', 'id'];
+                    },
+                    {
+                        foreignKeyName: 'group_members_academy_id_player_id_fkey';
+                        columns: ['academy_id', 'player_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'players';
+                        referencedColumns: ['academy_id', 'id'];
+                    }
+                ];
+            };
+            groups: {
+                Row: {
+                    academy_id: string;
+                    created_at: string;
+                    created_by: string;
+                    deleted_at: string | null;
+                    id: string;
+                    name: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    id?: string;
+                    name: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    id?: string;
+                    name?: string;
+                    updated_at?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'groups_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    }
+                ];
+            };
+            guardian_links: {
+                Row: {
+                    academy_id: string;
+                    consent_at: string;
+                    consent_document_id: string;
+                    created_at: string;
+                    created_by: string;
+                    deleted_at: string | null;
+                    guardian_id: string;
+                    id: string;
+                    player_id: string;
+                    relationship: string;
+                    status: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    consent_at?: string;
+                    consent_document_id: string;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    guardian_id: string;
+                    id?: string;
+                    player_id: string;
+                    relationship: string;
+                    status?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    consent_at?: string;
+                    consent_document_id?: string;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    guardian_id?: string;
+                    id?: string;
+                    player_id?: string;
+                    relationship?: string;
+                    status?: string;
+                    updated_at?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'guardian_links_academy_id_guardian_id_fkey';
+                        columns: ['academy_id', 'guardian_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'guardians';
+                        referencedColumns: ['academy_id', 'id'];
+                    },
+                    {
+                        foreignKeyName: 'guardian_links_academy_id_player_id_fkey';
+                        columns: ['academy_id', 'player_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'players';
+                        referencedColumns: ['academy_id', 'id'];
+                    },
+                    {
+                        foreignKeyName: 'guardian_links_consent_document_id_fkey';
+                        columns: ['consent_document_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'legal_documents';
+                        referencedColumns: ['id'];
+                    }
+                ];
+            };
+            guardians: {
+                Row: {
+                    academy_id: string;
+                    created_at: string;
+                    created_by: string;
+                    deleted_at: string | null;
+                    full_name: string;
+                    id: string;
+                    phone: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    full_name: string;
+                    id?: string;
+                    phone: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    full_name?: string;
+                    id?: string;
+                    phone?: string;
+                    updated_at?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'guardians_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    }
+                ];
+            };
             legal_acceptances: {
                 Row: {
                     academy_id: string;
@@ -274,6 +459,59 @@ export type Database = {
                     name?: string;
                 };
                 Relationships: [];
+            };
+            players: {
+                Row: {
+                    academy_id: string;
+                    birth_date: string;
+                    created_at: string;
+                    created_by: string;
+                    deleted_at: string | null;
+                    first_names: string;
+                    id: string;
+                    is_active: boolean;
+                    last_names: string;
+                    nickname: string | null;
+                    phone: string | null;
+                    updated_at: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    birth_date: string;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    first_names: string;
+                    id?: string;
+                    is_active?: boolean;
+                    last_names: string;
+                    nickname?: string | null;
+                    phone?: string | null;
+                    updated_at?: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    birth_date?: string;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    first_names?: string;
+                    id?: string;
+                    is_active?: boolean;
+                    last_names?: string;
+                    nickname?: string | null;
+                    phone?: string | null;
+                    updated_at?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'players_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    }
+                ];
             };
             profiles: {
                 Row: {
@@ -405,9 +643,43 @@ export type Database = {
             [_ in never]: never;
         };
         Functions: {
+            add_player_guardian: {
+                Args: { p_consent: boolean; p_full_name: string; p_phone: string; p_player_id: string; p_relationship: string };
+                Returns: {
+                    guardian_existed: boolean;
+                    guardian_id: string;
+                    guardian_name: string;
+                    link_id: string;
+                }[];
+            };
             current_academy_id: { Args: Record<PropertyKey, never>; Returns: string };
+            current_user_id: { Args: Record<PropertyKey, never>; Returns: string };
+            find_player_by_identity: {
+                Args: { p_birth_date: string; p_first_names: string; p_last_names: string };
+                Returns: {
+                    academy_id: string;
+                    birth_date: string;
+                    created_at: string;
+                    created_by: string;
+                    deleted_at: string | null;
+                    first_names: string;
+                    id: string;
+                    is_active: boolean;
+                    last_names: string;
+                    nickname: string | null;
+                    phone: string | null;
+                    updated_at: string;
+                }[];
+                SetofOptions: {
+                    from: '*';
+                    to: 'players';
+                    isOneToOne: false;
+                    isSetofReturn: true;
+                };
+            };
             has_academy_role: { Args: { p_academy_id: string; p_roles: string[] }; Returns: boolean };
             is_academy_member: { Args: { p_academy_id: string }; Returns: boolean };
+            normalize_name: { Args: { p_text: string }; Returns: string };
             set_primary_venue: { Args: { p_venue_id: string }; Returns: undefined };
             slugify: { Args: { p_text: string }; Returns: string };
             storage_object_academy_id: { Args: { p_name: string }; Returns: string };

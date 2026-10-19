@@ -1,0 +1,59 @@
+/** Jugadores y acudientes (spec 009, contracts/repositories.md). Fechas en `yyyy-mm-dd`. */
+
+export interface GroupRef {
+    readonly id: string;
+    readonly name: string;
+}
+
+export interface PlayerInput {
+    readonly firstNames: string;
+    readonly lastNames: string;
+    readonly nickname: string | null;
+    readonly birthDate: string;
+    readonly phone: string | null;
+    readonly groupIds: readonly string[];
+}
+
+export interface PlayerSummary {
+    readonly id: string;
+    readonly firstNames: string;
+    readonly lastNames: string;
+    readonly nickname: string | null;
+    readonly birthDate: string;
+    readonly phone: string | null;
+    readonly isActive: boolean;
+    readonly groups: readonly GroupRef[];
+    readonly guardianCount: number;
+}
+
+export type Relationship = 'mother' | 'father' | 'grandparent' | 'other';
+
+export const RELATIONSHIP_LABELS: Record<Relationship, string> = {
+    mother: 'Mamá',
+    father: 'Papá',
+    grandparent: 'Abuelo o abuela',
+    other: 'Otro'
+};
+
+export interface Guardian {
+    readonly linkId: string;
+    readonly guardianId: string;
+    readonly fullName: string;
+    readonly phone: string;
+    readonly relationship: Relationship;
+    /** Otros jugadores activos que acompaña («También de…»), como «Tomás V.». */
+    readonly otherPlayers: readonly string[];
+}
+
+export interface GuardianInput {
+    readonly fullName: string;
+    readonly phone: string;
+    readonly relationship: Relationship;
+}
+
+/** «Samuel V.»: nombre y la inicial del primer apellido. */
+export function shortName(player: { firstNames: string; lastNames: string }): string {
+    const initial = player.lastNames.trim().charAt(0);
+
+    return initial ? `${player.firstNames} ${initial.toLocaleUpperCase('es-CO')}.` : player.firstNames;
+}
