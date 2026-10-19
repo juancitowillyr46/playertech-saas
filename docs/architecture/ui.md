@@ -43,11 +43,11 @@ BARRA SUPERIOR   (Logo o iniciales) Nombre de la academia        (Iniciales ▾)
                                                                  ├ Modo claro / oscuro
                                                                  ├ Mi perfil (MVP+)
                                                                  └ Cerrar sesión
-NAVEGACIÓN INFERIOR   Inicio · Academia · Sedes
-                      (Fase 2: Inicio · Jugadores · Actividades · Convocatorias · Más)
+NAVEGACIÓN INFERIOR   Inicio · Jugadores · Academia · Sedes
+                      (spec 2 añade Actividades; con más de 5 destinos, «Más»)
 ```
 
-La navegación inferior admite como máximo 5 destinos; cuando haya más, el quinto («Más») agrupa el resto, incluida la configuración. No hay menú hamburguesa. La acción principal de cada página flota sobre la barra.
+Los acudientes se gestionan desde la ficha del jugador y los grupos son una pestaña de Jugadores (opción B aprobada en la spec 009). La navegación inferior admite como máximo 5 destinos; cuando haya más, el quinto («Más») agrupa el resto, incluida la configuración. No hay menú hamburguesa. La acción principal de cada página flota sobre la barra.
 
 En escritorio:
 
@@ -55,7 +55,8 @@ En escritorio:
 TOPBAR       [Logo PlayerTech] PlayerTech | Nombre de la academia      (Iniciales ▾)
 MENÚ LATERAL
 ├── Inicio                              /home
-├── (Fase 2: Jugadores, Acudientes, Actividades, Convocatorias…)
+├── Jugadores                           /players   (pestañas Jugadores y Grupos, spec 009)
+├── (Fase 2: Actividades, Convocatorias…)
 └── CONFIGURACIÓN
     ├── Academia                        /settings/academy
     └── Sedes                           /settings/venues

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Ficha del jugador</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="height: 56px; padding: 0 8px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<div style="display: flex; align-items: center; gap: 4px;">
+<a href="Main.dc.html" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 20px;" aria-label="Volver">←</a>
+<h1 style="margin: 0; font-size: 18px;">Samuel Vargas</h1>
+</div>
+<button style="width: 44px; height: 44px; border: 0; background: transparent; font-size: 20px; color: #222222;" aria-label="Más acciones">⋮</button>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-size: 16px; font-weight: 600;">Samu · 12 años</span>
+<span style="color: #555555;">Nació el 10/05/2014 · Celular 300 123 4567</span>
+<div style="display: flex; gap: 6px; flex-wrap: wrap;">
+<span style="padding: 4px 10px; border-radius: 12px; background: #E6E6E6; font-size: 12px;">Sub-12</span>
+<span style="padding: 4px 10px; border-radius: 12px; background: #E6E6E6; font-size: 12px;">Torneo Liga</span>
+<span style="padding: 4px 10px; border-radius: 12px; border: 1px solid #333333; font-size: 12px;">Activo</span>
+</div>
+</div>
+<div style="display: flex; gap: 8px;">
+<button style="flex-grow: 1; height: 44px; border: 1px solid #333333; border-radius: 8px; background: #FFFFFF; color: #222222; font-weight: 600;">Editar</button>
+<button style="flex-grow: 1; height: 44px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;">Desactivar</button>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between;">
+<h2 style="margin: 0; font-size: 16px;">Acudientes</h2>
+<a href="AddGuardian.dc.html" style="height: 44px; padding: 0 14px; display: flex; align-items: center; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600; text-decoration: none;">Agregar acudiente</a>
+</div>
+<div style="display: flex; flex-direction: column; border: 1px solid #D9D9D9; border-radius: 8px;">
+<div style="padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E6E6E6;">
+<div style="display: flex; flex-direction: column; gap: 2px;"><span style="font-weight: 600;">Diana Gómez</span><span style="font-size: 12px; color: #555555;">Mamá · 310 555 1234</span></div>
+<button style="width: 44px; height: 44px; border: 0; background: transparent; font-size: 20px; color: #222222;" aria-label="Acciones de Diana Gómez">⋮</button>
+</div>
+<div style="padding: 10px 12px; display: flex; align-items: center; justify-content: space-between;">
+<div style="display: flex; flex-direction: column; gap: 2px;"><span style="font-weight: 600;">Carlos Vargas</span><span style="font-size: 12px; color: #555555;">Papá · 315 777 9876 · También de Tomás V.</span></div>
+<button style="width: 44px; height: 44px; border: 0; background: transparent; font-size: 20px; color: #222222;" aria-label="Acciones de Carlos Vargas">⋮</button>
+</div>
+</div>
+<div style="padding: 10px 12px; border: 1px dashed #BDBDBD; border-radius: 8px; color: #555555; font-size: 12px;">Menú ⋮ del jugador: Eliminar jugador (con confirmación). Menú ⋮ del acudiente: Editar · Retirar.</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

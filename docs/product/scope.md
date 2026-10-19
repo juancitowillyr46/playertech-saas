@@ -54,12 +54,13 @@ Las decisiones de la Fase 1 están registradas en ADR-012, ADR-013 y ADR-014 (`d
 
 ### Fase 2 — Negocio
 
-> Refinada en la ideación del 2026-10-18. Decisiones en `docs/architecture/decisions.md` (ADR-018, DEC-30 a DEC-41).
+> Refinada en la ideación del 2026-10-18. Decisiones en `docs/architecture/decisions.md` (ADR-018, DEC-30 a DEC-42).
 
 ### Gestión de jugadores y acudientes
 
 - Registro y consulta de jugadores con datos básicos: nombres y apellidos, apodo opcional, fecha de nacimiento, celular propio y activo o inactivo. Sin documento ni foto (DEC-36).
-- Cada jugador puede tener uno o más acudientes (nombre, celular, parentesco). Sin acudiente, el celular del jugador es obligatorio y responde él mismo (DEC-30).
+- Cada jugador puede tener uno o más acudientes (nombre, celular, parentesco). Un jugador adulto sin acudiente responde él mismo desde el enlace («Soy el jugador»). El celular del jugador es opcional (DEC-30, DEC-36).
+- No se registra dos veces el mismo jugador (nombres, apellidos y fecha de nacimiento); se ofrece actualizar sus datos (DEC-42).
 - Asociación de jugadores con grupos o categorías; un jugador puede pertenecer a más de un grupo.
 
 ### Gestión de grupos

@@ -6,9 +6,9 @@ function routes(items: MenuItem[]): string[] {
 }
 
 describe('APP_NAVIGATION', () => {
-    it('contiene General (Inicio) y Configuración (Academia y Sedes)', () => {
+    it('contiene General (Inicio y Jugadores, spec 009) y Configuración (Academia y Sedes)', () => {
         expect(APP_NAVIGATION.map((item) => item.label)).toEqual(['General', 'Configuración']);
-        expect(routes(APP_NAVIGATION)).toEqual(['/home', '/settings/academy', '/settings/venues']);
+        expect(routes(APP_NAVIGATION)).toEqual(['/home', '/players', '/settings/academy', '/settings/venues']);
         expect(APP_NAVIGATION[1].items?.map((item) => item.label)).toEqual(['Academia', 'Sedes']);
     });
 

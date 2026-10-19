@@ -21,7 +21,11 @@ Registrar a las personas que responden por cada jugador, para enviarles sus conv
 
 ## Historias de usuario
 
-Por definir antes de la spec 1 de la Fase 2 (Definition of Ready).
+| ID | Historia | Estado |
+|---|---|---|
+| HU-034 | Acudientes del jugador (registro por el owner) | Terminada |
+
+Los acudientes que nacen desde el enlace y la validación de vínculos se definen antes de la spec 4.
 
 ## Decisiones de la ideación (2026-10-18)
 

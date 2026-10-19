@@ -1,0 +1,91 @@
+import { TestBed } from '@angular/core/testing';
+import { SUPABASE_CLIENT } from '../../../core/supabase/supabase-client';
+import { MockResult, pgError, supabaseClientMock } from '../../../testing/supabase-client-mock';
+import { SupabaseGuardianRepository } from './supabase-guardian.repository';
+
+const player = (first_names: string, last_names: string, is_active = true, deleted_at: string | null = null) => ({ first_names, last_names, is_active, deleted_at });
+
+const LINK = {
+    id: 'l1',
+    relationship: 'father',
+    guardians: {
+        id: 'gd1',
+        full_name: 'Carlos Vargas',
+        phone: '3157779876',
+        guardian_links: [
+            { player_id: 'p1', deleted_at: null, players: player('Samuel', 'Vargas') },
+            { player_id: 'p2', deleted_at: null, players: player('Tomás', 'vargas') },
+            { player_id: 'p3', deleted_at: null, players: player('Inactivo', 'X', false) },
+            { player_id: 'p4', deleted_at: '2026-10-01T00:00:00Z', players: player('Retirado', 'Y') }
+        ]
+    }
+};
+
+function setup(results: MockResult[]) {
+    const mock = supabaseClientMock(results);
+
+    TestBed.configureTestingModule({ providers: [SupabaseGuardianRepository, { provide: SUPABASE_CLIENT, useValue: mock.client }] });
+
+    return { repository: TestBed.inject(SupabaseGuardianRepository), ...mock };
+}
+
+describe('SupabaseGuardianRepository', () => {
+    it('listByPlayer: vínculos validados y no retirados, con los otros jugadores activos que acompaña', async () => {
+        const { repository, args } = setup([{ data: [LINK], error: null }]);
+
+        const guardians = await repository.listByPlayer('p1');
+
+        expect(args('eq')).toEqual([
+            ['player_id', 'p1'],
+            ['status', 'validated']
+        ]);
+        expect(args('is')).toContainEqual(['deleted_at', null]);
+        expect(guardians).toEqual([{ linkId: 'l1', guardianId: 'gd1', fullName: 'Carlos Vargas', phone: '3157779876', relationship: 'father', otherPlayers: ['Tomás V.'] }]);
+    });
+
+    it('findByPhone: el acudiente no eliminado con ese celular, o null', async () => {
+        const { repository, args } = setup([
+            { data: { id: 'gd1', full_name: 'Carlos Vargas' }, error: null },
+            { data: null, error: null }
+        ]);
+
+        expect(await repository.findByPhone('3157779876')).toEqual({ guardianId: 'gd1', fullName: 'Carlos Vargas' });
+        expect(await repository.findByPhone('3000000000')).toBeNull();
+        expect(args('is')).toContainEqual(['deleted_at', null]);
+    });
+
+    it('addToPlayer: llama a add_player_guardian con la autorización y traduce la respuesta', async () => {
+        const { repository, rpc } = setup([{ data: [{ guardian_id: 'gd1', link_id: 'l2', guardian_existed: true, guardian_name: 'Carlos Vargas' }], error: null }]);
+
+        const result = await repository.addToPlayer('p2', { fullName: 'Carlos', phone: '3157779876', relationship: 'father' });
+
+        expect(rpc).toHaveBeenCalledWith('add_player_guardian', { p_player_id: 'p2', p_full_name: 'Carlos', p_phone: '3157779876', p_relationship: 'father', p_consent: true });
+        expect(result).toEqual({ guardianExisted: true, guardianName: 'Carlos Vargas' });
+    });
+
+    it('addToPlayer: vínculo repetido rechaza con duplicate; sin autorización, con rule_violation', async () => {
+        const { repository } = setup([
+            { data: null, error: pgError('23505') },
+            { data: null, error: pgError('22023') }
+        ]);
+        const input = { fullName: 'Carlos', phone: '3157779876', relationship: 'father' } as const;
+
+        await expect(repository.addToPlayer('p1', input)).rejects.toMatchObject({ code: 'duplicate' });
+        await expect(repository.addToPlayer('p1', input)).rejects.toMatchObject({ code: 'rule_violation' });
+    });
+
+    it('editar y retirar: solo sus columnas, sobre filas no eliminadas; si ya no existe, not_found', async () => {
+        const ok = { data: { id: 'x' }, error: null };
+        const { repository, args } = setup([ok, ok, ok, { data: null, error: pgError('PGRST116') }]);
+
+        await repository.updateGuardian('gd1', { fullName: 'Carlos V.', phone: '3157779876' });
+        await repository.updateRelationship('l1', 'other');
+        await repository.removeFromPlayer('l1');
+
+        expect(args('update', 'guardians')[0][0]).toEqual({ full_name: 'Carlos V.', phone: '3157779876' });
+        expect(args('update', 'guardian_links')[0][0]).toEqual({ relationship: 'other' });
+        expect(Object.keys(args('update', 'guardian_links')[1][0] as object)).toEqual(['deleted_at']);
+        expect(args('is', 'guardian_links')).toContainEqual(['deleted_at', null]);
+        await expect(repository.removeFromPlayer('l1')).rejects.toMatchObject({ code: 'not_found' });
+    });
+});

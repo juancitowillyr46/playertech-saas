@@ -16,6 +16,8 @@ const CODE_MAP: Readonly<Record<string, AppErrorCode>> = {
     // Reglas de la base de datos (spec 004): índice único, check y ninguna fila afectada.
     '23505': 'duplicate',
     '23514': 'rule_violation',
+    // Regla de negocio de una función (p. ej., falta la autorización de datos del acudiente, spec 009).
+    '22023': 'rule_violation',
     PGRST116: 'not_found'
 };
 

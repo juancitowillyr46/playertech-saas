@@ -263,6 +263,35 @@ Las funciones de autorización usan `SECURITY DEFINER` con `search_path` fijo, p
 
 ---
 
+# Fase 2 — Jugadores, grupos y acudientes (spec 009)
+
+Migración `20261018100000_players_groups_guardians.sql`. Columnas, restricciones y estados: [`specs/009-players-guardians-groups/data-model.md`](../../specs/009-players-guardians-groups/data-model.md); permisos y funciones: [`contracts/database.md`](../../specs/009-players-guardians-groups/contracts/database.md). Sustituye a `players`, `groups` y `player_groups` del borrador de abajo.
+
+```text
+academies ─┬─< players ─┬─< group_members >─┬─ groups
+           │            └─< guardian_links >─┴─ guardians
+           └─ (todas llevan academy_id; claves compuestas (academy_id, id) impiden mezclar academias)
+```
+
+| Tabla | Qué es | Borrado |
+|---|---|---|
+| `players` | Jugador: nombres, apellidos, apodo, fecha de nacimiento, celular opcional, activo | Lógico. Único por nombre normalizado y fecha (DEC-42) |
+| `groups` | Grupo con nombre único por academia | Lógico. Al eliminarlo, un trigger quita sus integrantes |
+| `group_members` | Jugador en un grupo | **Físico** (relación sin historia, excepción del plan) |
+| `guardians` | Acudiente: la persona, única por celular en la academia | Lógico |
+| `guardian_links` | Vínculo acudiente-jugador: parentesco, estado y autorización de datos (DEC-39, DEC-40) | Lógico |
+
+| Función | Uso |
+|---|---|
+| `current_user_id()` | Usuario actual para `created_by` y políticas (ADR-017) |
+| `normalize_name(text)` | Comparar nombres sin mayúsculas, tildes ni espacios |
+| `find_player_by_identity(...)` | Detectar el jugador ya registrado |
+| `add_player_guardian(...)` | Única vía para crear acudientes y vínculos; exige la autorización y guarda la Política vigente |
+
+RLS: leen los miembros de la academia y escribe el owner; `guardians` y `guardian_links` solo se insertan con `add_player_guardian`.
+
+---
+
 # Fase 2 — Negocio (borrador previo, pendiente de rediseño)
 
 > ⚠️ Esta sección es anterior a la ideación de la Fase 1 y se rediseñará. Pendiente: acudientes, convocatoria con cabecera y convocados por jugador, `academy_id` y `deleted_at` en todas las tablas, sede de la actividad y sede habitual del jugador. Las definiciones de `academies` y `academy_members` de esta sección quedan reemplazadas por la Fase 1.
