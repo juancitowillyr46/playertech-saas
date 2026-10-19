@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Nueva actividad: lugar y repetir</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;" role="dialog" aria-label="Nueva actividad">
+<div style="height: 56px; padding: 0 8px 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<h1 style="margin: 0; font-size: 18px;">Nueva actividad</h1>
+<a href="Main.dc.html" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px;" aria-label="Cerrar">✕</a>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;">
+<div style="display: flex; flex-direction: column; gap: 4px;">
+<span style="font-weight: 600;">Lugar</span>
+<div style="border: 1px solid #333333; border-radius: 8px; overflow: hidden;">
+<div style="height: 44px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;"><span>Sede Norte</span><span>▴</span></div>
+<span style="display: block; padding: 6px 12px 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #555555;">SEDES</span>
+<div style="height: 40px; padding: 0 12px; display: flex; align-items: center; background: #E6E6E6; font-weight: 600;">✓ Sede Norte</div>
+<div style="height: 40px; padding: 0 12px; display: flex; align-items: center;">Sede Sur</div>
+<span style="display: block; padding: 6px 12px 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #555555;">CANCHAS</span>
+<div style="height: 40px; padding: 0 12px; display: flex; align-items: center;">Cancha El Salitre · Bogotá</div>
+<div style="height: 44px; padding: 0 12px; display: flex; align-items: center; border-top: 1px solid #D9D9D9; font-weight: 600;">＋ Nueva cancha</div>
+</div>
+</div>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Observaciones <span style="font-weight: 400; color: #555555;">(opcional)</span></span><textarea style="height: 52px; box-sizing: border-box; padding: 8px 12px; border: 1px solid #BDBDBD; border-radius: 8px; font: inherit;">Uniforme azul, canilleras.</textarea></label>
+<div style="padding: 12px; border: 1px solid #BDBDBD; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
+<label style="min-height: 32px; display: flex; align-items: center; justify-content: space-between; font-weight: 600;">Repetir cada semana <input type="checkbox" checked style="width: 22px; height: 22px; margin: 0;"></label>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px;" role="group" aria-label="Días de la semana">
+<button style="height: 44px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;" aria-pressed="false" aria-label="Lunes">L</button>
+<button style="height: 44px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 700;" aria-pressed="true" aria-label="Martes">M</button>
+<button style="height: 44px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;" aria-pressed="false" aria-label="Miércoles">X</button>
+<button style="height: 44px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 700;" aria-pressed="true" aria-label="Jueves">J</button>
+<button style="height: 44px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;" aria-pressed="false" aria-label="Viernes">V</button>
+<button style="height: 44px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;" aria-pressed="false" aria-label="Sábado">S</button>
+<button style="height: 44px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;" aria-pressed="false" aria-label="Domingo">D</button>
+</div>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span>Hasta</span><input style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #BDBDBD; border-radius: 8px; font-size: 14px;" value="20/01/2027"></label>
+<span style="font-weight: 600;">Se crearán 27 entrenamientos.</span>
+</div>
+</div>
+<div style="padding: 12px 16px; border-top: 1px solid #D9D9D9; display: flex; gap: 8px;">
+<button style="flex-grow: 1; height: 48px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;">Cancelar</button>
+<button style="flex-grow: 1; height: 48px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600;">Crear 27</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -19,6 +19,7 @@ export const appRoutes: Routes = [
         children: [
             { path: 'home', loadChildren: () => import('./app/features/home/home.routes') },
             { path: 'players', loadChildren: () => import('./app/features/players/players.routes') },
+            { path: 'activities', loadChildren: () => import('./app/features/activities/activities.routes') },
             { path: 'settings', loadChildren: () => import('./app/features/settings/settings.routes') }
         ]
     },

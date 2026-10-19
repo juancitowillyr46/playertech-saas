@@ -20,6 +20,10 @@ import { HomeSummaryRepository } from './app/features/home/data/home-summary.rep
 import { SupabaseHomeSummaryRepository } from './app/features/home/data/supabase-home-summary.repository';
 import { SupabaseVenueRepository } from './app/features/venues/data/supabase-venue.repository';
 import { VenueRepository } from './app/features/venues/data/venue.repository';
+import { ActivityRepository } from './app/features/activities/data/activity.repository';
+import { ExternalFieldRepository } from './app/features/activities/data/external-field.repository';
+import { SupabaseActivityRepository } from './app/features/activities/data/supabase-activity.repository';
+import { SupabaseExternalFieldRepository } from './app/features/activities/data/supabase-external-field.repository';
 import { GroupRepository } from './app/features/groups/data/group.repository';
 import { SupabaseGroupRepository } from './app/features/groups/data/supabase-group.repository';
 import { GuardianRepository } from './app/features/players/data/guardian.repository';
@@ -56,6 +60,8 @@ export const appConfig: ApplicationConfig = {
         { provide: PlayerRepository, useClass: SupabasePlayerRepository },
         { provide: GuardianRepository, useClass: SupabaseGuardianRepository },
         { provide: GroupRepository, useClass: SupabaseGroupRepository },
+        { provide: ActivityRepository, useClass: SupabaseActivityRepository },
+        { provide: ExternalFieldRepository, useClass: SupabaseExternalFieldRepository },
         { provide: HomeSummaryRepository, useClass: SupabaseHomeSummaryRepository },
         { provide: AcademyProfileRepository, useClass: SupabaseAcademyProfileRepository },
         provideAppInitializer(async () => {

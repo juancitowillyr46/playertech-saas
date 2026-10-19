@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -49,9 +49,13 @@ export class GroupNameDrawer {
 
     constructor() {
         effect(() => {
+            // Solo `open` dispara el reinicio: las señales internas de PrimeNG que se leen al
+            // reiniciar el formulario no deben volver a ejecutarlo (reiniciaba al elegir un valor).
             if (this.open()) {
-                this.submitted = false;
-                this.form.reset({ name: this.name() });
+                untracked(() => {
+                    this.submitted = false;
+                    this.form.reset({ name: this.name() });
+                });
             }
         });
     }

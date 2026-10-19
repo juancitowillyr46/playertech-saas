@@ -18,6 +18,8 @@ const CODE_MAP: Readonly<Record<string, AppErrorCode>> = {
     '23514': 'rule_violation',
     // Regla de negocio de una función (p. ej., falta la autorización de datos del acudiente, spec 009).
     '22023': 'rule_violation',
+    // Clave foránea violada: el lugar u otra referencia ya no es válida (spec 011).
+    '23503': 'rule_violation',
     PGRST116: 'not_found'
 };
 

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Detalle de la actividad</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="height: 56px; padding: 0 8px; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #D9D9D9;">
+<a href="Main.dc.html" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 20px;" aria-label="Volver">←</a>
+<span style="font-weight: 600;">Actividades</span>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow: hidden;">
+<div style="display: flex; align-items: flex-end; gap: 8px; padding-bottom: 8px; border-bottom: 2px solid #222222;">
+<h1 style="margin: 0; flex-grow: 1; font-size: 22px;">Competencia vs. Club Norte</h1>
+<button style="width: 44px; height: 44px; border: 0; background: transparent; font-size: 20px; color: #222222;" aria-label="Más acciones: eliminar">⋮</button>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: 96px minmax(0, 1fr); row-gap: 10px; column-gap: 8px;">
+<dt style="color: #555555;">Fecha</dt><dd style="margin: 0; font-weight: 600;">Sábado 24 de octubre</dd>
+<dt style="color: #555555;">Citación</dt><dd style="margin: 0;">8:15 a. m.</dd>
+<dt style="color: #555555;">Inicio · fin</dt><dd style="margin: 0;">9:00 a. m. – 10:30 a. m.</dd>
+<dt style="color: #555555;">Torneo</dt><dd style="margin: 0;">Torneo Liga</dd>
+<dt style="color: #555555;">Lugar</dt><dd style="margin: 0;"><strong>Cancha El Salitre</strong><br><span style="color: #555555;">Calle 63 # 60-80, Bogotá · Entrada por la puerta 4</span></dd>
+<dt style="color: #555555;">Observaciones</dt><dd style="margin: 0;">Uniforme azul, llevar canilleras e hidratación.</dd>
+</dl>
+<div style="display: flex; gap: 8px;">
+<a href="Form.dc.html" style="flex-grow: 1; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #333333; border-radius: 8px; font-weight: 600; text-decoration: none;">Editar</a>
+<button style="flex-grow: 1; height: 44px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;">Cancelar actividad</button>
+</div>
+<div style="padding: 10px 12px; border: 1px dashed #BDBDBD; border-radius: 8px; color: #555555; font-size: 12px; line-height: 1.5;">Si la actividad ya pasó: «Esta actividad ya pasó: no se puede modificar». Sin Editar ni Cancelar; solo Eliminar en ⋮. Cancelada: sello «Cancelada» y «Reactivar».</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

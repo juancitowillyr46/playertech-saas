@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -175,16 +175,20 @@ export class PlayerFormDrawer {
     constructor() {
         // Cada apertura parte de los datos del jugador (o vacío) y sin errores visibles.
         effect(() => {
+            // Solo `open` dispara el reinicio: las señales internas de PrimeNG que se leen al
+            // reiniciar el formulario no deben volver a ejecutarlo (reiniciaba al elegir un valor).
             if (this.open()) {
-                const player = this.player();
-                this.submitted = false;
-                this.form.reset({
-                    firstNames: player?.firstNames ?? '',
-                    lastNames: player?.lastNames ?? '',
-                    nickname: player?.nickname ?? '',
-                    birthDate: player ? fromIsoDate(player.birthDate) : null,
-                    phone: player?.phone ?? '',
-                    groupIds: player?.groups.map((group) => group.id) ?? []
+                untracked(() => {
+                    const player = this.player();
+                    this.submitted = false;
+                    this.form.reset({
+                        firstNames: player?.firstNames ?? '',
+                        lastNames: player?.lastNames ?? '',
+                        nickname: player?.nickname ?? '',
+                        birthDate: player ? fromIsoDate(player.birthDate) : null,
+                        phone: player?.phone ?? '',
+                        groupIds: player?.groups.map((group) => group.id) ?? []
+                    });
                 });
             }
         });

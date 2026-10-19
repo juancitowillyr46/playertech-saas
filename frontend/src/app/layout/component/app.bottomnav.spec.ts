@@ -27,7 +27,7 @@ describe('AppBottomnav', () => {
 
         const nav = screen.getByRole('navigation', { name: 'Navegación principal' });
         expect(nav).toBeTruthy();
-        expect(screen.getAllByRole('link').map((link) => link.textContent?.trim())).toEqual(['Inicio', 'Jugadores', 'Academia', 'Sedes']);
+        expect(screen.getAllByRole('link').map((link) => link.textContent?.trim())).toEqual(['Inicio', 'Jugadores', 'Actividades', 'Academia', 'Sedes']);
     });
 
     it('marca la sección actual con aria-current', async () => {

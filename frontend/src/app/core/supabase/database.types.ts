@@ -114,6 +114,135 @@ export type Database = {
                     }
                 ];
             };
+            activities: {
+                Row: {
+                    academy_id: string;
+                    call_at: string | null;
+                    created_at: string;
+                    created_by: string;
+                    deleted_at: string | null;
+                    ends_at: string | null;
+                    external_field_id: string | null;
+                    id: string;
+                    notes: string | null;
+                    opponent: string | null;
+                    series_id: string | null;
+                    starts_at: string;
+                    status: string;
+                    tournament: string | null;
+                    type: string;
+                    updated_at: string;
+                    venue_id: string | null;
+                };
+                Insert: {
+                    academy_id: string;
+                    call_at?: string | null;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    ends_at?: string | null;
+                    external_field_id?: string | null;
+                    id?: string;
+                    notes?: string | null;
+                    opponent?: string | null;
+                    series_id?: string | null;
+                    starts_at: string;
+                    status?: string;
+                    tournament?: string | null;
+                    type: string;
+                    updated_at?: string;
+                    venue_id?: string | null;
+                };
+                Update: {
+                    academy_id?: string;
+                    call_at?: string | null;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    ends_at?: string | null;
+                    external_field_id?: string | null;
+                    id?: string;
+                    notes?: string | null;
+                    opponent?: string | null;
+                    series_id?: string | null;
+                    starts_at?: string;
+                    status?: string;
+                    tournament?: string | null;
+                    type?: string;
+                    updated_at?: string;
+                    venue_id?: string | null;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'activities_academy_id_external_field_id_fkey';
+                        columns: ['academy_id', 'external_field_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'external_fields';
+                        referencedColumns: ['academy_id', 'id'];
+                    },
+                    {
+                        foreignKeyName: 'activities_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    },
+                    {
+                        foreignKeyName: 'activities_academy_id_venue_id_fkey';
+                        columns: ['academy_id', 'venue_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'venues';
+                        referencedColumns: ['academy_id', 'id'];
+                    }
+                ];
+            };
+            external_fields: {
+                Row: {
+                    academy_id: string;
+                    address: string | null;
+                    city: string | null;
+                    created_at: string;
+                    created_by: string;
+                    deleted_at: string | null;
+                    directions: string | null;
+                    id: string;
+                    name: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    address?: string | null;
+                    city?: string | null;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    directions?: string | null;
+                    id?: string;
+                    name: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    address?: string | null;
+                    city?: string | null;
+                    created_at?: string;
+                    created_by?: string;
+                    deleted_at?: string | null;
+                    directions?: string | null;
+                    id?: string;
+                    name?: string;
+                    updated_at?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'external_fields_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    }
+                ];
+            };
             files: {
                 Row: {
                     academy_id: string;

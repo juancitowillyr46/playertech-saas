@@ -123,7 +123,7 @@ description: "Lista de tareas para asignar acudientes ya registrados (spec 010)"
 - [X] T020 Recorrer `quickstart.md` (pasos 2 a 5) y anotar los resultados; el responsable valida desde el celular
 - [X] T021 Restaurar la academia A del seed: borrar por SQL los jugadores, grupos, acudientes y vínculos creados, y confirmar `npm run db:test` en verde
 - [X] T022 [P] Marcar HU-035 como «Terminada (entorno local)» en la HU, en EP-10 y en `docs/backlog/README.md`; marcar T044 de la spec 009
-- [ ] T023 Tras el merge y con autorización, `npm run db:push`: primero con `--dry-run`, y verificar por SQL en la nube que ningún acudiente quedó sin autorización
+- [X] T023 Tras el merge y con autorización, `npm run db:push`: primero con `--dry-run`, y verificar por SQL en la nube que ningún acudiente quedó sin autorización
 
 ---
 
