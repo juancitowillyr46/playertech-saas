@@ -4,10 +4,15 @@ import { LegalDocumentsRepository } from '../../../core/legal/data/legal-documen
 import { normalizePhone } from '../../../shared/forms/phone.validator';
 import { AddGuardianResult, GuardianRepository } from '../data/guardian.repository';
 import { GroupsNotSavedError, PlayerRepository } from '../data/player.repository';
-import { GroupRef, Guardian, GuardianInput, PlayerInput, PlayerSummary, Relationship } from '../models/player.models';
+import { GroupRef, Guardian, GuardianAssignment, GuardianInput, GuardianOption, PlayerInput, PlayerSummary, Relationship } from '../models/player.models';
 import { cleanPlayerInput } from './players.service';
 
 export type PlayerDetailStatus = 'loading' | 'ready' | 'not_found' | 'error';
+
+/** Opción del selector: indica si ya es acudiente de este jugador (CA-004 de HU-035). */
+export interface GuardianChoice extends GuardianOption {
+    readonly alreadyLinked: boolean;
+}
 
 /**
  * Ficha de un jugador con sus acudientes (spec 009; HU-033 y HU-034). Cada operación
@@ -92,6 +97,33 @@ export class PlayerDetailService {
                 await this.guardianRepository.updateRelationship(guardian.linkId, input.relationship as Relationship);
             }
         });
+    }
+
+    /** Acudientes de la academia para el selector (DEC-43). */
+    async guardianOptions(): Promise<readonly GuardianChoice[]> {
+        const options = await this.guardianRepository.listGuardians();
+
+        return options.map((option) => ({ ...option, alreadyLinked: option.players.some((player) => player.playerId === this.playerId) }));
+    }
+
+    /** Otros jugadores con acudientes, para «Copiar de un hermano». */
+    async siblings(): Promise<readonly PlayerSummary[]> {
+        return (await this.players.listPlayers()).filter((player) => player.id !== this.playerId && player.guardianCount > 0);
+    }
+
+    siblingGuardians(playerId: string): Promise<readonly Guardian[]> {
+        return this.guardianRepository.listByPlayer(playerId);
+    }
+
+    /** Asigna acudientes ya registrados sin pedir de nuevo la autorización (CA-003 de HU-035). */
+    async assignGuardians(assignments: readonly GuardianAssignment[]): Promise<number> {
+        let assigned = 0;
+
+        await this.run(async () => {
+            assigned = await this.guardianRepository.assign(this.playerId, assignments);
+        });
+
+        return assigned;
     }
 
     removeGuardian(guardian: Guardian): Promise<void> {

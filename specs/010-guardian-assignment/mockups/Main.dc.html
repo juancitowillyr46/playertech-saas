@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Ficha de Tomás</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="height: 56px; padding: 0 8px; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #D9D9D9;">
+<a href="#" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 20px;" aria-label="Volver">←</a>
+<span style="font-weight: 600;">Jugadores</span>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+<h1 style="margin: 0; font-size: 22px; padding-bottom: 8px; border-bottom: 2px solid #222222;">Tomás Vargas</h1>
+<span style="color: #555555;">10 años · Sub-10 · Activo</span>
+<div style="display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-size: 16px;">Acudientes</h2>
+<div style="display: flex; gap: 8px;">
+<a href="Picker.dc.html" style="flex-grow: 1; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600; text-decoration: none;">Agregar acudiente</a>
+<a href="CopySibling.dc.html" style="flex-grow: 1; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid #333333; color: #222222; font-weight: 600; text-decoration: none;">Copiar de un hermano</a>
+</div>
+</div>
+<p style="margin: 0; padding: 20px 0; border-top: 1px solid #D9D9D9; border-bottom: 1px solid #D9D9D9; color: #555555;">Aún no tiene acudientes.</p>
+<div style="padding: 10px 12px; border: 1px dashed #BDBDBD; border-radius: 8px; color: #555555; font-size: 12px; line-height: 1.5;">«Agregar acudiente» abre la lista de acudientes de la academia; si aún no hay ninguno, abre el formulario de registro. «Copiar de un hermano» solo aparece si otros jugadores tienen acudientes.</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

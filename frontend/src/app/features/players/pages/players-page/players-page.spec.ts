@@ -138,7 +138,7 @@ describe('PlayersPage', { timeout: 20_000 }, () => {
         const dialog = await fillForm(user, { first: 'Andres', last: 'Gomez' });
         await user.click(within(dialog).getByRole('button', { name: 'Guardar' }));
 
-        expect(within(dialog).getByText('Este jugador ya está registrado')).toBeTruthy();
+        expect(await within(dialog).findByText('Este jugador ya está registrado')).toBeTruthy();
         expect(within(dialog).getByText(/Andrés Gómez · 10\/05\/2014/)).toBeTruthy();
         expect(repository.createPlayer).not.toHaveBeenCalled();
 

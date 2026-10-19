@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Copiar acudientes de un hermano</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;" role="dialog" aria-label="Copiar acudientes de un hermano">
+<div style="height: 56px; padding: 0 8px 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<h1 style="margin: 0; font-size: 18px;">Copiar acudientes de un hermano</h1>
+<a href="Main.dc.html" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px;" aria-label="Cerrar">✕</a>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow: hidden;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-size: 12px; color: #555555;">Paso 1 · Elige al hermano</span>
+<div style="min-height: 52px; padding: 0 4px 0 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #BDBDBD; border-radius: 8px;">
+<span><strong>Samuel V. · Samu</strong> <span style="color: #555555;">· 2 acudientes</span></span>
+<button style="height: 44px; padding: 0 10px; border: 0; background: transparent; color: #222222; text-decoration: underline;">Cambiar</button>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-size: 12px; color: #555555;">Paso 2 · Acudientes que pasan a Tomás</span>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #D9D9D9;">
+<div style="padding: 10px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E6E6E6;">
+<input type="checkbox" style="width: 22px; height: 22px; margin: 0;" checked aria-label="Diana Gómez">
+<div style="min-width: 0; flex-grow: 1; display: flex; flex-direction: column;"><span style="font-weight: 600;">Diana Gómez</span><span style="font-size: 12px; color: #555555;">310 555 1234</span></div>
+<button style="height: 44px; padding: 0 10px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;" aria-label="Parentesco de Diana Gómez">Mamá ▾</button>
+</div>
+<div style="padding: 10px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E6E6E6;">
+<input type="checkbox" style="width: 22px; height: 22px; margin: 0;" checked aria-label="Carlos Vargas">
+<div style="min-width: 0; flex-grow: 1; display: flex; flex-direction: column;"><span style="font-weight: 600;">Carlos Vargas</span><span style="font-size: 12px; color: #555555;">315 777 9876</span></div>
+<button style="height: 44px; padding: 0 10px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;" aria-label="Parentesco de Carlos Vargas">Papá ▾</button>
+</div>
+<div style="padding: 10px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E6E6E6; color: #555555;">
+<input type="checkbox" style="width: 22px; height: 22px; margin: 0;" disabled aria-label="Luz Ruiz">
+<div style="min-width: 0; flex-grow: 1; display: flex; flex-direction: column;"><span style="font-weight: 600;">Luz Ruiz</span><span style="font-size: 12px;">Ya es acudiente de Tomás</span></div>
+</div>
+</div>
+</div>
+<div style="padding: 10px 12px; border: 1px dashed #BDBDBD; border-radius: 8px; color: #555555; font-size: 12px; line-height: 1.5;">El parentesco viene del hermano y se puede cambiar. No se pide de nuevo la autorización de datos.</div>
+</div>
+<div style="padding: 12px 16px; border-top: 1px solid #D9D9D9; display: flex; gap: 8px;">
+<button style="flex-grow: 1; height: 48px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;">Cancelar</button>
+<button style="flex-grow: 1; height: 48px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600;">Asignar 2 acudientes</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

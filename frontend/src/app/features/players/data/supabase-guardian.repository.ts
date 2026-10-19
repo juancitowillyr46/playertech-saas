@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
+import { AppError } from '../../../core/errors/app-error';
 import { mapSupabaseError } from '../../../core/errors/supabase-error.mapper';
 import { SUPABASE_CLIENT } from '../../../core/supabase/supabase-client';
-import { Guardian, GuardianInput, Relationship, shortName } from '../models/player.models';
+import { Guardian, GuardianAssignment, GuardianInput, GuardianOption, Relationship, shortName } from '../models/player.models';
 import { AddGuardianResult, GuardianRepository } from './guardian.repository';
 
 /** Vínculo con la persona y los demás jugadores que acompaña (para «También de…»). */
@@ -15,6 +16,31 @@ interface LinkRow {
         full_name: string;
         phone: string;
         guardian_links: { player_id: string; deleted_at: string | null; players: { first_names: string; last_names: string; is_active: boolean; deleted_at: string | null } | null }[];
+    };
+}
+
+/** Acudiente con sus vínculos no eliminados y los jugadores (para el selector, DEC-43). */
+const OPTION_COLUMNS = 'id, full_name, phone, guardian_links(player_id, relationship, deleted_at, players(first_names, last_names, is_active, deleted_at))';
+
+interface OptionRow {
+    id: string;
+    full_name: string;
+    phone: string;
+    guardian_links: { player_id: string; relationship: string; deleted_at: string | null; players: { first_names: string; last_names: string; is_active: boolean; deleted_at: string | null } | null }[];
+}
+
+function toOption(row: OptionRow): GuardianOption {
+    return {
+        guardianId: row.id,
+        fullName: row.full_name,
+        phone: row.phone,
+        players: row.guardian_links
+            .filter((link) => !link.deleted_at && link.players?.is_active && !link.players.deleted_at)
+            .map((link) => ({
+                playerId: link.player_id,
+                name: shortName({ firstNames: link.players!.first_names, lastNames: link.players!.last_names }),
+                relationship: link.relationship as Relationship
+            }))
     };
 }
 
@@ -77,6 +103,34 @@ export class SupabaseGuardianRepository extends GuardianRepository {
         }
 
         return { guardianExisted: data[0].guardian_existed, guardianName: data[0].guardian_name };
+    }
+
+    async listGuardians(): Promise<readonly GuardianOption[]> {
+        // Sin filtro por academia: RLS lo aplica (principio VI).
+        const { data, error } = await this.client.from('guardians').select(OPTION_COLUMNS).is('deleted_at', null).order('full_name');
+
+        if (error || !data) {
+            throw mapSupabaseError(error);
+        }
+
+        return (data as unknown as OptionRow[]).map(toOption);
+    }
+
+    async assign(playerId: string, assignments: readonly GuardianAssignment[]): Promise<number> {
+        const { data, error } = await this.client.rpc('assign_guardians', {
+            p_player_id: playerId,
+            p_assignments: assignments.map((assignment) => ({ guardian_id: assignment.guardianId, relationship: assignment.relationship }))
+        });
+
+        if (error) {
+            const appError = mapSupabaseError(error);
+
+            // La función responde 42501 también cuando el jugador o un acudiente ya no existe,
+            // para no revelar datos ajenos: para el owner significa que ya no está.
+            throw appError.code === 'forbidden' ? new AppError('not_found', { cause: error }) : appError;
+        }
+
+        return data ?? 0;
     }
 
     async updateGuardian(guardianId: string, input: { fullName: string; phone: string }): Promise<void> {

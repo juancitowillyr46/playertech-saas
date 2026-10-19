@@ -1,4 +1,4 @@
-import { Guardian, GuardianInput, Relationship } from '../models/player.models';
+import { Guardian, GuardianAssignment, GuardianInput, GuardianOption, Relationship } from '../models/player.models';
 
 export interface AddGuardianResult {
     readonly guardianExisted: boolean;
@@ -25,4 +25,10 @@ export abstract class GuardianRepository {
 
     /** Retira el acudiente del jugador (borrado lógico del vínculo). */
     abstract removeFromPlayer(linkId: string): Promise<void>;
+
+    /** Acudientes no eliminados de la academia, con los jugadores que acompañan (DEC-43). */
+    abstract listGuardians(): Promise<readonly GuardianOption[]>;
+
+    /** Asigna acudientes ya registrados, validados y sin duplicar; devuelve cuántos asignó. */
+    abstract assign(playerId: string, assignments: readonly GuardianAssignment[]): Promise<number>;
 }

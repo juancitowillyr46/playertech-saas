@@ -13,6 +13,7 @@ function setup(player: Partial<Record<keyof PlayerRepository, ReturnType<typeof 
     const players = {
         getPlayer: vi.fn().mockResolvedValue(PLAYER),
         listGroups: vi.fn().mockResolvedValue([]),
+        listPlayers: vi.fn().mockResolvedValue([PLAYER, { ...PLAYER, id: 'p2', guardianCount: 2 }, { ...PLAYER, id: 'p3', guardianCount: 0 }]),
         updatePlayer: vi.fn().mockResolvedValue(undefined),
         setActive: vi.fn().mockResolvedValue(undefined),
         deletePlayer: vi.fn().mockResolvedValue(undefined),
@@ -24,7 +25,12 @@ function setup(player: Partial<Record<keyof PlayerRepository, ReturnType<typeof 
         addToPlayer: vi.fn().mockResolvedValue({ guardianExisted: false, guardianName: 'Diana' }),
         updateGuardian: vi.fn().mockResolvedValue(undefined),
         updateRelationship: vi.fn().mockResolvedValue(undefined),
-        removeFromPlayer: vi.fn().mockResolvedValue(undefined)
+        removeFromPlayer: vi.fn().mockResolvedValue(undefined),
+        listGuardians: vi.fn().mockResolvedValue([
+            { guardianId: 'gd1', fullName: 'Carlos Vargas', phone: '3157779876', players: [{ playerId: 'p1', name: 'Samuel V.', relationship: 'father' }] },
+            { guardianId: 'gd2', fullName: 'Diana Gómez', phone: '3105551234', players: [] }
+        ]),
+        assign: vi.fn().mockResolvedValue(2)
     };
 
     TestBed.configureTestingModule({
@@ -114,4 +120,31 @@ describe('PlayerDetailService', () => {
 
         expect(await service.privacyPolicyUrl()).toBe('https://legal/privacy');
     });
+
+    it('guardianOptions marca los que ya son de este jugador (CA-004 de HU-035)', async () => {
+        const { service } = setup();
+        await service.load('p1');
+
+        expect((await service.guardianOptions()).map((option) => [option.guardianId, option.alreadyLinked])).toEqual([
+            ['gd1', true],
+            ['gd2', false]
+        ]);
+    });
+
+    it('siblings: otros jugadores con acudientes', async () => {
+        const { service } = setup();
+        await service.load('p1');
+
+        expect((await service.siblings()).map((player) => player.id)).toEqual(['p2']);
+    });
+
+    it('assignGuardians asigna, relee la ficha y devuelve cuántos', async () => {
+        const { service, guardians } = setup();
+        await service.load('p1');
+
+        expect(await service.assignGuardians([{ guardianId: 'gd2', relationship: 'mother' }])).toBe(2);
+        expect(guardians.assign).toHaveBeenCalledWith('p1', [{ guardianId: 'gd2', relationship: 'mother' }]);
+        expect(guardians.listByPlayer).toHaveBeenCalledTimes(2);
+    });
 });
+
