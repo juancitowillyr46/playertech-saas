@@ -1,27 +1,44 @@
-# HU-006 — Activity List
+# HU-006 — Consultar actividades
 
-**Épica:** EP-04 — Gestión de actividades
+**Épica:** EP-04 — Gestión de actividades · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Spec:** spec 2 de la Fase 2 (actividades y canchas)
 
 ## Historia de usuario
 
-> Como **administrador**, quiero consultar las actividades de la academia, para conocer las actividades programadas y gestionarlas.
+> Como **owner**, quiero ver las actividades programadas de mi academia, para saber qué viene y gestionarlas.
 
 ## Criterios de aceptación
 
-### CA-001 — Consultar actividades
+### CA-001 — Próximas actividades
+**Dado** actividades programadas,
+**cuando** el owner abre Actividades,
+**entonces** ve por defecto las **próximas** (de hoy en adelante), ordenadas por fecha y hora, agrupadas por día.
 
-**Dado** que existen actividades registradas,  
-**cuando** el administrador accede a la gestión de actividades,  
-**entonces** debe poder visualizar las actividades disponibles.
+### CA-002 — Identificar cada actividad
+**Dado** el listado,
+**cuando** el owner lo revisa,
+**entonces** cada actividad muestra su tipo (Entrenamiento o Competencia), fecha, hora de inicio, lugar y, en competencia, el rival si existe; las canceladas se distinguen con el sello «Cancelada».
 
-### CA-002 — Identificar tipo
+### CA-003 — Filtros
+**Dado** el listado,
+**cuando** el owner filtra por tipo o elige ver las **pasadas**,
+**entonces** ve solo las que cumplen; las pasadas se ordenan de la más reciente a la más antigua.
 
-**Dado** que existen diferentes tipos de actividad,  
-**cuando** el administrador consulta el listado,  
-**entonces** debe poder identificar si cada actividad corresponde a un entrenamiento o competencia.
+### CA-004 — Detalle
+**Dado** una actividad del listado,
+**cuando** el owner la toca,
+**entonces** ve todos sus datos (incluidas citación, observaciones y las indicaciones del lugar) y sus acciones (HU-036).
 
-### CA-003 — Estado vacío
+### CA-005 — Estado vacío
+**Dado** que no hay actividades próximas,
+**cuando** el owner abre el listado,
+**entonces** ve un mensaje que lo indica y la acción para crear una.
 
-**Dado** que no existen actividades,  
-**cuando** el administrador accede al listado,  
-**entonces** debe visualizar un estado indicando que no existen actividades registradas.
+### CA-006 — Aislamiento
+**Dado** que existen otras academias,
+**cuando** el owner consulta,
+**entonces** solo ve las actividades de su academia.
+
+## Decisiones relacionadas
+
+ADR-018: DEC-44.

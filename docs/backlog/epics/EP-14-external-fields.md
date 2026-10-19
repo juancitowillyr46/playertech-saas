@@ -18,7 +18,9 @@ Guardar las canchas donde la academia juega torneos, para elegirlas al crear act
 
 ## Historias de usuario
 
-Por definir antes de la spec 2 de la Fase 2 (Definition of Ready).
+| ID | Historia | Estado |
+|---|---|---|
+| HU-037 | Canchas externas | Definida |
 
 ## Decisiones de la ideación (2026-10-18)
 
