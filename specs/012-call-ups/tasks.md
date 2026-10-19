@@ -64,7 +64,7 @@ description: "Lista de tareas para convocatoria y mensaje de WhatsApp (Fase 2, s
   - `copyText`;
   - `callUpLink(token)` con el origen actual y `/c/`.
 - [ ] T008 Crear los modelos (`call-up.models.ts`), `data/call-up.repository.ts`, `supabase-call-up.repository.ts` y su `.spec.ts` según `contracts/repositories.md`:
-  - `getByActivity` en una consulta, con listas, grupos, convocados y acudientes validados no retirados;
+  - `getByActivity` en una consulta, con listas, grupos, convocados y acudientes validados no retirados; sin los jugadores desactivados o eliminados después de convocarlos;
   - `create` (RPC);
   - `addPlayers`, `removePlayer` (y borrar la lista si queda vacía), `movePlayer`;
   - `setDeadline`, `close` y `saveIntro`;
@@ -77,7 +77,7 @@ description: "Lista de tareas para convocatoria y mensaje de WhatsApp (Fase 2, s
 ## Fase 3: US1 y US2 — Convocar y ajustar (P1) 🎯 MVP
 
 - [ ] T011 [US1] Crear `features/call-ups/components/call-up-drawer/call-up-drawer.ts` según `mockups/CallUp.dc.html`:
-  - grupos con casilla y su número de jugadores;
+  - grupos con casilla y su número de jugadores; un jugador que está en dos grupos elegidos queda en la lista del primero;
   - la lista por grupo con «Quitar»;
   - «Sumar jugador» (buscador de activos que no están, con la lista destino si hay varias);
   - fecha límite (fecha y hora con listas, futura y antes del inicio);
