@@ -37,6 +37,7 @@ describe('mapSupabaseError', () => {
         ['23505', 'duplicate'],
         ['23514', 'rule_violation'],
         ['22023', 'rule_violation'],
+        ['23503', 'rule_violation'],
         ['PGRST116', 'not_found']
     ] as const)('traduce el código de la base de datos %s a %s (spec 004)', (code, expected) => {
         const result = mapSupabaseError({ code, message: 'postgrest', details: null, hint: null });

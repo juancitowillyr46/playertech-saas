@@ -8,7 +8,7 @@ export interface MockResult {
     error: unknown;
 }
 
-const CHAIN_METHODS = ['select', 'insert', 'update', 'delete', 'eq', 'is', 'in', 'order'];
+const CHAIN_METHODS = ['select', 'insert', 'update', 'delete', 'eq', 'is', 'in', 'order', 'gte', 'lt'];
 
 export function supabaseClientMock(results: MockResult[]) {
     const queue = [...results];

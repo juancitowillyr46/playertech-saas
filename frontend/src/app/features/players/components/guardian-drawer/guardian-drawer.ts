@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -128,8 +128,12 @@ export class GuardianDrawer {
 
     constructor() {
         effect(() => {
+            // Solo `open` dispara el reinicio: las señales internas de PrimeNG que se leen al
+            // reiniciar el formulario no deben volver a ejecutarlo (reiniciaba al elegir un valor).
             if (this.open()) {
-                this.reset();
+                untracked(() => {
+                    this.reset();
+                });
             }
         });
 

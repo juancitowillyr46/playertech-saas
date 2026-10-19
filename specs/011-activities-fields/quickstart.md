@@ -40,4 +40,12 @@ Maquetas aprobadas; pantallas a 360 px y en escritorio, en claro y oscuro; contr
 
 ## Resultados
 
-*(se completa al implementar)*
+**2026-10-18, Supabase local:**
+
+| Paso | Resultado |
+|---|---|
+| Automáticas | pgTAP 220/220 (26 nuevas); Vitest de `activities`, `players`, `groups`, `shared`, `core` y `layout` en verde; lint, `check:styles` y compilación de producción en verde |
+| 1 a 6 | El responsable validó desde su celular: «Mi validación está conforme» |
+| Ajustes de la validación | Horas con listas desplegables cada 15 minutos (sin teclado ni botón de aceptar); si la fecha es hoy, solo horas futuras; fin solo después del inicio y citación antes o igual; el formulario ya no se reinicia al elegir un valor (`untracked` en los cinco drawers con formulario); botón «Cancelar» de una línea y con contorno activo; «Nueva cancha» también al editar |
+| 7 | Detector de Impeccable sin hallazgos (solo código) |
+| Seed | La academia A no tiene actividades ni canchas; pgTAP en verde |

@@ -19,9 +19,9 @@ Permitir al administrador registrar y gestionar las actividades deportivas de la
 
 | ID | Historia | Estado |
 |---|---|---|
-| HU-005 | Crear actividad (con repetición semanal) | Definida |
-| HU-006 | Consultar actividades | Definida |
-| HU-036 | Gestionar actividad (editar, cancelar, eliminar) | Definida |
+| HU-005 | Crear actividad (con repetición semanal) | Terminada |
+| HU-006 | Consultar actividades | Terminada |
+| HU-036 | Gestionar actividad (editar, cancelar, eliminar) | Terminada |
 
 ## Decisiones de la ideación (2026-10-18)
 

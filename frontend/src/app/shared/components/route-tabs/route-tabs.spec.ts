@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { screen } from '@testing-library/angular';
-import { PlayersShell } from './players-shell';
+import { PlayersShell } from '../../../features/players/pages/players-shell/players-shell';
 
 @Component({ template: 'contenido' })
 class Stub {}
@@ -28,7 +28,7 @@ async function navigate(url: string) {
     harness.detectChanges();
 }
 
-describe('PlayersShell', () => {
+describe('RouteTabs (Jugadores | Grupos)', () => {
     // p-tablist observa su tamaño; jsdom no trae ResizeObserver.
     beforeAll(() => {
         globalThis.ResizeObserver ??= vi.fn(function () {

@@ -20,7 +20,7 @@ Guardar las canchas donde la academia juega torneos, para elegirlas al crear act
 
 | ID | Historia | Estado |
 |---|---|---|
-| HU-037 | Canchas externas | Definida |
+| HU-037 | Canchas externas | Terminada |
 
 ## Decisiones de la ideación (2026-10-18)
 

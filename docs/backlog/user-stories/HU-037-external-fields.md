@@ -1,7 +1,7 @@
 # HU-037 — Canchas externas
 
-**Épica:** EP-14 — Canchas externas · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
-**Spec:** spec 2 de la Fase 2 (actividades y canchas)
+**Épica:** EP-14 — Canchas externas · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local)
+**Spec:** [`specs/011-activities-fields/`](../../../specs/011-activities-fields/spec.md) (**implementada**; validación en su `quickstart.md`)
 
 ## Historia de usuario
 

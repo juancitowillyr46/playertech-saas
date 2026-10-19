@@ -7,7 +7,7 @@ El documento se organiza por fases:
 | Sección | Estado |
 |---|---|
 | **Fase 1 — Fundación SaaS** | ✅ Vigente. Decisiones en ADR-012, ADR-013 y ADR-014 (`decisions.md`) |
-| **Fase 2 — Jugadores, grupos y acudientes** | ✅ Vigente (specs 009 y 010). Decisiones en ADR-018 |
+| **Fase 2 — Jugadores, grupos y acudientes; actividades y canchas** | ✅ Vigente (specs 009, 010 y 011). Decisiones en ADR-018 |
 | **Fase 2 — Pendiente** | Índice de las tablas de las specs siguientes; se documentan al implementarse |
 
 ---
@@ -292,13 +292,25 @@ RLS: leen los miembros de la academia y escribe el owner; `guardians` y `guardia
 
 ---
 
+# Fase 2 — Actividades y canchas externas (spec 011)
+
+Migración `20261018120000_activities_fields.sql`. Detalle: [`specs/011-activities-fields/data-model.md`](../../specs/011-activities-fields/data-model.md) y [`contracts/database.md`](../../specs/011-activities-fields/contracts/database.md).
+
+| Tabla | Qué es | Borrado |
+|---|---|---|
+| `external_fields` | Canchas donde se juegan torneos; nombre único en la academia (DEC-32) | Lógico |
+| `activities` | Entrenamiento o competencia: inicio, fin y citación (`timestamptz`), lugar (sede **o** cancha, claves compuestas), rival y torneo solo en competencia, estado programada o cancelada, `series_id` de la repetición (DEC-44) | Lógico |
+
+Trigger `activities_guard`: no se crean en el pasado; una actividad pasada solo admite `deleted_at`; el lugar elegido debe estar vigente (sede activa o cancha no retirada, de la misma academia). RLS: leen los miembros y escribe el owner.
+
+---
+
 # Fase 2 — Pendiente
 
 Las tablas de las siguientes specs se documentan aquí cuando se implementan (ADR-018, DEC-37):
 
 | Spec | Tablas previstas | Decisiones |
 |---|---|---|
-| 011 — Actividades y canchas | `activities`, `external_fields` | DEC-32, DEC-44 · `specs/011-activities-fields/data-model.md` |
 | 3 — Convocatoria y mensaje | Convocatorias y enlaces por grupo | DEC-31, DEC-34 |
 | 4 — Respuesta y seguimiento | Respuestas, historial y dispositivos | DEC-33, DEC-38, DEC-40, DEC-41 |
 

@@ -11,7 +11,9 @@ export const APP_NAVIGATION: MenuItem[] = [
         items: [
             { label: 'Inicio', icon: 'pi pi-fw pi-home', routerLink: ['/home'] },
             // Jugadores agrupa las pestañas Jugadores y Grupos (spec 009, opción B de navegación).
-            { label: 'Jugadores', icon: 'pi pi-fw pi-users', routerLink: ['/players'] }
+            { label: 'Jugadores', icon: 'pi pi-fw pi-users', routerLink: ['/players'] },
+            // Actividades agrupa las pestañas Actividades y Canchas (spec 011, opción A).
+            { label: 'Actividades', icon: 'pi pi-fw pi-calendar', routerLink: ['/activities'] }
         ]
     },
     {
