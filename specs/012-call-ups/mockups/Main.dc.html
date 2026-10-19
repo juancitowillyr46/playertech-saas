@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Actividad con convocatoria</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="height: 52px; padding: 0 8px; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #D9D9D9;">
+<a href="#" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 20px;" aria-label="Volver">←</a>
+<span style="font-weight: 600;">Actividades</span>
+</div>
+<div style="flex-grow: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden;">
+<h1 style="margin: 0; font-size: 20px; padding-bottom: 6px; border-bottom: 2px solid #222222;">Competencia vs. Club Norte</h1>
+<span style="color: #555555;">Sábado 24 de octubre · 9:00 a. m. · Cancha El Salitre</span>
+<span style="font-size: 12px; color: #555555;">(datos, Editar y Cancelar como en la spec 011)</span>
+<div style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+<h2 style="margin: 0; font-size: 17px;">Convocatoria</h2>
+<span style="padding: 2px 8px; border: 2px solid #333333; font-size: 11px; font-weight: 700; letter-spacing: 0.06em;">ABIERTA</span>
+</div>
+<span style="color: #444444;">Responde hasta el viernes 23, 8:00 p. m.</span>
+<div style="padding: 10px 12px; border: 1px solid #BDBDBD; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+<span><strong>2017</strong> <span style="color: #555555;">· 14 convocados</span></span>
+<a href="Message.dc.html" style="height: 44px; padding: 0 14px; display: flex; align-items: center; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600; text-decoration: none;">Mensaje</a>
+</div>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #D9D9D9;">
+<div style="min-height: 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E6E6E6;"><span>Juan P.</span><a href="Send.dc.html" style="height: 40px; padding: 0 10px; display: flex; align-items: center; text-decoration: underline;">Enviar</a></div>
+<div style="min-height: 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E6E6E6;"><span>Mateo R. <span style="font-size: 12px; color: #555555;">· de 2018</span></span><a href="Send.dc.html" style="height: 40px; padding: 0 10px; display: flex; align-items: center; text-decoration: underline;">Enviar</a></div>
+<div style="min-height: 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E6E6E6;"><span>Samuel V. · Samu</span><a href="Send.dc.html" style="height: 40px; padding: 0 10px; display: flex; align-items: center; text-decoration: underline;">Enviar</a></div>
+<span style="padding: 6px 0; font-size: 12px; color: #555555;">… 11 más</span>
+</div>
+<div style="display: flex; gap: 8px;">
+<a href="CallUp.dc.html" style="flex-grow: 1; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #333333; border-radius: 8px; font-weight: 600; text-decoration: none;">Ajustar convocados</a>
+<button style="flex-grow: 1; height: 44px; border: 1px solid #333333; border-radius: 8px; background: #FFFFFF; color: #222222; font-weight: 600;">Cerrar</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

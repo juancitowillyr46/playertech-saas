@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Avisar un cambio</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;" role="dialog" aria-label="Avisar a los convocados">
+<div style="height: 56px; padding: 0 8px 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<h1 style="margin: 0; font-size: 18px;">Avisar a los convocados</h1>
+<a href="Main.dc.html" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px;" aria-label="Cerrar">✕</a>
+</div>
+<div style="flex-grow: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden;">
+<span style="color: #444444;">Cambiaste la hora de la actividad. ¿Quieres avisar al grupo?</span>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Tu texto</span><textarea style="height: 52px; box-sizing: border-box; padding: 8px 12px; border: 1px solid #BDBDBD; border-radius: 8px; font: inherit;">Familias de la 2017, ojo con este cambio:</textarea></label>
+<div style="padding: 10px 12px; border-radius: 8px; background: #F2F2F2; font-size: 13px; line-height: 1.5; white-space: pre-line; color: #333333;">Cambio en la Competencia vs. Club Norte
+Sábado 24 de octubre
+Inicio: 10:00 a. m. (antes 9:00 a. m.)
+Citación: 9:15 a. m. (antes 8:15 a. m.)
+Lugar: Cancha El Salitre (sin cambio)
+
+Responde aquí: playertech.co/c/7f3a…</div>
+<span style="font-size: 12px; color: #555555;">Con varias listas, hay un aviso por cada grupo.</span>
+</div>
+<div style="padding: 12px 16px; border-top: 1px solid #D9D9D9; display: flex; flex-direction: column; gap: 8px;">
+<div style="display: flex; gap: 8px;">
+<button style="flex-grow: 1; height: 48px; border: 1px solid #333333; border-radius: 8px; background: #FFFFFF; color: #222222; font-weight: 600;">Copiar</button>
+<button style="flex-grow: 2; height: 48px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600;">Compartir en el grupo</button>
+</div>
+<button style="height: 44px; border: 0; background: transparent; color: #222222; text-decoration: underline;">Ahora no</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
