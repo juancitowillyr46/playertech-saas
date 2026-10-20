@@ -49,6 +49,7 @@ La implementación DEBE leer estos documentos antes de empezar y aplicarlos junt
 | `docs/architecture/decisions.md` | ADR-012, ADR-017 y ADR-018 (DEC-31, DEC-34, DEC-35, DEC-45) |
 | `docs/product/call-up-flow.md` | Flujo; aquí solo la parte del owner hasta compartir |
 | `docs/engineering/security.md` | SEC-03 (enlace secreto): aquí solo se genera |
+| `docs/engineering/coding-standards.md` y `testing.md` | Claridad sobre brevedad, formato con Prettier, sin `any` ni reglas de lint desactivadas, interfaces de fila en los repositorios; proceso de pruebas por spec |
 | `docs/architecture/database-schema.md`, `ui.md` y `DESIGN.md` | Convenciones, drawers y sistema visual; se amplían |
 | `specs/009-...`, `010-...` y `011-...` | Jugadores, grupos y acudientes (celulares), actividades (`activity-page`, `colombia-time`, `FormDrawer`) |
 
