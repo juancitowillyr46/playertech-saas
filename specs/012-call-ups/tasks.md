@@ -9,7 +9,7 @@ description: "Lista de tareas para convocatoria y mensaje de WhatsApp (Fase 2, s
 
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/, quickstart.md, mockups/ (aprobadas)
 
-**Tests**: Se incluyen porque la spec las exige (FR-013, SC-006). **Solo las de la spec**: pgTAP completo y Vitest de `features/call-ups` y de los cambios en `features/activities`. Una prueba que falle se reintenta como máximo una vez; el commit no se encadena a las pruebas.
+**Tests**: Se incluyen porque la spec las exige (FR-013, SC-006). **Solo las de la spec**: pgTAP completo y Vitest de `features/call-ups` y de los cambios en `features/activities`. Proceso: `docs/engineering/testing.md` («Proceso de pruebas en cada spec»).
 
 **Organización**: base de datos, mensajes, repositorio y servicio en la Fase 2. Orden: US1 y US2 (convocar y ajustar), US3 y US4 (mensaje y compartir), US5 (avisos) y US6.
 
