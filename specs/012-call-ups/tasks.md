@@ -29,7 +29,7 @@ description: "Lista de tareas para convocatoria y mensaje de WhatsApp (Fase 2, s
 
 ## Fase 2: Fundaciones (bloqueantes)
 
-- [ ] T002 Escribir `supabase/tests/database/100-call-ups.test.sql` (research R8). Debe cubrir:
+- [X] T002 Escribir `supabase/tests/database/100-call-ups.test.sql` (research R8). Debe cubrir:
   - RLS en las tres tablas;
   - `create_call_up`: listas con tokens únicos de 32 caracteres, lista sin grupo, convocados;
   - sin convocados, `23514`;
@@ -44,33 +44,33 @@ description: "Lista de tareas para convocatoria y mensaje de WhatsApp (Fase 2, s
   - jugador o grupo de la academia B, `23503`;
   - aislamiento A/B;
   - anon sin acceso.
-- [ ] T003 Crear `supabase/migrations/20261019100000_call_ups.sql` según `data-model.md` y `contracts/database.md`:
+- [X] T003 Crear `supabase/migrations/20261019100000_call_ups.sql` según `data-model.md` y `contracts/database.md`:
   - tablas, claves e índices;
   - `call_up_is_open`, `create_call_up` (`security invoker`);
   - triggers `call_ups_guard`, `call_up_members_guard` y `activities_call_up_sync`;
   - RLS, políticas y GRANT;
   - comentarios en español.
-- [ ] T004 Aplicar con `npx supabase migration up`, ejecutar `npm run db:test` en verde y regenerar los tipos con `npm run db:types`
-- [ ] T005 [P] Documentar las tablas en `docs/architecture/database-schema.md`, sacando la convocatoria de «Pendiente»
-- [ ] T006 [P] Crear `frontend/src/app/features/call-ups/messages/call-up-messages.ts` y su `.spec.ts`:
+- [X] T004 Aplicar con `npx supabase migration up`, ejecutar `npm run db:test` en verde y regenerar los tipos con `npm run db:types`
+- [X] T005 [P] Documentar las tablas en `docs/architecture/database-schema.md`, sacando la convocatoria de «Pendiente»
+- [X] T006 [P] Crear `frontend/src/app/features/call-ups/messages/call-up-messages.ts` y su `.spec.ts`:
   - `listMessage` (texto propio y bloque: título, fecha, citación, inicio y fin, lugar y dirección, torneo, observaciones, «Responde hasta…», «Convocados (N): …» con `shortName · apodo`, «Responde aquí: enlace»);
   - `personalMessage`;
   - `cancellationNotice`;
   - `changeNotice(antes, después)`, con «(antes …)» solo en lo que cambió;
   - textos vacíos sin líneas sobrantes.
-- [ ] T007 [P] Crear `frontend/src/app/features/call-ups/messages/whatsapp.ts` y su `.spec.ts`:
+- [X] T007 [P] Crear `frontend/src/app/features/call-ups/messages/whatsapp.ts` y su `.spec.ts`:
   - `whatsappChat(phone, text)` → `https://wa.me/57…?text=…` codificado;
   - `shareText`: `navigator.share` o `https://wa.me/?text=…`;
   - `copyText`;
   - `callUpLink(token)` con el origen actual y `/c/`.
-- [ ] T008 Crear los modelos (`call-up.models.ts`), `data/call-up.repository.ts`, `supabase-call-up.repository.ts` y su `.spec.ts` según `contracts/repositories.md`:
+- [X] T008 Crear los modelos (`call-up.models.ts`), `data/call-up.repository.ts`, `supabase-call-up.repository.ts` y su `.spec.ts` según `contracts/repositories.md`:
   - `getByActivity` en una consulta, con listas, grupos, convocados y acudientes validados no retirados; sin los jugadores desactivados o eliminados después de convocarlos;
   - `create` (RPC);
   - `addPlayers`, `removePlayer` (y borrar la lista si queda vacía), `movePlayer`;
   - `setDeadline`, `close` y `saveIntro`;
   - errores.
-- [ ] T009 Crear `features/call-ups/services/call-up.service.ts` y su `.spec.ts`: `load(activity)`, `isOpen` calculado, `candidates()` (jugadores activos con sus grupos, de `PlayerRepository`), las operaciones con `run()` y refresco, y `not_found`
-- [ ] T010 Registrar `CallUpRepository` en `frontend/src/app.config.ts`. Añadir la ruta pública `/c/:token` en `app.routes.ts`, fuera del layout autenticado, con `features/call-ups/pages/public-call-up/public-call-up.ts` (marca y «Pronto podrás responder aquí», sin consultas) y su `.spec.ts`
+- [X] T009 Crear `features/call-ups/services/call-up.service.ts` y su `.spec.ts`: `load(activity)`, `isOpen` calculado, `candidates()` (jugadores activos con sus grupos, de `PlayerRepository`), las operaciones con `run()` y refresco, y `not_found`
+- [X] T010 Registrar `CallUpRepository` en `frontend/src/app.config.ts`. Añadir la ruta pública `/c/:token` en `app.routes.ts`, fuera del layout autenticado, con `features/call-ups/pages/public-call-up/public-call-up.ts` (marca y «Pronto podrás responder aquí», sin consultas) y su `.spec.ts`
 
 ---
 

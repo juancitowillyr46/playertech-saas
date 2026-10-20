@@ -24,6 +24,8 @@ import { ActivityRepository } from './app/features/activities/data/activity.repo
 import { ExternalFieldRepository } from './app/features/activities/data/external-field.repository';
 import { SupabaseActivityRepository } from './app/features/activities/data/supabase-activity.repository';
 import { SupabaseExternalFieldRepository } from './app/features/activities/data/supabase-external-field.repository';
+import { CallUpRepository } from './app/features/call-ups/data/call-up.repository';
+import { SupabaseCallUpRepository } from './app/features/call-ups/data/supabase-call-up.repository';
 import { GroupRepository } from './app/features/groups/data/group.repository';
 import { SupabaseGroupRepository } from './app/features/groups/data/supabase-group.repository';
 import { GuardianRepository } from './app/features/players/data/guardian.repository';
@@ -62,6 +64,7 @@ export const appConfig: ApplicationConfig = {
         { provide: GroupRepository, useClass: SupabaseGroupRepository },
         { provide: ActivityRepository, useClass: SupabaseActivityRepository },
         { provide: ExternalFieldRepository, useClass: SupabaseExternalFieldRepository },
+        { provide: CallUpRepository, useClass: SupabaseCallUpRepository },
         { provide: HomeSummaryRepository, useClass: SupabaseHomeSummaryRepository },
         { provide: AcademyProfileRepository, useClass: SupabaseAcademyProfileRepository },
         provideAppInitializer(async () => {

@@ -196,6 +196,174 @@ export type Database = {
                     }
                 ];
             };
+            call_up_lists: {
+                Row: {
+                    academy_id: string;
+                    call_up_id: string;
+                    created_at: string;
+                    created_by: string;
+                    group_id: string | null;
+                    id: string;
+                    intro: string | null;
+                    position: number;
+                    token: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    call_up_id: string;
+                    created_at?: string;
+                    created_by?: string;
+                    group_id?: string | null;
+                    id?: string;
+                    intro?: string | null;
+                    position: number;
+                    token?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    call_up_id?: string;
+                    created_at?: string;
+                    created_by?: string;
+                    group_id?: string | null;
+                    id?: string;
+                    intro?: string | null;
+                    position?: number;
+                    token?: string;
+                    updated_at?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'call_up_lists_academy_id_call_up_id_fkey';
+                        columns: ['academy_id', 'call_up_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'call_ups';
+                        referencedColumns: ['academy_id', 'id'];
+                    },
+                    {
+                        foreignKeyName: 'call_up_lists_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    },
+                    {
+                        foreignKeyName: 'call_up_lists_academy_id_group_id_fkey';
+                        columns: ['academy_id', 'group_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'groups';
+                        referencedColumns: ['academy_id', 'id'];
+                    }
+                ];
+            };
+            call_up_players: {
+                Row: {
+                    academy_id: string;
+                    call_up_id: string;
+                    created_at: string;
+                    created_by: string;
+                    list_id: string;
+                    player_id: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    call_up_id: string;
+                    created_at?: string;
+                    created_by?: string;
+                    list_id: string;
+                    player_id: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    call_up_id?: string;
+                    created_at?: string;
+                    created_by?: string;
+                    list_id?: string;
+                    player_id?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'call_up_players_academy_id_call_up_id_fkey';
+                        columns: ['academy_id', 'call_up_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'call_ups';
+                        referencedColumns: ['academy_id', 'id'];
+                    },
+                    {
+                        foreignKeyName: 'call_up_players_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    },
+                    {
+                        foreignKeyName: 'call_up_players_academy_id_list_id_fkey';
+                        columns: ['academy_id', 'list_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'call_up_lists';
+                        referencedColumns: ['academy_id', 'id'];
+                    },
+                    {
+                        foreignKeyName: 'call_up_players_academy_id_player_id_fkey';
+                        columns: ['academy_id', 'player_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'players';
+                        referencedColumns: ['academy_id', 'id'];
+                    }
+                ];
+            };
+            call_ups: {
+                Row: {
+                    academy_id: string;
+                    activity_id: string;
+                    closed_at: string | null;
+                    created_at: string;
+                    created_by: string;
+                    deadline: string | null;
+                    deleted_at: string | null;
+                    id: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    activity_id: string;
+                    closed_at?: string | null;
+                    created_at?: string;
+                    created_by?: string;
+                    deadline?: string | null;
+                    deleted_at?: string | null;
+                    id?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    activity_id?: string;
+                    closed_at?: string | null;
+                    created_at?: string;
+                    created_by?: string;
+                    deadline?: string | null;
+                    deleted_at?: string | null;
+                    id?: string;
+                    updated_at?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'call_ups_academy_id_activity_id_fkey';
+                        columns: ['academy_id', 'activity_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'activities';
+                        referencedColumns: ['academy_id', 'id'];
+                    },
+                    {
+                        foreignKeyName: 'call_ups_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    }
+                ];
+            };
             external_fields: {
                 Row: {
                     academy_id: string;
@@ -782,6 +950,8 @@ export type Database = {
                 }[];
             };
             assign_guardians: { Args: { p_assignments: Json; p_player_id: string }; Returns: number };
+            call_up_is_open: { Args: { p_call_up_id: string }; Returns: boolean };
+            create_call_up: { Args: { p_activity_id: string; p_deadline: string; p_lists: Json }; Returns: string };
             current_academy_id: { Args: Record<PropertyKey, never>; Returns: string };
             current_user_id: { Args: Record<PropertyKey, never>; Returns: string };
             find_player_by_identity: {
