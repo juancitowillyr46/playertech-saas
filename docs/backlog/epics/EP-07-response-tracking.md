@@ -22,7 +22,8 @@ Permitir al administrador consultar las respuestas recibidas para una convocator
 
 | ID | Historia | Estado |
 |---|---|---|
-| HU-011 | Consultar respuestas de una convocatoria | Pendiente |
+| HU-011 | Seguimiento de respuestas | Definida |
+| HU-041 | Avisos en la aplicación (spec 014) | Definida |
 
 ## Decisiones de la ideación (2026-10-18)
 

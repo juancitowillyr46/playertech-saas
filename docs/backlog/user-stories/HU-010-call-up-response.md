@@ -1,47 +1,49 @@
+# HU-010 — Responder la convocatoria
 
-# HU-010 — Call-Up Response
-
-**Épica:** EP-06 — Respuesta del tutor
+**Épica:** EP-06 — Respuesta del acudiente · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Spec:** 013 (respuesta y seguimiento)
 
 ## Historia de usuario
 
-> Como **tutor**, quiero responder una convocatoria indicando si el jugador participará o no, para informar a la academia sobre su participación.
+> Como **acudiente**, quiero indicar si mi jugador asiste, asiste de forma provisional o no asiste, y poder corregirlo, para que la academia sepa con quién cuenta.
 
 ## Criterios de aceptación
 
-### CA-001 — Confirmar participación
+### CA-001 — Tres respuestas
+**Dado** un jugador por el que la persona responde, con la convocatoria abierta,
+**cuando** elige **Sí**, **Sí, provisional** o **No** y envía,
+**entonces** la respuesta queda registrada con quién la dio y cuándo, y se confirma con «¡Listo!».
 
-**Dado** que el tutor tiene una convocatoria válida,  
-**cuando** selecciona "Sí" y confirma,  
-**entonces** el sistema debe registrar la respuesta como confirmación de participación.
+### CA-002 — Motivo opcional
+**Dado** **No** o **Sí, provisional**,
+**cuando** la persona responde,
+**entonces** puede elegir un motivo de la lista fija (DEC-38); si elige *Otro*, un texto de hasta 200 caracteres es obligatorio. En **Sí** no hay motivo.
 
-### CA-002 — No participar
+### CA-003 — Cambiar la respuesta
+**Dado** una respuesta registrada y la convocatoria abierta,
+**cuando** la persona la cambia,
+**entonces** vale la última, y se le indica cuántos cambios le quedan («Te quedan 2 cambios»); tras 3 cambios por jugador, la respuesta queda fija y se indica «Escríbele a la academia para cambiarla» (DEC-33).
 
-**Dado** que el tutor tiene una convocatoria válida,  
-**cuando** selecciona "No",  
-**entonces** el sistema debe solicitar un motivo.
+### CA-004 — Varios acudientes
+**Dado** un jugador con dos acudientes (papá y mamá),
+**cuando** ambos responden,
+**entonces** vale la última respuesta, cada cambio cuenta para el límite del jugador y la academia ve quién respondió cada vez (HU-011).
 
-### CA-003 — Motivo obligatorio
+### CA-005 — Vínculo sin validar
+**Dado** una respuesta dada desde un vínculo o dispositivo pendiente,
+**cuando** se registra,
+**entonces** cuenta igual, marcada como sin validar hasta que el owner decida (HU-040).
 
-**Dado** que el tutor seleccionó "No",  
-**cuando** intenta enviar la respuesta sin indicar un motivo,  
-**entonces** el sistema debe impedir el registro y solicitarlo.
-
-### CA-004 — Registro de respuesta
-
-**Dado** que el tutor proporciona una respuesta válida,  
-**cuando** confirma el envío,  
-**entonces** el sistema debe registrar la respuesta asociada al jugador y a la convocatoria.
-
-### CA-005 — No modificar respuesta
-
-**Dado** que el tutor ya registró una respuesta,  
-**cuando** intenta utilizar nuevamente el enlace para modificarla,  
-**entonces** el sistema no debe permitir cambiar la respuesta registrada.
+### CA-006 — Cierre
+**Dado** la fecha límite o el inicio de la actividad,
+**cuando** llega,
+**entonces** ya no se admiten respuestas; una respuesta provisional queda como provisional (DEC-38).
 
 ## Reglas de negocio
 
-- Las respuestas posibles son **Sí** y **No**.
-- Cuando la respuesta es **No**, el motivo es obligatorio.
-- Una respuesta registrada no puede modificarse.
-- La confirmación de participación no representa asistencia.
+- Una respuesta afirmativa es confirmación de participación, no asistencia (la asistencia está fuera del MVP).
+- El owner puede registrar o cambiar la respuesta en nombre del acudiente (HU-011); eso no consume los cambios del acudiente.
+
+## Decisiones relacionadas
+
+ADR-018: DEC-33, DEC-38, DEC-40 y DEC-46.

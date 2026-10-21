@@ -1,58 +1,59 @@
-# HU-011 — Response Tracking
+# HU-011 — Seguimiento de respuestas
 
-**Épica:** EP-07 — Consulta y seguimiento de respuestas
+**Épica:** EP-07 — Seguimiento de respuestas · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Spec:** 013 (respuesta y seguimiento)
 
 ## Historia de usuario
 
-> Como **administrador**, quiero consultar las respuestas de una convocatoria, para conocer la participación confirmada y la no participación de los jugadores convocados.
-
-## Objetivo
-
-Permitir al administrador consultar el estado de respuesta de los jugadores incluidos en una convocatoria.
+> Como **owner**, quiero ver quién respondió a la convocatoria, qué respondió y quién falta, para organizar la actividad sin perseguir a cada familia por WhatsApp.
 
 ## Criterios de aceptación
 
-### CA-001 — Consultar respuestas
+### CA-001 — Resumen
+**Dado** una convocatoria,
+**cuando** el owner abre la actividad,
+**entonces** la sección «Convocatoria» muestra los totales de **Sí**, **Provisional**, **No** y **Sin respuesta** de toda la convocatoria, y en cada lista los confirmados sobre los convocados («12/17»).
 
-**Dado** que existe una convocatoria,  
-**cuando** el administrador consulta sus respuestas,  
-**entonces** el sistema debe mostrar los jugadores convocados y el estado de respuesta de cada uno.
+### CA-002 — Estado de cada convocado
+**Dado** la lista de convocados,
+**cuando** el owner la consulta,
+**entonces** cada jugador muestra su última respuesta, quién la dio (nombre y parentesco), la hora y el motivo si lo hay; los que no han respondido aparecen como **Sin respuesta**.
 
-### CA-002 — Participación confirmada
+### CA-003 — Historial
+**Dado** un jugador con varias respuestas,
+**cuando** el owner lo toca,
+**entonces** ve el historial corto: cada respuesta con quién y cuándo (por ejemplo, papá «Sí» a las 9:30 a. m. y mamá «No» a las 2:10 p. m.).
 
-**Dado** que un tutor respondió "Sí",  
-**cuando** el administrador consulta las respuestas,  
-**entonces** el jugador debe mostrarse como **participación confirmada**.
+### CA-004 — Respuestas sin validar
+**Dado** una respuesta de un vínculo o dispositivo pendiente,
+**cuando** aparece en el seguimiento,
+**entonces** se distingue como «sin validar», con las acciones de validar o rechazar (HU-040).
 
-### CA-003 — No participación
+### CA-005 — Registrar en nombre del acudiente
+**Dado** un jugador convocado,
+**cuando** el owner registra o cambia su respuesta (por ejemplo, porque el papá escribió por WhatsApp o agotó sus cambios),
+**entonces** queda como la última respuesta, «registrada por el owner», también después del cierre, y no consume los cambios del acudiente.
 
-**Dado** que un tutor respondió "No",  
-**cuando** el administrador consulta las respuestas,  
-**entonces** el jugador debe mostrarse como **no participa** y debe poder consultar el motivo registrado.
+### CA-006 — Lista de actividades
+**Dado** una actividad convocada,
+**cuando** el owner ve la lista de actividades,
+**entonces** la marca muestra los confirmados sobre los convocados («12/17»).
 
-### CA-004 — Sin respuesta
-
-**Dado** que un jugador fue convocado y su tutor todavía no ha respondido,  
-**cuando** el administrador consulta las respuestas,  
-**entonces** el jugador debe mostrarse como **sin respuesta**.
-
-### CA-005 — Información de la convocatoria
-
-**Dado** que el administrador consulta las respuestas,  
-**cuando** visualiza la información,  
-**entonces** debe poder identificar la actividad y los jugadores asociados a la convocatoria.
+### CA-007 — Actualizar
+**Dado** el seguimiento abierto,
+**cuando** el owner vuelve a la pantalla o toca «Actualizar»,
+**entonces** ve las respuestas nuevas. La actualización en vivo queda para más adelante (DEC-46).
 
 ## Reglas de negocio
 
-- Una convocatoria puede tener jugadores con respuesta y jugadores sin respuesta.
-- Una respuesta "Sí" representa confirmación de participación.
-- Una respuesta "No" requiere un motivo.
-- La confirmación de participación no representa asistencia.
-- La asistencia pertenece a un proceso diferente y está fuera del MVP v1.
+- Los confirmados cuentan solo **Sí**; los provisionales se muestran aparte.
+- Un jugador quitado de la convocatoria sale del conteo; su respuesta queda en el historial.
+- Una respuesta de un vínculo rechazado deja de contar (DEC-40).
 
 ## Fuera de alcance
 
-- Registro de asistencia.
-- Estadísticas de participación.
-- Reportes avanzados.
-- Notificaciones automáticas al administrador.
+Registro de asistencia, estadísticas y reportes.
+
+## Decisiones relacionadas
+
+ADR-018: DEC-33, DEC-38, DEC-40 y DEC-46.

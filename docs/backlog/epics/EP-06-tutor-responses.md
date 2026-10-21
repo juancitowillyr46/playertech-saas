@@ -1,12 +1,12 @@
-# EP-06 — Respuesta del tutor
+# EP-06 — Respuesta del acudiente
 
 ## Objetivo
 
-Permitir que el tutor consulte una convocatoria y registre la respuesta respecto a la participación del jugador.
+Permitir que el acudiente consulte una convocatoria y registre la respuesta respecto a la participación del jugador.
 
 ## Alcance
 
-El tutor puede:
+El acudiente puede:
 
 - Acceder mediante el enlace recibido.
 - Consultar la información de la convocatoria.
@@ -16,7 +16,7 @@ El tutor puede:
 
 ## Reglas principales
 
-- El tutor no necesita crear una cuenta.
+- El acudiente no necesita crear una cuenta.
 - El enlace de convocatoria es temporal.
 - La respuesta puede cambiarse hasta 3 veces por jugador, antes del cierre (DEC-33; antes: «no puede modificarse»).
 - Una respuesta afirmativa representa confirmación de participación, no asistencia.
@@ -25,8 +25,8 @@ El tutor puede:
 
 | ID | Historia | Estado |
 |---|---|---|
-| HU-009 | Consultar convocatoria | Pendiente |
-| HU-010 | Responder convocatoria | Pendiente |
+| HU-009 | Abrir la convocatoria e identificarse | Definida |
+| HU-010 | Responder la convocatoria | Definida |
 
 ## Decisiones de la ideación (2026-10-18)
 

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Identificarte</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="padding: 14px 16px; border-bottom: 1px solid #D9D9D9; font-weight: 700; font-size: 16px;">Academia C</div>
+<div style="padding: 10px 16px; background: #F2F2F2; color: #333333;">Partido contra Club Atlético Norte · sábado 24, 9:00 a. m.</div>
+<div style="flex-grow: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding-left: 12px; border: 1px solid #D9D9D9; border-radius: 8px;">
+<span>Respondes por <strong>Samuel V. · Samu</strong></span>
+<a href="Main.dc.html" style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; padding: 0 12px;">Cambiar</a>
+</div>
+<h2 style="margin: 0; font-size: 16px;">¿Quién eres?</h2>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">¿Cómo te llamas?</span><input value="Carlos" autocomplete="name" style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #333333; border-radius: 8px; font: inherit;"><span style="color: #555555; font-size: 12px;">Basta tu nombre. El teclado te lo sugiere.</span></label>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Tu celular</span><input value="310 555 0021" inputmode="tel" autocomplete="tel" style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #333333; border-radius: 8px; font: inherit;"></label>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 6px;">
+<legend style="font-weight: 600; margin-bottom: 6px;">Parentesco</legend>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+<label style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border: 1px solid #D9D9D9; border-radius: 8px;"><input type="radio" name="rel">Mamá</label>
+<label style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border: 2px solid #333333; border-radius: 8px;"><input type="radio" name="rel" checked>Papá</label>
+<label style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border: 1px solid #D9D9D9; border-radius: 8px;"><input type="radio" name="rel">Abuelo o abuela</label>
+<label style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border: 1px solid #D9D9D9; border-radius: 8px;"><input type="radio" name="rel">Otro</label>
+<label style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border: 1px solid #D9D9D9; border-radius: 8px;"><input type="radio" name="rel">Soy el jugador</label>
+</div>
+</fieldset>
+<label style="display: flex; gap: 10px; align-items: flex-start;"><input type="checkbox" checked style="width: 22px; height: 22px; margin: 0;"><span>Autorizo el tratamiento de mis datos según la <a href="#">Política de Tratamiento de Datos</a>.</span></label>
+<p style="margin: 0; color: #555555; font-size: 13px;">Solo la academia ve tus datos y confirmará que eres acudiente. Si eliges «Soy el jugador», no te pedimos el nombre.</p>
+</div>
+<div style="padding: 12px 16px; border-top: 1px solid #D9D9D9;">
+<a href="Respond.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600; text-decoration: none;">Continuar</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

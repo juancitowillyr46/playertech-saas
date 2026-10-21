@@ -1,0 +1,36 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-10-21T20:30:00Z" },
+  "title": "Maquetas spec 013 — Respuesta y seguimiento",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 360, "h": 760, "title": "1. Enlace: elegir jugador" },
+    "Identify.dc.html": { "x": 440, "y": 0, "w": 360, "h": 760, "title": "2. Enlace: identificarte" },
+    "Respond.dc.html": { "x": 880, "y": 0, "w": 360, "h": 760, "title": "3. Enlace: responder" },
+    "Done.dc.html": { "x": 1320, "y": 0, "w": 360, "h": 760, "title": "4. Enlace: listo" },
+    "Remembered.dc.html": { "x": 1760, "y": 0, "w": 360, "h": 760, "title": "5. Enlace: dispositivo recordado" },
+    "Closed.dc.html": { "x": 2200, "y": 0, "w": 360, "h": 760, "title": "6. Enlace: cerrada" },
+    "NotFound.dc.html": { "x": 2640, "y": 0, "w": 360, "h": 760, "title": "7. Enlace: no disponible" },
+    "Tracking.dc.html": { "x": 0, "y": 1200, "w": 360, "h": 760, "title": "8. Owner: seguimiento" },
+    "PlayerDrawer.dc.html": { "x": 440, "y": 1200, "w": 360, "h": 760, "title": "9. Owner: drawer del jugador" },
+    "PlayerPending.dc.html": { "x": 880, "y": 1200, "w": 360, "h": 760, "title": "10. Owner: ficha, por validar" }
+  },
+  "order": [
+    "Main.dc.html",
+    "Identify.dc.html",
+    "Respond.dc.html",
+    "Done.dc.html",
+    "Remembered.dc.html",
+    "Closed.dc.html",
+    "NotFound.dc.html",
+    "Tracking.dc.html",
+    "PlayerDrawer.dc.html",
+    "PlayerPending.dc.html"
+  ],
+  "notes": {
+    "rowGuardian": { "x": 0, "y": -300, "text": "Acudiente: página del enlace (sin cuenta)", "kind": "title1", "maxW": 3000 },
+    "rowOwner": { "x": 0, "y": 900, "text": "Owner: seguimiento y validación", "kind": "title1", "maxW": 1240 }
+  },
+  "designSystems": []
+}
