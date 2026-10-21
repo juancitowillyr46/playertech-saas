@@ -75,6 +75,7 @@ describe('ActivitiesPage', { timeout: 20_000 }, () => {
         expect(screen.getByText(/Cancha El Salitre · Torneo Liga/)).toBeTruthy();
         expect(screen.getByText('9:00 a. m.')).toBeTruthy();
         expect(screen.getByText('Cancelada')).toBeTruthy();
+        expect(screen.getAllByText('Por convocar').length).toBeGreaterThan(0);
         expect(screen.getAllByRole('link')[0].getAttribute('href')).toBe('/a1');
     });
 

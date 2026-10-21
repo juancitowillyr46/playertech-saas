@@ -52,6 +52,7 @@ La implementación DEBE leer estos documentos antes de empezar y aplicarlos junt
 |---|---|
 | `.specify/memory/constitution.md` | [Principios aplicables] |
 | `docs/architecture/decisions.md` | [ADR aplicables] |
+| `docs/engineering/coding-standards.md` y `testing.md` | Siempre: claridad y formato (Prettier), sin `any` ni reglas de lint desactivadas, capas; proceso de pruebas por spec |
 | [docs/...] | [Secciones aplicables; secciones fuera de alcance] |
 
 ## Constitution Check

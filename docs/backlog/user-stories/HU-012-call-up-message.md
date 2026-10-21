@@ -1,56 +1,41 @@
-# HU-012 — Call-Up Message
+# HU-012 — Generar mensaje de convocatoria
 
-**Épica:** EP-08 — Comunicación de convocatorias
+**Épica:** EP-08 — Comunicación de convocatorias · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 012)
+**Spec:** spec 3 de la Fase 2 (convocatoria y mensaje)
 
 ## Historia de usuario
 
-> Como **administrador**, quiero generar un mensaje de convocatoria, para comunicar la actividad al tutor utilizando el canal habitual de la academia.
-
-## Objetivo
-
-Facilitar al administrador un mensaje estructurado que pueda utilizar para comunicar una convocatoria.
+> Como **owner**, quiero que PlayerTech me arme el mensaje de la convocatoria, para no escribirlo a mano en cada grupo de WhatsApp.
 
 ## Criterios de aceptación
 
-### CA-001 — Generar mensaje
+### CA-001 — Mensaje del grupo
+**Dado** una lista de la convocatoria,
+**cuando** el owner abre su mensaje,
+**entonces** ve un texto con el tipo de actividad, la fecha, la hora de citación y de inicio, el lugar con su dirección, el rival y el torneo (si es competencia), las observaciones, la fecha límite si existe, los convocados de esa lista (nombre, inicial del apellido y apodo, por ejemplo «Samuel V. · Samu») y el enlace de la lista.
 
-**Dado** que existe una convocatoria publicada,  
-**cuando** el administrador solicita generar el mensaje,  
-**entonces** el sistema debe generar un contenido listo para compartir.
+### CA-002 — Mensaje personal
+**Dado** un convocado,
+**cuando** el owner abre su mensaje personal,
+**entonces** ve un texto dirigido a su acudiente (o al jugador) con su nombre, los datos de la actividad y el enlace de su lista.
 
-### CA-002 — Información de la actividad
+### CA-003 — Texto propio editable
+**Dado** el mensaje de una lista,
+**cuando** el owner escribe o cambia su **texto propio** (saludo y notas, antes de los datos) y comparte,
+**entonces** el mensaje lleva ese texto seguido del **bloque generado**, y el texto queda guardado para esa lista.
 
-**Dado** que se genera el mensaje,  
-**cuando** el administrador lo consulta,  
-**entonces** debe contener la información necesaria para identificar la actividad convocada.
-
-### CA-003 — Información del jugador
-
-**Dado** que la convocatoria corresponde a un jugador,  
-**cuando** se genera el mensaje,  
-**entonces** el mensaje debe identificar al jugador convocado.
-
-### CA-004 — Enlace de convocatoria
-
-**Dado** que la convocatoria tiene un enlace válido,  
-**cuando** se genera el mensaje,  
-**entonces** el enlace debe incluirse en el contenido.
-
-### CA-005 — Mensaje reutilizable
-
-**Dado** que el mensaje fue generado,  
-**cuando** el administrador lo consulta,  
-**entonces** debe poder utilizar el contenido para compartirlo mediante un canal externo.
+### CA-004 — Bloque generado no editable
+**Dado** el mensaje,
+**cuando** el owner lo revisa,
+**entonces** los datos de la actividad, la lista de convocados y el enlace no se pueden editar y siempre salen con los datos actuales, aunque la actividad o los convocados hayan cambiado.
 
 ## Reglas de negocio
 
-- El mensaje debe estar asociado a una convocatoria específica.
-- El enlace incluido debe corresponder a la convocatoria publicada.
-- PlayerTech genera el contenido, pero no realiza el envío mediante WhatsApp.
+- Español de Colombia, tuteo, sin emojis obligatorios; fechas y horas de Colombia.
+- Se guarda solo el texto propio de cada lista (hasta 500 caracteres); el bloque generado nunca se guarda.
+- El mensaje personal y los avisos (HU-038) llevan su propio texto inicial editable, que no se guarda.
+- PlayerTech no envía mensajes (EP-08, fuera de alcance).
 
-## Fuera de alcance
+## Decisiones relacionadas
 
-- Integración con la API de WhatsApp.
-- Envío automático.
-- Seguimiento de entrega o lectura.
-- Gestión de conversaciones.
+ADR-018: DEC-31 y DEC-45.

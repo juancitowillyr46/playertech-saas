@@ -60,7 +60,7 @@ Cuatro specs en el orden del flujo (DEC-37). Antes de cada spec se ajustan y se 
 |---|---|---|---|
 | 1 — Jugadores, acudientes y grupos | [EP-02 Jugadores](epics/EP-02-player-management.md), [EP-10 Acudientes](epics/EP-10-guardians.md), [EP-03 Grupos](epics/EP-03-groups-and-categories.md) | HU-002, HU-003, HU-033, HU-004, HU-034, HU-035 | **Terminada** (entorno local; specs 009 y 010) |
 | 2 — Actividades y canchas | [EP-04 Actividades](epics/EP-04-activity-management.md), [EP-14 Canchas externas](epics/EP-14-external-fields.md) | HU-005, HU-006, HU-036, HU-037 | **Terminada** (entorno local; spec 011) |
-| 3 — Convocatoria y mensaje | [EP-05 Convocatorias](epics/EP-05-call-ups.md), [EP-08 Comunicación](epics/EP-08-call-up-communication.md) | HU-007, HU-008, HU-012, HU-013 | Ideada |
+| 3 — Convocatoria y mensaje | [EP-05 Convocatorias](epics/EP-05-call-ups.md), [EP-08 Comunicación](epics/EP-08-call-up-communication.md) | HU-007, HU-008, HU-012, HU-013, HU-038 | **Terminada** (entorno local; spec 012) |
 | 4 — Respuesta y seguimiento | [EP-06 Respuesta del acudiente](epics/EP-06-tutor-responses.md), [EP-07 Seguimiento](epics/EP-07-response-tracking.md) | HU-009, HU-010, HU-011 | Ideada |
 
 ### MVP+
@@ -69,6 +69,7 @@ Cuatro specs en el orden del flujo (DEC-37). Antes de cada spec se ajustan y se 
 |---|---|
 | EP-11 Equipo y roles | Invitaciones, roles adicionales y gestión de miembros (incluye HU-018) |
 | EP-13 Planes | Cambio de plan, límites y cobro |
+| EP-08 Comunicación | [HU-039](user-stories/HU-039-message-template.md): plantilla del mensaje escrita por el owner, con datos que se reemplazan y no se editan |
 | T-03 Notificaciones push | Push web (PWA) para avisar al owner de respuestas nuevas y acudientes por validar, detrás de una abstracción propia (DEC-41) |
 
 Los IDs de épicas e HU se mantienen estables para conservar la trazabilidad; el orden de construcción lo indica la columna **Orden**.

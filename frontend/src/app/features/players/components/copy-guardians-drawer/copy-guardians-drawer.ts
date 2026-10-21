@@ -11,7 +11,7 @@ import { AppError } from '../../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../../core/errors/error-messages';
 import { FormDrawer } from '../../../../shared/components/form-drawer/form-drawer';
 import { searchKey } from '../../../../shared/text/search-text';
-import { PlayerSummary, Relationship, RELATIONSHIP_LABELS, shortName } from '../../models/player.models';
+import { fullNameWithNickname, PlayerSummary, Relationship, RELATIONSHIP_LABELS } from '../../models/player.models';
 import { PlayerDetailService } from '../../services/player-detail.service';
 
 interface CopyRow {
@@ -53,16 +53,31 @@ interface CopyRow {
                     <p-button label="Cambiar" [text]="true" severity="secondary" (onClick)="sibling.set(null)" />
                 </div>
 
-                <p class="m-0 mb-2 text-sm text-muted-color">Acudientes que pasan a {{ playerName() }}</p>
-                <ul class="m-0 list-none border-t border-(--p-content-border-color) p-0" aria-label="Acudientes del hermano">
-                    @for (row of rows(); track row.guardianId) {
-                        <li class="flex items-center gap-3 border-b border-(--p-content-border-color) py-2">
-                            <p-checkbox [binary]="true" [inputId]="'copy-' + row.guardianId" [disabled]="row.alreadyLinked" [(ngModel)]="row.selected" (ngModelChange)="touch()" />
-                            <label [for]="'copy-' + row.guardianId" class="flex min-w-0 flex-1 flex-col" [class.text-muted-color]="row.alreadyLinked">
-                                <span class="truncate font-semibold">{{ row.fullName }}</span>
-                                <span class="text-sm">{{ row.alreadyLinked ? 'Ya es acudiente de ' + playerName() : row.phone }}</span>
-                            </label>
-                            @if (!row.alreadyLinked) {
+                <!-- Igual que en «Agregar acudiente»: los que ya son acudientes van aparte y no se eligen. -->
+                @if (linkedRows().length > 0) {
+                    <section class="mb-5 rounded-border bg-emphasis p-3" [attr.aria-label]="'Ya son acudientes de ' + playerName()">
+                        <p class="m-0 mb-1 font-medium">Ya son acudientes de {{ playerName() }}</p>
+                        <ul class="m-0 list-none p-0">
+                            @for (row of linkedRows(); track row.guardianId) {
+                                <li class="flex items-center gap-2 py-1">
+                                    <i class="pi pi-check text-primary" aria-hidden="true"></i>
+                                    <span>{{ row.fullName }}</span>
+                                </li>
+                            }
+                        </ul>
+                    </section>
+                }
+
+                @if (pendingRows().length > 0) {
+                    <p class="m-0 mb-2 text-sm text-muted-color">Acudientes que pasan a {{ playerName() }}</p>
+                    <ul class="m-0 list-none border-t border-(--p-content-border-color) p-0" aria-label="Acudientes del hermano">
+                        @for (row of pendingRows(); track row.guardianId) {
+                            <li class="flex items-center gap-3 border-b border-(--p-content-border-color) py-2">
+                                <p-checkbox [binary]="true" [inputId]="'copy-' + row.guardianId" [(ngModel)]="row.selected" (ngModelChange)="touch()" />
+                                <label [for]="'copy-' + row.guardianId" class="flex min-w-0 flex-1 flex-col">
+                                    <span class="truncate font-semibold">{{ row.fullName }}</span>
+                                    <span class="text-sm text-muted-color">{{ row.phone }}</span>
+                                </label>
                                 <p-select
                                     [options]="relationshipOptions"
                                     optionLabel="label"
@@ -72,10 +87,10 @@ interface CopyRow {
                                     styleClass="w-36"
                                     [(ngModel)]="row.relationship"
                                 />
-                            }
-                        </li>
-                    }
-                </ul>
+                            </li>
+                        }
+                    </ul>
+                }
                 @if (allLinked()) {
                     <p class="m-0 mt-3 text-muted-color">Todos sus acudientes ya son de {{ playerName() }}.</p>
                 } @else {
@@ -133,7 +148,9 @@ export class CopyGuardiansDrawer {
         return this.rows().filter((row) => row.selected && !row.alreadyLinked).length;
     });
 
-    protected readonly allLinked = computed(() => this.rows().length > 0 && this.rows().every((row) => row.alreadyLinked));
+    protected readonly linkedRows = computed(() => this.rows().filter((row) => row.alreadyLinked));
+    protected readonly pendingRows = computed(() => this.rows().filter((row) => !row.alreadyLinked));
+    protected readonly allLinked = computed(() => this.rows().length > 0 && this.pendingRows().length === 0);
 
     protected readonly saveLabel = computed(() => {
         const count = this.selectedCount();
@@ -153,7 +170,7 @@ export class CopyGuardiansDrawer {
     }
 
     protected label(player: PlayerSummary): string {
-        return player.nickname ? `${shortName(player)} · ${player.nickname}` : shortName(player);
+        return fullNameWithNickname(player);
     }
 
     protected touch(): void {

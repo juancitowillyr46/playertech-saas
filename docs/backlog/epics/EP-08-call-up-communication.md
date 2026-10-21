@@ -22,9 +22,11 @@ Facilitar al administrador la comunicación de las convocatorias mediante los ca
 
 | ID | Historia | Estado |
 |---|---|---|
-| HU-012 | Generar mensaje de convocatoria | Pendiente |
-| HU-013 | Copiar y compartir convocatoria | Pendiente |
+| HU-012 | Generar mensaje de convocatoria | Terminada (entorno local) |
+| HU-013 | Compartir convocatoria por WhatsApp | Terminada (entorno local) |
+| HU-038 | Avisar cambios de una actividad convocada | Terminada (entorno local) |
+| [HU-039](../user-stories/HU-039-message-template.md) | Plantilla del mensaje con datos de la convocatoria (MVP+) | Pendiente |
 
 ## Decisiones de la ideación (2026-10-18)
 
-ADR-018. Se construye en la **spec 3 (convocatoria y mensaje)** de la Fase 2. Un mensaje generado por grupo con su enlace, con botón «Compartir» (abre WhatsApp en el celular) además de «Copiar» (DEC-31).
+ADR-018. Se construye en la **spec 3 (convocatoria y mensaje)** de la Fase 2. Un mensaje generado por grupo con su enlace, con botón «Compartir» (abre WhatsApp en el celular) además de «Copiar» (DEC-31). Envío directo al acudiente y avisos de cambio: DEC-45.

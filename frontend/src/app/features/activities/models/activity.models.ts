@@ -37,6 +37,8 @@ export interface Activity extends Omit<ActivityInput, 'place'> {
     readonly status: ActivityStatus;
     readonly place: Place;
     readonly seriesId: string | null;
+    /** Tiene convocatoria (spec 012): sello «Convocada» en el listado. */
+    readonly hasCallUp?: boolean;
 }
 
 export interface ExternalField {

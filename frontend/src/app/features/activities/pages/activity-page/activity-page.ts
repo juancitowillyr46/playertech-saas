@@ -11,10 +11,11 @@ import { AppError } from '../../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../../core/errors/error-messages';
 import { dayLabel, fromInstant, timeLabel } from '../../../../shared/text/colombia-time';
 import { todayInColombia } from '../../../../shared/text/search-text';
+import { CallUpSection } from '../../../call-ups/components/call-up-section/call-up-section';
 import { ActivityFormDrawer } from '../../components/activity-form-drawer/activity-form-drawer';
 import { ExternalFieldDrawer } from '../../components/external-field-drawer/external-field-drawer';
 import { Activity, activityTitle, ExternalFieldInput, isPast } from '../../models/activity.models';
-import { ActivitiesService, ActivityDraft, PlaceGroups } from '../../services/activities.service';
+import { ActivitiesService, ActivityDraft, PlaceGroups, toActivityInput } from '../../services/activities.service';
 import { ExternalFieldsService } from '../../services/external-fields.service';
 
 const STAMP = 'border-2 border-current uppercase tracking-wider';
@@ -27,7 +28,7 @@ type DetailStatus = 'loading' | 'ready' | 'not_found' | 'error';
  */
 @Component({
     selector: 'app-activity-page',
-    imports: [RouterLink, ButtonModule, ConfirmDialogModule, MenuModule, MessageModule, SkeletonModule, TagModule, ActivityFormDrawer, ExternalFieldDrawer],
+    imports: [RouterLink, ButtonModule, ConfirmDialogModule, MenuModule, MessageModule, SkeletonModule, TagModule, ActivityFormDrawer, ExternalFieldDrawer, CallUpSection],
     providers: [ActivitiesService, ExternalFieldsService, ConfirmationService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
@@ -99,6 +100,8 @@ type DetailStatus = 'loading' | 'ready' | 'not_found' | 'error';
                         </div>
                     }
 
+                    <app-call-up-section [activity]="current" />
+
                     <app-activity-form-drawer [open]="editOpen()" [activity]="current" [places]="places()" [busy]="activities.busy()" [error]="formError()" (save)="update($event)" (newField)="fieldOpen.set(true)" (closed)="editOpen.set(false)" />
                     <app-external-field-drawer [open]="fieldOpen()" [busy]="fields.busy()" [error]="fieldError()" [isTaken]="isFieldTaken" (save)="createField($event)" (closed)="fieldOpen.set(false)" />
                 }
@@ -117,6 +120,7 @@ export class ActivityPage implements OnInit {
     protected readonly fields = inject(ExternalFieldsService);
     private readonly editDrawer = viewChild(ActivityFormDrawer);
     private readonly fieldDrawer = viewChild(ExternalFieldDrawer);
+    private readonly callUpSection = viewChild(CallUpSection);
 
     /** Parámetro `:id` de la ruta. */
     readonly id = input.required<string>();
@@ -181,6 +185,16 @@ export class ActivityPage implements OnInit {
 
     protected async update(draft: ActivityDraft): Promise<void> {
         this.formError.set(null);
+        const before = this.activity();
+        const section = this.callUpSection();
+
+        // La base de datos rechaza mover el inicio antes de la fecha límite de una convocatoria abierta.
+        if (section?.deadlineConflicts(toActivityInput(draft).startsAt)) {
+            this.formError.set('La fecha límite de la convocatoria quedaría después del inicio: cámbiala primero.');
+            return;
+        }
+
+        const callUpOpen = !!section?.isOpen();
 
         try {
             await this.activities.update(this.id(), draft);
@@ -188,6 +202,13 @@ export class ActivityPage implements OnInit {
             this.editOpen.set(false);
             await this.load();
             this.notify('Cambios guardados.');
+
+            const after = this.activity();
+
+            // Aviso de cambio solo si cambian la fecha, la hora o el lugar (HU-038).
+            if (callUpOpen && before && after && (before.startsAt !== after.startsAt || before.callAt !== after.callAt || before.place.id !== after.place.id)) {
+                await section!.offerNotice({ kind: 'change', before, after });
+            }
         } catch (error) {
             this.formError.set(error instanceof AppError && error.code === 'rule_violation' ? 'Revisa la fecha, las horas y el lugar: alguno ya no es válido, o la actividad ya empezó.' : this.messageFor(error));
         }
@@ -233,10 +254,20 @@ export class ActivityPage implements OnInit {
     }
 
     private async changeStatus(status: 'scheduled' | 'cancelled', success: string): Promise<void> {
+        const section = this.callUpSection();
+        const callUpOpen = status === 'cancelled' && !!section?.isOpen();
+
         try {
             await this.activities.setStatus(this.id(), status);
             await this.load();
             this.notify(success);
+
+            // Cancelar cierra la convocatoria (base de datos); se ofrece el aviso (HU-038).
+            const current = this.activity();
+
+            if (callUpOpen && current) {
+                await section!.offerNotice({ kind: 'cancel', activity: current });
+            }
         } catch (error) {
             await this.load();
             this.toastError(error);

@@ -305,13 +305,32 @@ Trigger `activities_guard`: no se crean en el pasado; una actividad pasada solo 
 
 ---
 
+# Fase 2 — Convocatorias y mensajes (spec 012)
+
+Migración `20261019100000_call_ups.sql`. Detalle: [`specs/012-call-ups/data-model.md`](../../specs/012-call-ups/data-model.md) y [`contracts/database.md`](../../specs/012-call-ups/contracts/database.md).
+
+```text
+activities ─< call_ups ─< call_up_lists ─< call_up_players >─ players
+                                │
+                                └──────────────────────────── groups (opcional)
+```
+
+| Tabla | Qué es | Borrado |
+|---|---|---|
+| `call_ups` | Convocatoria única de una actividad; fecha límite opcional y cierre | Lógico; no admite borrado físico |
+| `call_up_lists` | Lista por grupo o lista única sin grupo; conserva token secreto y texto propio | Físico cuando queda vacía |
+| `call_up_players` | Jugador de una lista; un jugador aparece una sola vez por convocatoria | Físico (relación sin historia) |
+
+`call_up_is_open` calcula si está abierta con `closed_at`, la fecha límite y el inicio de la actividad. `create_call_up` crea la convocatoria, sus listas y convocados atómicamente. Los triggers impiden convocar actividades pasadas o canceladas, modifican solo convocatorias abiertas, cierran al cancelar la actividad y no permiten mover el inicio después de la fecha límite. RLS: los miembros leen y el owner escribe; las claves compuestas evitan cruzar academias.
+
+---
+
 # Fase 2 — Pendiente
 
 Las tablas de las siguientes specs se documentan aquí cuando se implementan (ADR-018, DEC-37):
 
 | Spec | Tablas previstas | Decisiones |
 |---|---|---|
-| 3 — Convocatoria y mensaje | Convocatorias y enlaces por grupo | DEC-31, DEC-34 |
 | 4 — Respuesta y seguimiento | Respuestas, historial y dispositivos | DEC-33, DEC-38, DEC-40, DEC-41 |
 
 El borrador anterior a la ideación de la Fase 2 está en [`docs/archive/database-schema-phase2-draft.md`](../archive/database-schema-phase2-draft.md) (no es fuente de verdad).

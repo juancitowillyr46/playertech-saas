@@ -141,7 +141,7 @@ description: "Lista de tareas para actividades y canchas externas (Fase 2, spec 
 - [X] T023 Recorrer `quickstart.md` y anotar los resultados; el responsable valida desde el celular
 - [X] T024 Confirmar que la academia A del seed no tiene actividades ni canchas y que `npm run db:test` está en verde
 - [X] T025 [P] Marcar HU-005, HU-006, HU-036 y HU-037 como «Terminada (entorno local)» en las HU, en EP-04, en EP-14 y en `docs/backlog/README.md`
-- [ ] T026 Tras el merge y con autorización: `npm run db:push`, primero con `--dry-run`
+- [X] T026 Tras el merge y con autorización: `npm run db:push`, primero con `--dry-run`
 
 ---
 

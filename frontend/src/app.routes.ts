@@ -10,6 +10,7 @@ import { AppLayout } from './app/layout/component/app.layout';
  * Los guards mejoran la experiencia; la protección de los datos es RLS.
  */
 export const appRoutes: Routes = [
+    { path: 'c/:token', title: 'Convocatoria · PlayerTech', loadComponent: () => import('./app/features/call-ups/pages/public-call-up/public-call-up').then((m) => m.PublicCallUpPage) },
     { path: '', pathMatch: 'full', redirectTo: rootRedirect },
     { path: 'auth', loadChildren: () => import('./app/features/auth/auth.routes') },
     {

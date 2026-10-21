@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Convocar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;" role="dialog" aria-label="Convocar">
+<div style="height: 56px; padding: 0 8px 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<h1 style="margin: 0; font-size: 18px;">Convocar</h1>
+<a href="Main.dc.html" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px;" aria-label="Cerrar">✕</a>
+</div>
+<div style="flex-grow: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;">
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 6px;">
+<legend style="padding: 0; margin-bottom: 6px; font-weight: 600;">Grupos</legend>
+<label style="min-height: 44px; display: flex; align-items: center; gap: 10px;"><input type="checkbox" checked style="width: 22px; height: 22px; margin: 0;">2017 <span style="color: #555555;">· 15 jugadores</span></label>
+<label style="min-height: 44px; display: flex; align-items: center; gap: 10px;"><input type="checkbox" style="width: 22px; height: 22px; margin: 0;">2018 <span style="color: #555555;">· 12 jugadores</span></label>
+</fieldset>
+<div style="display: flex; flex-direction: column; gap: 4px;">
+<span style="font-weight: 600;">Lista 2017 · 15 convocados</span>
+<div style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E6E6E6;"><span>Andrés G.</span><button style="height: 40px; padding: 0 10px; border: 0; background: transparent; color: #222222; text-decoration: underline;">Quitar</button></div>
+<div style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E6E6E6;"><span>Mateo R. <span style="font-size: 12px; color: #555555;">· sumado de 2018</span></span><button style="height: 40px; padding: 0 10px; border: 0; background: transparent; color: #222222; text-decoration: underline;">Quitar</button></div>
+<span style="font-size: 12px; color: #555555;">… 13 más</span>
+</div>
+<button style="height: 44px; border: 1px dashed #333333; border-radius: 8px; background: #FFFFFF; color: #222222; font-weight: 600;">＋ Sumar jugador de otro grupo</button>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Responder hasta <span style="font-weight: 400; color: #555555;">(opc.)</span></span><input style="height: 44px; box-sizing: border-box; padding: 0 10px; border: 1px solid #BDBDBD; border-radius: 8px; font-size: 14px;" value="23/10/2026"></label>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="font-weight: 600;">Hora</span><select style="height: 44px; border: 1px solid #BDBDBD; border-radius: 8px; font-size: 14px; background: #FFFFFF;"><option>8:00 p. m.</option></select></label>
+</div>
+<span style="font-size: 12px; color: #555555;">Sin fecha límite, se responde hasta que empiece la actividad.</span>
+</div>
+<div style="padding: 12px 16px; border-top: 1px solid #D9D9D9; display: flex; gap: 8px;">
+<button style="flex-grow: 1; height: 48px; border: 1px solid #BDBDBD; border-radius: 8px; background: #FFFFFF; color: #222222;">Cancelar</button>
+<button style="flex-grow: 1; height: 48px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600;">Convocar 15</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

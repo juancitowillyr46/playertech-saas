@@ -18,7 +18,7 @@ import { PageHeader, PageHeaderAction } from '../../../../shared/components/page
 import { ageOn, todayInColombia } from '../../../../shared/text/search-text';
 import { PlayerFormDrawer } from '../../components/player-form-drawer/player-form-drawer';
 import { GroupsNotSavedError } from '../../data/player.repository';
-import { PlayerInput, PlayerSummary, shortName } from '../../models/player.models';
+import { fullNameWithNickname, PlayerInput, PlayerSummary } from '../../models/player.models';
 import { PlayersService, PlayerStatusFilter } from '../../services/players.service';
 
 /** Sellos de estado de la planilla (DESIGN.md), como en Sedes. */
@@ -184,7 +184,7 @@ export class PlayersPage implements OnInit {
                 player,
                 age,
                 fullName: `${player.firstNames} ${player.lastNames}`,
-                name: player.nickname ? `${shortName(player)} · ${player.nickname}` : shortName(player),
+                name: fullNameWithNickname(player),
                 groupNames,
                 details: [`${age} años`, groupNames || 'Sin grupo', guardians].join(' · ')
             };

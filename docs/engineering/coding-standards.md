@@ -26,6 +26,11 @@ El código debe priorizar ser comprensible antes que ser excesivamente compacto.
 
 Evitar abstracciones innecesarias o implementaciones excesivamente inteligentes.
 
+### Formato y reglas de lint
+
+- Todo el código pasa por el **Prettier del proyecto** (`npx prettier --write <archivos>`, desde `frontend/`; ancho máximo de 250 caracteres, `.prettierrc.json`). El código no se comprime para ocupar menos líneas: un método por bloque, legible.
+- Las **reglas de lint no se desactivan**. Si una excepción es inevitable, se desactiva solo en la línea afectada (`eslint-disable-next-line`) y con su motivo; nunca para un archivo entero.
+
 ### Responsabilidad única
 
 Cada componente, servicio o clase debe tener una responsabilidad clara.
@@ -114,6 +119,8 @@ La implementación concreta está definida en:
 ```text
 docs/architecture/data.md
 ```
+
+En las implementaciones Supabase, las filas que llegan de una consulta (incluidas las relaciones embebidas) se describen con **interfaces de fila** en `snake_case` y se convierten con `as unknown as Fila`, para luego mapearlas a los modelos en `camelCase`. Nunca con `any`. Ejemplo: `features/activities/data/supabase-activity.repository.ts`.
 
 ## TypeScript
 

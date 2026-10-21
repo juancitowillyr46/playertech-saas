@@ -11,7 +11,7 @@ import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { FormDrawer } from '../../../../shared/components/form-drawer/form-drawer';
 import { fieldA11y } from '../../../../shared/forms/field-a11y';
-import { addDays, fromInstant, timeLabel, toInstant } from '../../../../shared/text/colombia-time';
+import { addDays, fromInstant, QUARTER_HOURS, timeLabel, toInstant } from '../../../../shared/text/colombia-time';
 import { todayInColombia } from '../../../../shared/text/search-text';
 import { Activity, ACTIVITY_TYPE_LABELS, ActivityType, PlaceRef } from '../../models/activity.models';
 import { ActivityDraft, draftDates, PlaceGroups } from '../../services/activities.service';
@@ -46,11 +46,6 @@ const dateFrom = (value: string) => {
     const [year, month, day] = value.split('-').map(Number);
     return new Date(year, month - 1, day);
 };
-/** Horas de 5:00 a. m. a 11:00 p. m. cada 15 minutos (`HH:mm`): selección con un toque, sin teclado. */
-const BASE_TIMES = Array.from({ length: (23 - 5) * 4 + 1 }, (_, index) => {
-    const minutes = 5 * 60 + index * 15;
-    return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
-});
 
 /**
  * Programar o editar una actividad (spec 011; HU-005 y HU-036), en drawer. Presentacional:
@@ -207,7 +202,7 @@ export class ActivityFormDrawer {
     /** Horas de la actividad editada que no están en los pasos de 15 minutos. */
     private readonly extraTimes = signal<readonly string[]>([]);
 
-    private readonly allTimes = computed(() => [...new Set([...BASE_TIMES, ...this.extraTimes()])].sort());
+    private readonly allTimes = computed(() => [...new Set([...QUARTER_HOURS, ...this.extraTimes()])].sort());
 
     /** Primera hora disponible: si la fecha es hoy, después de la hora actual de Colombia. */
     private readonly earliest = computed(() => {
@@ -426,7 +421,7 @@ export class ActivityFormDrawer {
         const start = fromInstant(activity.startsAt);
         const end = activity.endsAt ? fromInstant(activity.endsAt).time : null;
         const call = activity.callAt ? fromInstant(activity.callAt).time : null;
-        this.extraTimes.set([start.time, end, call].filter((time): time is string => !!time && !BASE_TIMES.includes(time)));
+        this.extraTimes.set([start.time, end, call].filter((time): time is string => !!time && !QUARTER_HOURS.includes(time)));
 
         this.form.reset({
             type: activity.type,

@@ -1,57 +1,46 @@
-# HU-013 — Share Call-Up
+# HU-013 — Compartir convocatoria por WhatsApp
 
-**Épica:** EP-08 — Comunicación de convocatorias
+**Épica:** EP-08 — Comunicación de convocatorias · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 012)
+**Spec:** spec 3 de la Fase 2 (convocatoria y mensaje)
 
 ## Historia de usuario
 
-> Como **administrador**, quiero copiar el mensaje de una convocatoria, para compartirlo manualmente con el tutor mediante WhatsApp.
-
-## Objetivo
-
-Permitir que el administrador transfiera fácilmente el mensaje generado desde PlayerTech hacia el canal de comunicación utilizado por la academia.
+> Como **owner**, quiero compartir el mensaje en el grupo de WhatsApp o enviárselo al acudiente de un convocado, para que respondan desde el enlace.
 
 ## Criterios de aceptación
 
-### CA-001 — Copiar mensaje
+### CA-001 — Llevar el mensaje al grupo
+**Dado** el mensaje de una lista,
+**cuando** el owner toca «Copiar mensaje»,
+**entonces** el mensaje completo (su texto y el bloque generado) queda copiado para pegarlo en el grupo de WhatsApp.
 
-**Dado** que existe un mensaje de convocatoria generado,  
-**cuando** el administrador selecciona la opción de copiar,  
-**entonces** el sistema debe copiar el contenido al portapapeles.
+> Ajuste del 2026-10-19 (validación de la spec 012): abrir WhatsApp sin un número para elegir el grupo no funcionó de forma confiable en el iPhone del responsable, y la API de WhatsApp no envía a grupos. El mensaje del grupo se copia y se pega.
 
-### CA-002 — Confirmación de copia
+### CA-002 — Enviar al acudiente
+**Dado** un convocado con acudientes,
+**cuando** el owner toca «Enviar al acudiente» y, si hay varios, elige a cuál,
+**entonces** se abre el chat de WhatsApp de ese celular con el mensaje personal listo para enviar.
 
-**Dado** que el mensaje fue copiado correctamente,  
-**cuando** finaliza la operación,  
-**entonces** el sistema debe mostrar una confirmación visual.
+### CA-003 — Jugador sin acudientes
+**Dado** un convocado sin acudientes pero con celular propio,
+**cuando** el owner toca «Enviar al jugador»,
+**entonces** se abre su chat con el mensaje personal; sin celular, solo se ofrece «Copiar».
 
-### CA-003 — Contenido completo
-
-**Dado** que el administrador copia el mensaje,  
-**cuando** pega el contenido en otro canal,  
-**entonces** debe conservar la información y el enlace de la convocatoria.
-
-### CA-004 — Compartir mediante WhatsApp
-
-**Dado** que el administrador tiene el mensaje copiado,  
-**cuando** accede a WhatsApp,  
-**entonces** debe poder pegar el mensaje y enviarlo manualmente al tutor.
+### CA-004 — Copiar
+**Dado** cualquier mensaje,
+**cuando** el owner toca «Copiar»,
+**entonces** el texto completo queda en el portapapeles y se confirma con un aviso breve.
 
 ### CA-005 — Sin envío automático
-
-**Dado** que el administrador utiliza la opción de copiar,  
-**cuando** finaliza la operación,  
-**entonces** PlayerTech no debe enviar automáticamente el mensaje al tutor.
+**Dado** cualquier opción de compartir,
+**cuando** se usa,
+**entonces** el owner envía el mensaje desde WhatsApp; PlayerTech no envía ni conoce si se entregó o se leyó.
 
 ## Reglas de negocio
 
-- El envío del mensaje es responsabilidad del administrador.
-- WhatsApp funciona como canal externo de comunicación.
-- PlayerTech no necesita conocer el estado de entrega o lectura del mensaje.
+- Los enlaces de chat usan el celular en formato internacional de Colombia (+57) y el texto codificado; no requieren la API de WhatsApp.
+- Compartir no cambia el estado de la convocatoria.
 
-## Fuera de alcance
+## Decisiones relacionadas
 
-- API oficial de WhatsApp.
-- Envío automático.
-- Seguimiento de entrega.
-- Seguimiento de lectura.
-- Gestión de conversaciones.
+ADR-018: DEC-31 y DEC-45.

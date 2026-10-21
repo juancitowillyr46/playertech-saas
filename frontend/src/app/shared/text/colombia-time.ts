@@ -50,7 +50,16 @@ export function weeklyDates(from: string, until: string, weekdays: readonly numb
     return dates;
 }
 
-/** «Hoy», «Mañana» o «Martes 20 de octubre» (con el año si no es el actual). */
+/** «Martes 20 de octubre», con el año si no es el de `today`. Absoluta: para mensajes que se leen después. */
+export function dateLabel(date: string, today: string): string {
+    const [year, month, day] = date.split('-').map(Number);
+    const weekday = WEEKDAYS[weekdayOf(date)];
+    const label = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} ${day} de ${MONTHS[month - 1]}`;
+
+    return year === Number(today.slice(0, 4)) ? label : `${label} de ${year}`;
+}
+
+/** «Hoy», «Mañana» o la fecha absoluta (para listados y detalles en pantalla). */
 export function dayLabel(date: string, today: string): string {
     if (date === today) {
         return 'Hoy';
@@ -60,12 +69,15 @@ export function dayLabel(date: string, today: string): string {
         return 'Mañana';
     }
 
-    const [year, month, day] = date.split('-').map(Number);
-    const weekday = WEEKDAYS[weekdayOf(date)];
-    const label = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} ${day} de ${MONTHS[month - 1]}`;
-
-    return year === Number(today.slice(0, 4)) ? label : `${label} de ${year}`;
+    return dateLabel(date, today);
 }
+
+/** Horas de 5:00 a. m. a 11:00 p. m. cada 15 minutos (`HH:mm`): selección con un toque, sin teclado. */
+export const QUARTER_HOURS: readonly string[] = Array.from({ length: (23 - 5) * 4 + 1 }, (_, index) => {
+    const minutes = 5 * 60 + index * 15;
+
+    return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+});
 
 /** «4:00 p. m.» */
 export function timeLabel(time: string): string {
