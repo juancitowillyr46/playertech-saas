@@ -8,7 +8,7 @@ import { Activity, ActivityInput, ActivityStatus, ActivityType, Place } from '..
 import { ActivityRepository } from './activity.repository';
 
 const PLACE_COLUMNS = 'id, name, address, city, directions';
-const COLUMNS = `id, type, starts_at, ends_at, call_at, notes, opponent, tournament, status, series_id, venues(${PLACE_COLUMNS}), external_fields(${PLACE_COLUMNS})`;
+const COLUMNS = `id, type, starts_at, ends_at, call_at, notes, opponent, tournament, status, series_id, venues(${PLACE_COLUMNS}), external_fields(${PLACE_COLUMNS}), call_ups(id, deleted_at)`;
 
 interface PlaceRow {
     id: string;
@@ -31,6 +31,8 @@ interface ActivityRow {
     series_id: string | null;
     venues: PlaceRow | null;
     external_fields: PlaceRow | null;
+    /** Convocatoria de la actividad (spec 012). */
+    call_ups?: { id: string; deleted_at: string | null }[] | null;
 }
 
 function toPlace(row: ActivityRow): Place {
@@ -51,7 +53,8 @@ function toActivity(row: ActivityRow): Activity {
         opponent: row.opponent,
         tournament: row.tournament,
         status: row.status as ActivityStatus,
-        seriesId: row.series_id
+        seriesId: row.series_id,
+        hasCallUp: (row.call_ups ?? []).some((callUp) => !callUp.deleted_at)
     };
 }
 

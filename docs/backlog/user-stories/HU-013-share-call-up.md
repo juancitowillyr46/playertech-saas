@@ -1,6 +1,6 @@
 # HU-013 — Compartir convocatoria por WhatsApp
 
-**Épica:** EP-08 — Comunicación de convocatorias · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-08 — Comunicación de convocatorias · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 012)
 **Spec:** spec 3 de la Fase 2 (convocatoria y mensaje)
 
 ## Historia de usuario
@@ -9,10 +9,12 @@
 
 ## Criterios de aceptación
 
-### CA-001 — Compartir en el grupo
+### CA-001 — Llevar el mensaje al grupo
 **Dado** el mensaje de una lista,
-**cuando** el owner toca «Compartir en el grupo»,
-**entonces** se abre WhatsApp con el texto listo para elegir el chat (en el celular, el menú de compartir; en el computador, WhatsApp Web).
+**cuando** el owner toca «Copiar mensaje»,
+**entonces** el mensaje completo (su texto y el bloque generado) queda copiado para pegarlo en el grupo de WhatsApp.
+
+> Ajuste del 2026-10-19 (validación de la spec 012): abrir WhatsApp sin un número para elegir el grupo no funcionó de forma confiable en el iPhone del responsable, y la API de WhatsApp no envía a grupos. El mensaje del grupo se copia y se pega.
 
 ### CA-002 — Enviar al acudiente
 **Dado** un convocado con acudientes,

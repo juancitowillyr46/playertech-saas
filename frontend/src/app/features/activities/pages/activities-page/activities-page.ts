@@ -15,7 +15,7 @@ import { PageHeader, PageHeaderAction } from '../../../../shared/components/page
 import { fromInstant, timeLabel } from '../../../../shared/text/colombia-time';
 import { ActivityFormDrawer } from '../../components/activity-form-drawer/activity-form-drawer';
 import { ExternalFieldDrawer } from '../../components/external-field-drawer/external-field-drawer';
-import { Activity, ACTIVITY_TYPE_LABELS, activityTitle, ActivityType, ExternalFieldInput } from '../../models/activity.models';
+import { Activity, ACTIVITY_TYPE_LABELS, activityTitle, ActivityType, ExternalFieldInput, isPast } from '../../models/activity.models';
 import { ActivitiesService, ActivitiesWhen, ActivityDraft, PlaceGroups } from '../../services/activities.service';
 import { ExternalFieldsService } from '../../services/external-fields.service';
 
@@ -86,14 +86,19 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
                                 <li class="border-b border-(--p-content-border-color)">
                                     <a [routerLink]="[activity.id]" class="flex min-h-15 items-center gap-3 py-2 pl-1 text-color no-underline" [class.text-muted-color]="activity.status === 'cancelled'">
                                         <span class="w-20 shrink-0 font-semibold">{{ time(activity) }}</span>
-                                        <span class="flex min-w-0 flex-col gap-0.5">
-                                            <span class="flex min-w-0 items-center gap-2">
-                                                <span class="truncate font-semibold">{{ title(activity) }}</span>
-                                                @if (activity.status === 'cancelled') {
-                                                    <p-tag severity="secondary" value="Cancelada" [styleClass]="stamp" />
-                                                }
-                                            </span>
+                                        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                                            <span class="line-clamp-2 font-semibold" [class.line-through]="activity.status === 'cancelled'">{{ title(activity) }}</span>
                                             <span class="truncate text-sm text-muted-color">{{ activity.place.name }}@if (activity.tournament) { · {{ activity.tournament }} }</span>
+                                        </span>
+                                        <!-- Estado siempre en la misma columna, para recorrerla con la vista (spec 012). -->
+                                        <span class="shrink-0 pr-1 text-right">
+                                            @if (activity.status === 'cancelled') {
+                                                <p-tag severity="secondary" value="Cancelada" [styleClass]="stamp" />
+                                            } @else if (activity.hasCallUp) {
+                                                <p-tag severity="info" value="Convocada" [styleClass]="stamp" />
+                                            } @else if (!isPast(activity)) {
+                                                <span class="text-sm text-muted-color">Por convocar</span>
+                                            }
                                         </span>
                                     </a>
                                 </li>
@@ -119,6 +124,7 @@ export class ActivitiesPage implements OnInit {
     private readonly fieldDrawer = viewChild.required(ExternalFieldDrawer);
 
     protected readonly stamp = STAMP;
+    protected readonly isPast = isPast;
     protected readonly whenOptions: { label: string; value: ActivitiesWhen }[] = [
         { label: 'Próximas', value: 'upcoming' },
         { label: 'Pasadas', value: 'past' }

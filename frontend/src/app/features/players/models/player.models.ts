@@ -69,6 +69,16 @@ export interface GuardianInput {
     readonly relationship: Relationship;
 }
 
+/**
+ * «Santiago Duque Restrepo · Santi»: nombre completo con el apodo, para las pantallas del
+ * owner. El nombre corto queda para lo que sale de PlayerTech (mensajes y enlace).
+ */
+export function fullNameWithNickname(player: { firstNames: string; lastNames: string; nickname: string | null }): string {
+    const fullName = `${player.firstNames} ${player.lastNames}`;
+
+    return player.nickname ? `${fullName} · ${player.nickname}` : fullName;
+}
+
 /** «Samuel V.»: nombre y la inicial del primer apellido. */
 export function shortName(player: { firstNames: string; lastNames: string }): string {
     const initial = player.lastNames.trim().charAt(0);

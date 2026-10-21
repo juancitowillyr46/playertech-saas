@@ -44,7 +44,7 @@ let nextId = 0;
 
             <ng-template #footer>
                 <div class="flex gap-2">
-                    <p-button label="Cancelar" [outlined]="true" styleClass="w-full" class="flex-1" (onClick)="requestClose()" />
+                    <p-button [label]="cancelLabel()" [outlined]="true" styleClass="w-full" class="flex-1" (onClick)="requestClose()" />
                     <p-button [label]="saveLabel()" styleClass="w-full" class="flex-1" [loading]="busy()" [disabled]="saveDisabled()" (onClick)="save.emit()" />
                 </div>
             </ng-template>
@@ -60,6 +60,7 @@ export class FormDrawer {
     /** Hay cambios sin guardar: cerrar pide confirmación. */
     readonly dirty = input(false);
     readonly saveLabel = input('Guardar');
+    readonly cancelLabel = input('Cancelar');
     readonly saveDisabled = input(false);
 
     readonly save = output<void>();

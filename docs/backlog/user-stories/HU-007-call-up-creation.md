@@ -1,6 +1,6 @@
 # HU-007 — Crear convocatoria
 
-**Épica:** EP-05 — Gestión de convocatorias · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-05 — Gestión de convocatorias · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 012)
 **Spec:** spec 3 de la Fase 2 (convocatoria y mensaje)
 
 ## Historia de usuario

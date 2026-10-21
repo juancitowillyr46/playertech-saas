@@ -24,7 +24,7 @@ Abrir el mensaje de 2017, escribir un saludo, compartir; cambiar la hora de la a
 
 ## 4. Compartir (HU-013)
 
-Desde el celular: «Compartir en el grupo» abre el menú (WhatsApp). «Enviar» de Mateo abre el chat de su papá con el mensaje personal. Medir: menos de 30 segundos (SC-002). Un jugador sin acudientes ni celular: solo «Copiar».
+Desde el celular: «Copiar mensaje» copia el mensaje completo y se pega en el grupo de WhatsApp. «Enviar» de Mateo abre el chat de su papá con el mensaje personal. Medir: menos de 30 segundos (SC-002). Un jugador sin acudientes ni celular: solo «Copiar».
 
 ## 5. Avisos (HU-038)
 
@@ -40,4 +40,12 @@ Maquetas aprobadas; pantallas a 360 px y en escritorio, en claro y oscuro; contr
 
 ## Resultados
 
-*(se completa al implementar)*
+Validado por el responsable desde su iPhone el 2026-10-21, con la academia C local (5 grupos, 43 jugadores, 14 acudientes y 11 actividades próximas).
+
+- **Automáticas**: pgTAP 246/246; Vitest de `call-ups`, `activities` y `players` en verde; lint y `check:styles` en verde.
+- **1 y 2. Convocar y ajustar**: conforme; un jugador de dos grupos aparece una sola vez; al cerrar, no se ajusta más.
+- **3. Mensaje**: conforme, con la narrativa nueva y los convocados en viñetas; el texto propio se conserva con los datos actuales.
+- **4. Compartir**: «Copiar mensaje» y pegar en el grupo funciona, también en la URL no segura de la red local; «Enviar» abre el chat del acudiente elegido; sin acudientes ni celular, solo «Copiar».
+- **5. Avisos**: conforme (cambio de hora y cancelación; la convocatoria cancelada queda cerrada).
+- **6. Enlace**: «Pronto podrás responder aquí», sin datos.
+- **7. Experiencia**: revisión con Impeccable 18/20, con sus hallazgos corregidos; revisado en el celular en claro y oscuro.

@@ -1,6 +1,6 @@
 # HU-038 — Avisar cambios de una actividad convocada
 
-**Épica:** EP-08 — Comunicación de convocatorias · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-08 — Comunicación de convocatorias · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 012)
 **Spec:** spec 3 de la Fase 2 (convocatoria y mensaje)
 
 ## Historia de usuario
@@ -17,7 +17,7 @@
 ### CA-002 — Aviso de cambio
 **Dado** una actividad con convocatoria abierta,
 **cuando** el owner cambia la fecha, la hora o el lugar y guarda,
-**entonces** se ofrece un mensaje «Cambio en…» que indica lo nuevo, con el enlace de cada lista.
+**entonces** se ofrece un mensaje «Hay un cambio en…» que indica, en viñetas, lo nuevo y lo anterior, con el enlace de cada lista.
 
 ### CA-003 — Opcional
 **Dado** el aviso ofrecido,

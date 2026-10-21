@@ -5,6 +5,9 @@ import userEvent from '@testing-library/user-event';
 import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 import { AppError } from '../../../../core/errors/app-error';
+import { CallUpRepository } from '../../../call-ups/data/call-up.repository';
+import { CallUp } from '../../../call-ups/models/call-up.models';
+import { PlayerRepository } from '../../../players/data/player.repository';
 import { VenueRepository } from '../../../venues/data/venue.repository';
 import { ActivityRepository } from '../../data/activity.repository';
 import { ExternalFieldRepository } from '../../data/external-field.repository';
@@ -25,7 +28,7 @@ const UPCOMING: Activity = {
     seriesId: null
 };
 
-async function setup(activity: Activity | Error = UPCOMING) {
+async function setup(activity: Activity | Error = UPCOMING, callUp: CallUp | null = null) {
     const repository = {
         list: vi.fn().mockResolvedValue([]),
         get: activity instanceof Error ? vi.fn().mockRejectedValue(activity) : vi.fn().mockResolvedValue(activity),
@@ -42,6 +45,8 @@ async function setup(activity: Activity | Error = UPCOMING) {
             { provide: ActivityRepository, useValue: repository },
             { provide: ExternalFieldRepository, useValue: { list: vi.fn().mockResolvedValue([]) } },
             { provide: VenueRepository, useValue: { listVenues: vi.fn().mockResolvedValue([]) } },
+            { provide: CallUpRepository, useValue: { getByActivity: vi.fn().mockResolvedValue(callUp) } },
+            { provide: PlayerRepository, useValue: { listPlayers: vi.fn().mockResolvedValue([]), listGroups: vi.fn().mockResolvedValue([]) } },
             { provide: MessageService, useValue: messages },
             { provide: BreakpointObserver, useValue: { observe: () => of({ matches: true, breakpoints: {} }) } }
         ]
@@ -111,5 +116,24 @@ describe('ActivityPage', { timeout: 20_000 }, () => {
         await setup(new AppError('not_found'));
 
         expect(screen.getByText('Esta actividad ya no existe.')).toBeTruthy();
+    });
+
+    it('cancelar con la convocatoria abierta ofrece el aviso de cancelación (CA-001 de HU-038)', async () => {
+        const callUp: CallUp = {
+            id: 'c1',
+            activityId: 'a1',
+            deadline: null,
+            closedAt: null,
+            lists: [{ id: 'l1', groupId: 'g1', groupName: '2017', token: 'abc123', intro: null, players: [{ playerId: 'p1', firstNames: 'Juan', lastNames: 'Pérez', nickname: null, phone: null, guardians: [] }] }]
+        };
+        const { user } = await setup(UPCOMING, callUp);
+
+        expect(await screen.findByText('Abierta')).toBeTruthy();
+        await user.click(screen.getByRole('button', { name: 'Cancelar actividad' }));
+        await user.click(screen.getAllByRole('button', { name: 'Cancelar actividad' }).at(-1)!);
+
+        const dialog = await screen.findByRole('dialog', { name: 'Avisar a los convocados' });
+        expect(within(dialog).getByText(/Se cancela el partido contra Club Norte/)).toBeTruthy();
+        expect(within(dialog).queryByText(/\/c\/abc123/)).toBeNull();
     });
 });

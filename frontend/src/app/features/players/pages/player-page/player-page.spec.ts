@@ -198,7 +198,8 @@ describe('PlayerPage', { timeout: 20_000 }, () => {
     describe('acudientes ya registrados (spec 010, HU-035)', () => {
         const OPTIONS = [
             { guardianId: 'gd1', fullName: 'Carlos Vargas', phone: '3157779876', players: [{ playerId: 'p1', name: 'Samuel V.', relationship: 'father' }] },
-            { guardianId: 'gd2', fullName: 'Diana Gómez', phone: '3105551234', players: [{ playerId: 'p2', name: 'Mateo R.', relationship: 'mother' }] }
+            { guardianId: 'gd2', fullName: 'Diana Gómez', phone: '3105551234', players: [{ playerId: 'p2', name: 'Mateo R.', relationship: 'mother' }] },
+            { guardianId: 'gd3', fullName: 'Luz Vargas', phone: '3201112233', players: [] }
         ];
         const MATEO: PlayerSummary = { ...SAMUEL, id: 'p2', firstNames: 'Mateo', lastNames: 'Ruiz', nickname: null, guardianCount: 2 };
 
@@ -207,13 +208,17 @@ describe('PlayerPage', { timeout: 20_000 }, () => {
 
             await user.click(screen.getByRole('button', { name: 'Agregar acudiente' }));
             const dialog = await screen.findByRole('dialog', { name: 'Agregar acudiente de Samuel' });
-            const list = within(dialog).getByRole('list', { name: 'Acudientes de la academia' });
-            expect(within(list).getByRole('button', { name: /Carlos Vargas/ }).hasAttribute('disabled')).toBe(true);
-            expect(within(list).getByText('Ya es acudiente de Samuel')).toBeTruthy();
-            expect(within(list).getByText('Mamá de Mateo R.')).toBeTruthy();
+            // Los que ya son acudientes van en un resumen aparte y no se pueden elegir.
+            const current = within(dialog).getByRole('region', { name: 'Ya son acudientes de Samuel' });
+            expect(within(current).getByText('Carlos Vargas · papá')).toBeTruthy();
+            expect(within(dialog).queryByRole('button', { name: /Carlos Vargas/ })).toBeNull();
+            // Sugeridos: comparten un apellido con el jugador.
+            expect(within(within(dialog).getByRole('list', { name: 'Acudientes sugeridos' })).getByRole('button', { name: /Luz Vargas/ })).toBeTruthy();
+            expect(within(within(dialog).getByRole('list', { name: 'Acudientes de la academia' })).getByText('Mamá de Mateo R.')).toBeTruthy();
 
             await user.type(within(dialog).getByRole('searchbox', { name: 'Buscar acudiente' }), '310 555');
-            expect(within(list).queryByText(/Carlos/)).toBeNull();
+            const list = within(dialog).getByRole('list', { name: 'Acudientes de la academia' });
+            expect(within(dialog).queryByRole('list', { name: 'Acudientes sugeridos' })).toBeNull();
             await user.click(within(list).getByRole('button', { name: /Diana Gómez/ }));
             expect(within(dialog).queryByLabelText(/El acudiente autoriza/)).toBeNull();
             await user.click(within(dialog).getByLabelText('Mamá'));
@@ -254,10 +259,11 @@ describe('PlayerPage', { timeout: 20_000 }, () => {
 
             await user.click(screen.getByRole('button', { name: 'Copiar de un hermano' }));
             const dialog = await screen.findByRole('dialog', { name: 'Copiar acudientes de un hermano' });
-            await user.click(within(dialog).getByRole('button', { name: /Mateo R\./ }));
+            await user.click(within(dialog).getByRole('button', { name: /Mateo Ruiz/ }));
 
             const list = await within(dialog).findByRole('list', { name: 'Acudientes del hermano' });
-            expect(within(list).getByText('Ya es acudiente de Samuel')).toBeTruthy();
+            expect(within(within(dialog).getByRole('region', { name: 'Ya son acudientes de Samuel' })).getByText('Carlos Vargas')).toBeTruthy();
+            expect(within(list).queryByText('Carlos Vargas')).toBeNull();
             await user.click(within(list).getByRole('checkbox', { name: /Luz Ruiz/ }));
             await user.click(within(dialog).getByRole('button', { name: 'Asignar 1 acudiente' }));
 

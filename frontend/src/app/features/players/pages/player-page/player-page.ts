@@ -121,6 +121,7 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
             [open]="pickerOpen()"
             [options]="guardianOptions()"
             [playerName]="detail.player()?.firstNames ?? ''"
+            [playerLastNames]="detail.player()?.lastNames ?? ''"
             [busy]="detail.busy()"
             (assign)="assignGuardian($event)"
             (registerNew)="registerNewGuardian()"

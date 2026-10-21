@@ -23,7 +23,7 @@ Aprobado por el responsable el 2026-10-19 sobre las maquetas de `mockups/` (R8).
 
 - «Tu texto» (textarea, 500 caracteres), que se guarda al compartir o copiar.
 - Vista previa del bloque generado, en un recuadro de solo lectura.
-- Botones «Compartir en el grupo» (principal) y «Copiar».
+- Botón principal «Copiar mensaje» (tu texto y el bloque), para pegarlo en el grupo (ajuste del 2026-10-19: «Compartir en el grupo» se retiró).
 
 ## «Enviar» a un convocado
 
@@ -31,7 +31,7 @@ Si tiene un solo acudiente, abre WhatsApp en su chat. Si tiene varios, primero u
 
 ## Aviso de cambio o cancelación
 
-Al guardar un cambio de fecha, hora o lugar, o al cancelar, se abre un drawer «Avisar a los convocados»: el aviso de cada lista, con «Compartir en el grupo» y «Copiar», y el enlace «Ahora no».
+Al guardar un cambio de fecha, hora o lugar, o al cancelar, se abre un drawer «Avisar a los convocados»: el aviso de cada lista con «Copiar aviso», y «Ahora no».
 
 ## Página pública `/c/:token`
 

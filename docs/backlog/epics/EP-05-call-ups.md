@@ -16,8 +16,8 @@ Permitir al administrador convocar jugadores para participar en una actividad.
 
 | ID | Historia | Estado |
 |---|---|---|
-| HU-007 | Crear convocatoria (grupos y jugadores sumados) | Definida |
-| HU-008 | Gestionar convocatoria abierta | Definida |
+| HU-007 | Crear convocatoria (grupos y jugadores sumados) | Terminada (entorno local) |
+| HU-008 | Gestionar convocatoria abierta | Terminada (entorno local) |
 
 ## Decisiones de la ideación (2026-10-18)
 

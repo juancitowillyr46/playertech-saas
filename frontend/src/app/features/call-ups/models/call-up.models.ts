@@ -1,5 +1,8 @@
 import { Relationship } from '../../players/models/player.models';
 
+/** Largo máximo de tu texto en el mensaje y en los avisos (FR-005). */
+export const INTRO_MAX = 500;
+
 export interface CallUpGuardian {
     readonly fullName: string;
     readonly phone: string;

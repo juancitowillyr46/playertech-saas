@@ -1,56 +1,120 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { PlayerRepository } from '../../players/data/player.repository';
 import { Activity } from '../../activities/models/activity.models';
-import { CallUp, CallUpListInput } from '../models/call-up.models';
+import { PlayerRepository } from '../../players/data/player.repository';
+import { GroupRef, PlayerSummary } from '../../players/models/player.models';
 import { CallUpRepository } from '../data/call-up.repository';
+import { CallUp, CallUpListInput } from '../models/call-up.models';
+
+/** Cambios del drawer «Ajustar convocados» sobre una convocatoria abierta (HU-008, CA-002 y CA-003). */
+export interface CallUpAdjustment {
+    readonly removed: readonly string[];
+    readonly moved: readonly { readonly playerId: string; readonly listId: string }[];
+    readonly added: readonly { readonly listId: string; readonly playerIds: readonly string[] }[];
+    /** `undefined`: sin cambio; `null`: quitar la fecha límite. */
+    readonly deadline?: string | null;
+}
+
+/** Abierta: sin cierre manual y antes de la fecha límite o, sin ella, del inicio (DEC-34). */
+export function callUpIsOpen(callUp: CallUp | null, activity: Pick<Activity, 'startsAt'> | null, now: Date = new Date()): boolean {
+    return !!callUp && !!activity && !callUp.closedAt && now.getTime() < new Date(callUp.deadline ?? activity.startsAt).getTime();
+}
+
+/**
+ * Convocatoria de una actividad (spec 012; HU-007 y HU-008). Las reglas (fecha límite,
+ * cerrada inmutable, un jugador por convocatoria) las garantiza la base de datos.
+ */
 @Injectable()
 export class CallUpService {
     private readonly repository = inject(CallUpRepository);
     private readonly players = inject(PlayerRepository);
+
     readonly callUp = signal<CallUp | null>(null);
+    readonly activity = signal<Activity | null>(null);
     readonly busy = signal(false);
-    private activity: Activity | null = null;
-    readonly isOpen = computed(() => {
-        const c = this.callUp(),
-            a = this.activity;
-        return !!c && !!a && !c.closedAt && Date.now() < new Date(c.deadline ?? a.startsAt).getTime();
-    });
-    async load(activity: Activity) {
-        this.activity = activity;
+    readonly isOpen = computed(() => callUpIsOpen(this.callUp(), this.activity()));
+
+    async load(activity: Activity): Promise<void> {
+        this.activity.set(activity);
         this.callUp.set(await this.repository.getByActivity(activity.id));
     }
-    candidates() {
-        return this.players.listPlayers().then((p) => p.filter((x) => x.isActive));
+
+    /** Jugadores activos (con sus grupos) que se pueden convocar o sumar. */
+    async candidates(): Promise<readonly PlayerSummary[]> {
+        return (await this.players.listPlayers()).filter((player) => player.isActive);
     }
-    async create(deadline: string | null, lists: readonly CallUpListInput[]) {
-        await this.run(() => this.repository.create(this.activity!.id, deadline, lists));
+
+    groups(): Promise<readonly GroupRef[]> {
+        return this.players.listGroups();
     }
-    async add(listId: string, ids: readonly string[]) {
-        await this.run(() => this.repository.addPlayers(this.callUp()!, listId, ids));
+
+    /** La fecha límite abierta quedaría en o después de un nuevo inicio (lo rechaza la base de datos). */
+    deadlineConflicts(newStartsAt: string): boolean {
+        const deadline = this.callUp()?.deadline;
+
+        return this.isOpen() && !!deadline && new Date(deadline).getTime() >= new Date(newStartsAt).getTime();
     }
-    async remove(playerId: string) {
-        await this.run(() => this.repository.removePlayer(this.callUp()!.id, playerId));
+
+    create(deadline: string | null, lists: readonly CallUpListInput[]): Promise<void> {
+        return this.run((activity) => this.repository.create(activity.id, deadline, lists));
     }
-    async move(playerId: string, listId: string) {
-        await this.run(() => this.repository.movePlayer(this.callUp()!.id, playerId, listId));
+
+    adjust(changes: CallUpAdjustment): Promise<void> {
+        return this.run(async () => {
+            const callUp = this.callUp()!;
+
+            for (const playerId of changes.removed) {
+                await this.repository.removePlayer(callUp.id, playerId);
+            }
+
+            for (const move of changes.moved) {
+                await this.repository.movePlayer(callUp.id, move.playerId, move.listId);
+            }
+
+            for (const group of changes.added) {
+                await this.repository.addPlayers(callUp, group.listId, group.playerIds);
+            }
+
+            if (changes.deadline !== undefined) {
+                await this.repository.setDeadline(callUp.id, changes.deadline);
+            }
+        });
     }
-    async deadline(value: string | null) {
-        await this.run(() => this.repository.setDeadline(this.callUp()!.id, value));
+
+    close(): Promise<void> {
+        return this.run(() => this.repository.close(this.callUp()!.id));
     }
-    async close() {
-        await this.run(() => this.repository.close(this.callUp()!.id));
+
+    saveIntro(listId: string, intro: string | null): Promise<void> {
+        return this.run(() => this.repository.saveIntro(listId, intro));
     }
-    async saveIntro(listId: string, intro: string | null) {
-        await this.run(() => this.repository.saveIntro(listId, intro));
+
+    /** Recarga sin cambiar nada (por ejemplo, tras cancelar la actividad, que cierra la convocatoria). */
+    async refresh(): Promise<void> {
+        const activity = this.activity();
+
+        if (activity) {
+            await this.load(activity);
+        }
     }
-    private async run(action: () => Promise<void>) {
-        if (this.busy() || !this.activity) return;
+
+    /** Una operación a la vez; al terminar o fallar, se relee la convocatoria. */
+    private async run(operation: (activity: Activity) => Promise<void>): Promise<void> {
+        const activity = this.activity();
+
+        if (this.busy() || !activity) {
+            return;
+        }
+
         this.busy.set(true);
+
         try {
-            await action();
-            await this.load(this.activity);
+            await operation(activity);
         } finally {
-            this.busy.set(false);
+            try {
+                await this.load(activity);
+            } finally {
+                this.busy.set(false);
+            }
         }
     }
 }

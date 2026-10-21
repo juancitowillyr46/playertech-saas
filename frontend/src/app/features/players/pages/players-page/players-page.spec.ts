@@ -75,11 +75,11 @@ async function fillForm(user: ReturnType<typeof userEvent.setup>, values: { firs
 }
 
 describe('PlayersPage', { timeout: 20_000 }, () => {
-    it('lista los activos con nombre corto, apodo, edad, grupos y acudientes (CA-001 y CA-004 de HU-003)', async () => {
+    it('lista los activos con nombre completo, apodo, edad, grupos y acudientes (CA-001 y CA-004 de HU-003)', async () => {
         await setup();
 
         const rows = within(list()).getAllByRole('link');
-        expect(rows.map((row) => row.textContent?.replace(/\s+/g, ' ').trim())).toEqual([expect.stringContaining('Mateo R.'), expect.stringContaining('Samuel V. · Samu')]);
+        expect(rows.map((row) => row.textContent?.replace(/\s+/g, ' ').trim())).toEqual([expect.stringContaining('Mateo Ruiz'), expect.stringContaining('Samuel Vargas · Samu')]);
         expect(rows[1].textContent).toMatch(/\d+ años · Sub-12 · 2 acudientes/);
         expect(rows[0].getAttribute('href')).toBe('/p2');
         expect(screen.getByText('2 jugadores')).toBeTruthy();

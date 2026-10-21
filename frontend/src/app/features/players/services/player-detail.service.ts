@@ -12,6 +12,8 @@ export type PlayerDetailStatus = 'loading' | 'ready' | 'not_found' | 'error';
 /** Opción del selector: indica si ya es acudiente de este jugador (CA-004 de HU-035). */
 export interface GuardianChoice extends GuardianOption {
     readonly alreadyLinked: boolean;
+    /** Parentesco con este jugador, si ya es su acudiente. */
+    readonly linkedAs: Relationship | null;
 }
 
 /**
@@ -103,7 +105,11 @@ export class PlayerDetailService {
     async guardianOptions(): Promise<readonly GuardianChoice[]> {
         const options = await this.guardianRepository.listGuardians();
 
-        return options.map((option) => ({ ...option, alreadyLinked: option.players.some((player) => player.playerId === this.playerId) }));
+        return options.map((option) => {
+            const link = option.players.find((player) => player.playerId === this.playerId);
+
+            return { ...option, alreadyLinked: !!link, linkedAs: link?.relationship ?? null };
+        });
     }
 
     /** Otros jugadores con acudientes, para «Copiar de un hermano». */

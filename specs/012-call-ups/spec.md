@@ -83,7 +83,7 @@ Como owner, quiero compartir el mensaje en el grupo o enviárselo directo al acu
 
 **Escenarios de aceptación**:
 
-1. **Dado** el mensaje de una lista, **cuando** toca «Compartir en el grupo», **entonces** se cumple CA-001 de HU-013.
+1. **Dado** el mensaje de una lista, **cuando** toca «Copiar mensaje», **entonces** se cumple CA-001 de HU-013 (ajuste del 2026-10-19).
 2. **Dado** un convocado con acudientes, o sin ellos, **cuando** toca enviar, **entonces** se cumplen CA-002 y CA-003 de HU-013.
 3. **Dado** cualquier mensaje, **cuando** copia, **entonces** se cumple CA-004 de HU-013.
 
@@ -144,7 +144,7 @@ Como owner, quiero que estas pantallas sean claras en el celular, y haber aproba
 - **FR-004**: Mientras esté abierta, el owner DEBE poder sumar, quitar o mover convocados y cambiar la fecha límite, y DEBE poder cerrarla (con confirmación). Cerrada no se reabre.
 - **FR-005**: Cada lista DEBE ofrecer su mensaje: un **texto propio** del owner (hasta 500 caracteres, guardado por lista) seguido de un **bloque generado no editable** con tipo, fecha, citación, inicio, lugar y dirección, rival y torneo (en competencia), observaciones, fecha límite, convocados (nombre, inicial y apodo) y el enlace, siempre con los datos actuales.
 - **FR-006**: Cada convocado DEBE ofrecer un mensaje personal (texto inicial editable no guardado, nombre del jugador, datos de la actividad y enlace de su lista).
-- **FR-007**: Los mensajes DEBEN poder compartirse en un chat de WhatsApp elegido por el owner, enviarse al celular de un acudiente del convocado (o del propio jugador sin acudientes) abriendo ese chat con el texto listo, y copiarse. PlayerTech NO DEBE enviar mensajes.
+- **FR-007**: El mensaje de una lista DEBE poder copiarse completo para pegarlo en el grupo (ajuste del 2026-10-19); los mensajes personales DEBEN poder enviarse al celular de un acudiente del convocado (o del propio jugador sin acudientes) abriendo ese chat con el texto listo, y copiarse. PlayerTech NO DEBE enviar mensajes.
 - **FR-008**: Al cancelar una actividad con convocatoria abierta, la convocatoria DEBE cerrarse y DEBE ofrecerse un aviso de cancelación; al cambiar su fecha, hora o lugar, DEBE ofrecerse un aviso de cambio. Los avisos son opcionales y usan las mismas opciones de compartir.
 - **FR-009**: Toda lectura y escritura DEBE depender de la autorización de la base de datos: solo el owner escribe, y nunca se accede a datos de otra academia. El enlace NO DEBE dar acceso a datos en esta spec.
 - **FR-010**: Cada operación exitosa DEBE mostrar un aviso breve y reflejarse sin recargar; los errores DEBEN mostrarse en español sin detalles técnicos, conservando lo escrito.
