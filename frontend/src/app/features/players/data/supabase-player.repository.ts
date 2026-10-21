@@ -8,7 +8,7 @@ import { GroupRef, PlayerInput, PlayerSummary } from '../models/player.models';
 import { GroupsNotSavedError, PlayerRepository } from './player.repository';
 
 /** Jugador con sus grupos y vínculos embebidos: una sola consulta para el listado (research R7). */
-const COLUMNS = 'id, first_names, last_names, nickname, birth_date, phone, is_active, group_members(groups(id, name)), guardian_links(status, deleted_at)';
+const COLUMNS = 'id, first_names, last_names, nickname, birth_date, phone, is_active, group_members(groups(id, name)), guardian_links(status, relationship, deleted_at)';
 
 interface PlayerRow {
     id: string;
@@ -19,7 +19,7 @@ interface PlayerRow {
     phone: string | null;
     is_active: boolean;
     group_members: { groups: GroupRef | null }[];
-    guardian_links: { status: string; deleted_at: string | null }[];
+    guardian_links: { status: string; relationship: string; deleted_at: string | null }[];
 }
 
 function toPlayer(row: PlayerRow): PlayerSummary {
@@ -31,10 +31,9 @@ function toPlayer(row: PlayerRow): PlayerSummary {
         birthDate: row.birth_date,
         phone: row.phone,
         isActive: row.is_active,
-        groups: row.group_members
-            .flatMap((member) => (member.groups ? [{ id: member.groups.id, name: member.groups.name }] : []))
-            .sort((a, b) => a.name.localeCompare(b.name, 'es-CO')),
-        guardianCount: row.guardian_links.filter((link) => link.status === 'validated' && !link.deleted_at).length
+        groups: row.group_members.flatMap((member) => (member.groups ? [{ id: member.groups.id, name: member.groups.name }] : [])).sort((a, b) => a.name.localeCompare(b.name, 'es-CO')),
+        // El vínculo «el jugador» (responde él mismo) no es un acudiente (spec 013).
+        guardianCount: row.guardian_links.filter((link) => link.status === 'validated' && !link.deleted_at && link.relationship !== 'self').length
     };
 }
 

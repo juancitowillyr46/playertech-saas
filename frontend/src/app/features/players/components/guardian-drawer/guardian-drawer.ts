@@ -45,7 +45,18 @@ function requiredTrimmed(control: AbstractControl<string>): ValidationErrors | n
             <form [formGroup]="form" class="flex flex-col gap-5" novalidate (ngSubmit)="submit()">
                 <div class="flex flex-col gap-2">
                     <label for="guardianPhone" class="font-medium">Celular</label>
-                    <input pInputText id="guardianPhone" type="tel" inputmode="tel" formControlName="phone" autocomplete="off" class="w-full" [invalid]="!!errorOf('phone')" [attr.aria-invalid]="a11y('phone')['aria-invalid']" [attr.aria-describedby]="a11y('phone')['aria-describedby']" />
+                    <input
+                        pInputText
+                        id="guardianPhone"
+                        type="tel"
+                        inputmode="tel"
+                        formControlName="phone"
+                        autocomplete="off"
+                        class="w-full"
+                        [invalid]="!!errorOf('phone')"
+                        [attr.aria-invalid]="a11y('phone')['aria-invalid']"
+                        [attr.aria-describedby]="a11y('phone')['aria-describedby']"
+                    />
                     @if (errorOf('phone'); as message) {
                         <p-message id="guardianPhone-error" severity="error" variant="simple" size="small">{{ message }}</p-message>
                     }
@@ -55,7 +66,18 @@ function requiredTrimmed(control: AbstractControl<string>): ValidationErrors | n
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="guardianFullName" class="font-medium">Nombre completo</label>
-                    <input pInputText id="guardianFullName" formControlName="fullName" maxlength="120" autocomplete="off" class="w-full" [readonly]="!!existingName()" [invalid]="!!errorOf('fullName')" [attr.aria-invalid]="a11y('fullName')['aria-invalid']" [attr.aria-describedby]="a11y('fullName')['aria-describedby']" />
+                    <input
+                        pInputText
+                        id="guardianFullName"
+                        formControlName="fullName"
+                        maxlength="120"
+                        autocomplete="off"
+                        class="w-full"
+                        [readonly]="!!existingName()"
+                        [invalid]="!!errorOf('fullName')"
+                        [attr.aria-invalid]="a11y('fullName')['aria-invalid']"
+                        [attr.aria-describedby]="a11y('fullName')['aria-describedby']"
+                    />
                     @if (errorOf('fullName'); as message) {
                         <p-message id="guardianFullName-error" severity="error" variant="simple" size="small">{{ message }}</p-message>
                     }
@@ -241,7 +263,7 @@ export class GuardianDrawer {
         this.existingName.set(null);
         this.formError.set(null);
         this.form.controls.consent.enable();
-        this.form.reset({ phone: guardian?.phone ?? '', fullName: guardian?.fullName ?? '', relationship: guardian?.relationship ?? '', consent: false });
+        this.form.reset({ phone: guardian?.phone ?? '', fullName: guardian?.fullName ?? '', relationship: guardian?.relationship && guardian.relationship !== 'self' ? guardian.relationship : '', consent: false });
 
         if (!guardian && !this.policyUrl()) {
             void this.detail.privacyPolicyUrl().then((url) => this.policyUrl.set(url));

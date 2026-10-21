@@ -146,7 +146,7 @@ description: "Lista de tareas para convocatoria y mensaje de WhatsApp (Fase 2, s
 - [X] T021 Recorrer `quickstart.md` y anotar los resultados; el responsable valida desde el celular
 - [X] T022 Confirmar que la academia A del seed no tiene convocatorias y que `npm run db:test` está en verde
 - [X] T023 [P] Marcar HU-007, HU-008, HU-012, HU-013 y HU-038 como «Terminada (entorno local)» en las HU, en EP-05, en EP-08, en `docs/backlog/README.md` y en `AGENTS.md`
-- [ ] T024 Tras el merge y con autorización: `npm run db:push`, primero con `--dry-run`
+- [X] T024 Tras el merge y con autorización: `npm run db:push`, primero con `--dry-run`
 
 ---
 

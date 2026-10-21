@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Elegir jugador</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="padding: 14px 16px; border-bottom: 1px solid #D9D9D9; font-weight: 700; font-size: 16px;">Academia C</div>
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; background: #F2F2F2;">
+<h1 style="margin: 0; font-size: 18px;">Partido contra Club Atlético Norte</h1>
+<span>Sábado 24 de octubre · llegar 8:15 a. m. · inicia 9:00 a. m.</span>
+<span>Cancha A, Calle 63, Medellín</span>
+<span style="color: #555555;">Liga de Antioquia · Uniforme rojo, canilleras y $15.000</span>
+<span style="font-weight: 600;">Responde hasta el viernes 23, 8:00 p. m.</span>
+</div>
+<div style="flex-grow: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; overflow: hidden;">
+<h2 style="margin: 0; font-size: 16px;">¿Por quién respondes?</h2>
+<label style="display: flex; flex-direction: column; gap: 4px;"><span style="color: #555555;">Buscar</span><input placeholder="Nombre o apodo" style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #333333; border-radius: 8px; font: inherit;"></label>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #D9D9D9;">
+<a href="Identify.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9; text-decoration: none; padding: 0 4px;"><span>Andrés G.</span><span aria-hidden="true">›</span></a>
+<a href="Identify.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9; text-decoration: none; padding: 0 4px;"><span>Antony C.</span><span aria-hidden="true">›</span></a>
+<a href="Identify.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9; text-decoration: none; padding: 0 4px;"><span>Juan José O. · Juanjo</span><span aria-hidden="true">›</span></a>
+<a href="Identify.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9; text-decoration: none; padding: 0 4px;"><span>Mateo R.</span><span aria-hidden="true">›</span></a>
+<a href="Identify.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9; text-decoration: none; padding: 0 4px;"><span>Samuel V. · Samu</span><span aria-hidden="true">›</span></a>
+<a href="Identify.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9; text-decoration: none; padding: 0 4px;"><span>Santiago D. · Santi</span><span aria-hidden="true">›</span></a>
+<span style="padding: 8px 4px; color: #555555;">… 11 más</span>
+</div>
+<p style="margin: 4px 0 0; color: #555555;">Si eres un jugador adulto, búscate y elige «Soy el jugador» en el siguiente paso.</p>
+<p style="margin: 0; color: #555555;">¿No ves a tu jugador? Escríbele a la academia.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

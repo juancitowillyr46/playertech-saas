@@ -2,7 +2,10 @@ import { GroupRef, PlayerInput, PlayerSummary } from '../models/player.models';
 
 /** El jugador se guardó, pero la sincronización de sus grupos falló (aceptado en el MVP, research M2). */
 export class GroupsNotSavedError extends Error {
-    constructor(readonly playerId: string, options?: ErrorOptions) {
+    constructor(
+        readonly playerId: string,
+        options?: ErrorOptions
+    ) {
         super('El jugador se guardó, pero no sus grupos.', options);
     }
 }

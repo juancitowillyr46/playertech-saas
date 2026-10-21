@@ -27,21 +27,7 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
  */
 @Component({
     selector: 'app-activities-page',
-    imports: [
-        FormsModule,
-        RouterLink,
-        ButtonModule,
-        ConfirmDialogModule,
-        MessageModule,
-        SelectModule,
-        SelectButtonModule,
-        SkeletonModule,
-        TagModule,
-        PageHeader,
-        PageHeaderAction,
-        ActivityFormDrawer,
-        ExternalFieldDrawer
-    ],
+    imports: [FormsModule, RouterLink, ButtonModule, ConfirmDialogModule, MessageModule, SelectModule, SelectButtonModule, SkeletonModule, TagModule, PageHeader, PageHeaderAction, ActivityFormDrawer, ExternalFieldDrawer],
     providers: [ActivitiesService, ExternalFieldsService, ConfirmationService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
@@ -88,14 +74,23 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
                                         <span class="w-20 shrink-0 font-semibold">{{ time(activity) }}</span>
                                         <span class="flex min-w-0 flex-1 flex-col gap-0.5">
                                             <span class="line-clamp-2 font-semibold" [class.line-through]="activity.status === 'cancelled'">{{ title(activity) }}</span>
-                                            <span class="truncate text-sm text-muted-color">{{ activity.place.name }}@if (activity.tournament) { · {{ activity.tournament }} }</span>
+                                            <span class="truncate text-sm text-muted-color"
+                                                >{{ activity.place.name }}
+                                                @if (activity.tournament) {
+                                                    · {{ activity.tournament }}
+                                                }
+                                            </span>
                                         </span>
                                         <!-- Estado siempre en la misma columna, para recorrerla con la vista (spec 012). -->
                                         <span class="shrink-0 pr-1 text-right">
                                             @if (activity.status === 'cancelled') {
                                                 <p-tag severity="secondary" value="Cancelada" [styleClass]="stamp" />
                                             } @else if (activity.hasCallUp) {
-                                                <p-tag severity="info" value="Convocada" [styleClass]="stamp" />
+                                                @if (activities.confirmations().get(activity.id); as confirmed) {
+                                                    <p-tag severity="info" [value]="confirmed.yes + '/' + confirmed.total" [styleClass]="stamp" [attr.aria-label]="confirmed.yes + ' de ' + confirmed.total + ' confirmados'" />
+                                                } @else {
+                                                    <p-tag severity="info" value="Convocada" [styleClass]="stamp" />
+                                                }
                                             } @else if (!isPast(activity)) {
                                                 <span class="text-sm text-muted-color">Por convocar</span>
                                             }

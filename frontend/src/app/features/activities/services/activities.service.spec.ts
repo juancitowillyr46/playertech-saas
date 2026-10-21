@@ -1,3 +1,4 @@
+import { CallUpRepository } from '../../call-ups/data/call-up.repository';
 import { TestBed } from '@angular/core/testing';
 import { VenueRepository } from '../../venues/data/venue.repository';
 import { ActivityRepository } from '../data/activity.repository';
@@ -35,11 +36,7 @@ const DRAFT: ActivityDraft = {
 
 function setup() {
     const repository = {
-        list: vi.fn().mockResolvedValue([
-            activity('a1', '2026-10-20T21:00:00.000Z'),
-            activity('a2', '2026-10-21T02:00:00.000Z', { type: 'competition' }),
-            activity('a3', '2026-10-22T21:00:00.000Z')
-        ]),
+        list: vi.fn().mockResolvedValue([activity('a1', '2026-10-20T21:00:00.000Z'), activity('a2', '2026-10-21T02:00:00.000Z', { type: 'competition' }), activity('a3', '2026-10-22T21:00:00.000Z')]),
         get: vi.fn(),
         create: vi.fn().mockResolvedValue(5),
         update: vi.fn().mockResolvedValue(undefined),
@@ -58,6 +55,7 @@ function setup() {
         providers: [
             ActivitiesService,
             { provide: ActivityRepository, useValue: repository },
+            { provide: CallUpRepository, useValue: { summaries: vi.fn().mockResolvedValue([]) } },
             { provide: VenueRepository, useValue: venues },
             { provide: ExternalFieldRepository, useValue: fields }
         ]

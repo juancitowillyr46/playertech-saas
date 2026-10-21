@@ -29,11 +29,7 @@ function setup(results: MockResult[], academyId: string | null = 'academy-a') {
     const mock = supabaseClientMock(results);
 
     TestBed.configureTestingModule({
-        providers: [
-            SupabasePlayerRepository,
-            { provide: SUPABASE_CLIENT, useValue: mock.client },
-            { provide: AcademyContextService, useValue: { academy: signal(academyId ? { id: academyId, name: 'A', logoFileId: null } : undefined) } }
-        ]
+        providers: [SupabasePlayerRepository, { provide: SUPABASE_CLIENT, useValue: mock.client }, { provide: AcademyContextService, useValue: { academy: signal(academyId ? { id: academyId, name: 'A', logoFileId: null } : undefined) } }]
     });
 
     return { repository: TestBed.inject(SupabasePlayerRepository), ...mock };
@@ -132,5 +128,14 @@ describe('SupabasePlayerRepository', () => {
         expect(args('update', 'players')[0][0]).toEqual({ is_active: false });
         expect(Object.keys(args('update', 'players')[1][0] as object)).toEqual(['deleted_at']);
         await expect(repository.setActive('p1', true)).rejects.toMatchObject({ code: 'rule_violation' });
+    });
+
+    it('listPlayers: el vínculo «el jugador» no cuenta como acudiente (spec 013)', async () => {
+        const row = { ...ROW, guardian_links: [{ status: 'validated', relationship: 'self', deleted_at: null }] };
+        const { repository } = setup([{ data: [row], error: null }]);
+
+        const [player] = await repository.listPlayers();
+
+        expect(player.guardianCount).toBe(0);
     });
 });

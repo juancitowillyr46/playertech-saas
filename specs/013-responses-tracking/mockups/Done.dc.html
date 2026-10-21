@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Respuesta registrada</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="padding: 14px 16px; border-bottom: 1px solid #D9D9D9; font-weight: 700; font-size: 16px;">Academia C</div>
+<div style="padding: 10px 16px; background: #F2F2F2; color: #333333;">Partido contra Club Atlético Norte · sábado 24, llegar 8:15 a. m. · Cancha A</div>
+<div style="flex-grow: 1; padding: 24px 16px; display: flex; flex-direction: column; gap: 14px;">
+<div style="width: 56px; height: 56px; border-radius: 28px; background: #E6E6E6; display: flex; align-items: center; justify-content: center;">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="2.5" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>
+</div>
+<h1 style="margin: 0; font-size: 22px;">¡Listo!</h1>
+<p style="margin: 0; font-size: 16px;">Registramos que <strong>Samuel V.</strong> no asiste.</p>
+<p style="margin: 0; color: #555555;">Motivo: Otro, «Tiene un cumpleaños familiar».</p>
+<p style="margin: 0; color: #555555;">Puedes cambiarla hasta el viernes 23, 8:00 p. m. Te quedan 3 cambios.</p>
+<a href="Respond.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border: 1px solid #333333; border-radius: 8px; font-weight: 600; text-decoration: none;">Cambiar respuesta</a>
+<a href="Main.dc.html" style="min-height: 44px; display: flex; align-items: center; justify-content: center; font-weight: 600;">¿Respondes por alguien más?</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -10,13 +10,14 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { AppError } from '../../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../../core/errors/error-messages';
+import { dayLabel, fromInstant, timeLabel } from '../../../../shared/text/colombia-time';
 import { ageOn, todayInColombia } from '../../../../shared/text/search-text';
 import { CopyGuardiansDrawer } from '../../components/copy-guardians-drawer/copy-guardians-drawer';
 import { GuardianDrawer } from '../../components/guardian-drawer/guardian-drawer';
 import { GuardianPickerDrawer } from '../../components/guardian-picker-drawer/guardian-picker-drawer';
 import { PlayerFormDrawer } from '../../components/player-form-drawer/player-form-drawer';
 import { GroupsNotSavedError } from '../../data/player.repository';
-import { Guardian, GuardianAssignment, PlayerInput, PlayerSummary, RELATIONSHIP_LABELS } from '../../models/player.models';
+import { Guardian, GuardianAssignment, PendingGuardian, PlayerInput, PlayerSummary, relationshipLabel, ReviewDecision } from '../../models/player.models';
 import { GuardianChoice, PlayerDetailService } from '../../services/player-detail.service';
 
 const STAMP = 'border-2 border-current uppercase tracking-wider';
@@ -78,9 +79,37 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
                         </div>
                         <div class="mt-2 flex gap-2">
                             <p-button label="Editar" icon="pi pi-pencil" [outlined]="true" class="flex-1 sm:flex-none" styleClass="w-full" [disabled]="detail.busy()" (onClick)="editOpen.set(true)" />
-                            <p-button [label]="player.isActive ? 'Desactivar' : 'Activar'" [icon]="player.isActive ? 'pi pi-ban' : 'pi pi-replay'" severity="secondary" [outlined]="true" class="flex-1 sm:flex-none" styleClass="w-full" [disabled]="detail.busy()" (onClick)="setActive(!player.isActive)" />
+                            <p-button
+                                [label]="player.isActive ? 'Desactivar' : 'Activar'"
+                                [icon]="player.isActive ? 'pi pi-ban' : 'pi pi-replay'"
+                                severity="secondary"
+                                [outlined]="true"
+                                class="flex-1 sm:flex-none"
+                                styleClass="w-full"
+                                [disabled]="detail.busy()"
+                                (onClick)="setActive(!player.isActive)"
+                            />
                         </div>
                     </section>
+
+                    <!-- Quienes se identificaron desde el enlace de una convocatoria (spec 013, HU-040). -->
+                    @if (detail.pending().length > 0) {
+                        <section class="rounded-border border border-(--p-text-color) p-4" aria-labelledby="pending-title">
+                            <h2 id="pending-title" class="m-0 mb-1 text-xl">Por validar</h2>
+                            <ul class="m-0 list-none p-0" aria-label="Acudientes por validar">
+                                @for (item of detail.pending(); track pendingKey(item)) {
+                                    <li class="flex flex-col gap-1 border-b border-(--p-content-border-color) py-3 last:border-b-0">
+                                        <strong>{{ pendingName(item) }}</strong>
+                                        <span class="text-sm text-muted-color">{{ pendingDetail(item) }}</span>
+                                        <div class="mt-1 flex gap-2">
+                                            <p-button label="Rechazar" [outlined]="true" class="flex-1" styleClass="w-full" [ariaLabel]="'Rechazar a ' + pendingName(item)" [disabled]="detail.busy()" (onClick)="review(item, 'reject')" />
+                                            <p-button label="Validar" class="flex-1" styleClass="w-full" [ariaLabel]="'Validar a ' + pendingName(item)" [disabled]="detail.busy()" (onClick)="review(item, 'validate')" />
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </section>
+                    }
 
                     <section aria-labelledby="guardians-title">
                         <h2 id="guardians-title" class="m-0 mb-3 text-xl">Acudientes</h2>
@@ -90,6 +119,15 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
                                 <p-button label="Copiar de un hermano" icon="pi pi-copy" [outlined]="true" class="flex-1 sm:flex-none" styleClass="w-full" [disabled]="detail.busy()" (onClick)="copyOpen.set(true)" />
                             }
                         </div>
+                        @if (detail.selfResponder(); as self) {
+                            <div class="mb-3 flex min-h-12 items-center gap-3 rounded-border bg-emphasis py-1 pr-1 pl-3">
+                                <p class="m-0 min-w-0 flex-1">
+                                    <span class="font-semibold">Responde él mismo</span>
+                                    <span class="text-muted-color"> · {{ self.phone }}</span>
+                                </p>
+                                <p-button label="Quitar" [text]="true" severity="secondary" [ariaLabel]="'Dejar de reconocer el celular ' + self.phone" [disabled]="detail.busy()" (onClick)="confirmRemoveSelf(self)" />
+                            </div>
+                        }
                         @if (detail.guardians().length === 0) {
                             <p class="m-0 border-y border-(--p-content-border-color) py-6 text-muted-color">Aún no tiene acudientes.</p>
                         } @else {
@@ -180,7 +218,7 @@ export class PlayerPage implements OnInit {
     }
 
     protected relationshipLabel(guardian: Guardian): string {
-        return RELATIONSHIP_LABELS[guardian.relationship];
+        return relationshipLabel(guardian.relationship);
     }
 
     protected backToList(): void {
@@ -298,6 +336,59 @@ export class PlayerPage implements OnInit {
                     await this.detail.remove();
                     this.backToList();
                 }, 'Jugador eliminado.')
+        });
+    }
+
+    protected pendingKey(item: PendingGuardian): string {
+        return `${item.linkId ?? ''}:${item.deviceId ?? ''}`;
+    }
+
+    /** «Luis · papá»: el nombre que escribió la persona, o el registrado. */
+    protected pendingName(item: PendingGuardian): string {
+        const relationship = relationshipLabel(item.relationship).toLocaleLowerCase('es-CO');
+
+        return `${item.declaredName ?? item.guardianName} · ${relationship}`;
+    }
+
+    /** Celular, cuándo y, si aplica, con quién coincide (CA-002 de HU-040). */
+    protected pendingDetail(item: PendingGuardian): string {
+        const at = fromInstant(item.at);
+        const when = `${dayLabel(at.date, todayInColombia())}, ${timeLabel(at.time)}`.toLocaleLowerCase('es-CO');
+        const origin = item.linkId ? `Desde el enlace, ${when}` : `Celular nuevo, ${when}`;
+        const match = item.phoneMatch ? ` · Coincide con ${item.guardianName}, acudiente registrado.` : '';
+
+        return `${item.phone} · ${origin}${match}`;
+    }
+
+    /** Validar va directo; rechazar pide confirmación (FR-012). */
+    protected review(item: PendingGuardian, decision: ReviewDecision): void {
+        if (decision === 'validate') {
+            void this.runAction(() => this.detail.review(item, 'validate'), 'Acudiente validado.');
+
+            return;
+        }
+
+        this.confirmation.confirm({
+            header: `¿Rechazar a ${item.declaredName ?? item.guardianName}?`,
+            message: 'Sus respuestas dejarán de contar y ese celular ya no se reconocerá. No se le avisará.',
+            acceptLabel: 'Rechazar',
+            rejectLabel: 'Cancelar',
+            acceptButtonProps: { severity: 'danger' },
+            rejectButtonProps: { outlined: true },
+            accept: () => void this.runAction(() => this.detail.review(item, 'reject'), 'Rechazado: sus respuestas ya no cuentan.')
+        });
+    }
+
+    /** Deja de reconocer el celular con el que el jugador responde por sí mismo; podrá identificarse de nuevo. */
+    protected confirmRemoveSelf(self: Guardian): void {
+        this.confirmation.confirm({
+            header: '¿Dejar de reconocer este celular?',
+            message: `${this.detail.player()?.firstNames ?? 'El jugador'} tendrá que identificarse de nuevo desde el enlace y validarlo otra vez.`,
+            acceptLabel: 'Quitar',
+            rejectLabel: 'Cancelar',
+            acceptButtonProps: { severity: 'danger' },
+            rejectButtonProps: { outlined: true },
+            accept: () => void this.runAction(() => this.detail.removeGuardian(self), 'Listo: ese celular ya no se reconoce.')
         });
     }
 

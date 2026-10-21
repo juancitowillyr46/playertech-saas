@@ -32,16 +32,7 @@ interface CopyRow {
     imports: [FormsModule, ButtonModule, CheckboxModule, IconFieldModule, InputIconModule, InputTextModule, MessageModule, SelectModule, FormDrawer],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <app-form-drawer
-            [open]="open()"
-            title="Copiar acudientes de un hermano"
-            [busy]="detail.busy()"
-            [dirty]="!!sibling()"
-            [saveLabel]="saveLabel()"
-            [saveDisabled]="selectedCount() === 0"
-            (save)="submit()"
-            (closed)="closed.emit()"
-        >
+        <app-form-drawer [open]="open()" title="Copiar acudientes de un hermano" [busy]="detail.busy()" [dirty]="!!sibling()" [saveLabel]="saveLabel()" [saveDisabled]="selectedCount() === 0" (save)="submit()" (closed)="closed.emit()">
             @if (error(); as message) {
                 <p-message severity="error" styleClass="mb-5">{{ message }}</p-message>
             }
@@ -78,15 +69,7 @@ interface CopyRow {
                                     <span class="truncate font-semibold">{{ row.fullName }}</span>
                                     <span class="text-sm text-muted-color">{{ row.phone }}</span>
                                 </label>
-                                <p-select
-                                    [options]="relationshipOptions"
-                                    optionLabel="label"
-                                    optionValue="value"
-                                    [ariaLabel]="'Parentesco de ' + row.fullName"
-                                    appendTo="body"
-                                    styleClass="w-36"
-                                    [(ngModel)]="row.relationship"
-                                />
+                                <p-select [options]="relationshipOptions" optionLabel="label" optionValue="value" [ariaLabel]="'Parentesco de ' + row.fullName" appendTo="body" styleClass="w-36" [(ngModel)]="row.relationship" />
                             </li>
                         }
                     </ul>
@@ -182,7 +165,8 @@ export class CopyGuardiansDrawer {
 
         try {
             const linked = new Set(this.detail.guardians().map((guardian) => guardian.guardianId));
-            const guardians = await this.detail.siblingGuardians(player.id);
+            // El vínculo «el jugador» de un hermano adulto es él mismo: no se copia.
+            const guardians = (await this.detail.siblingGuardians(player.id)).flatMap((guardian) => (guardian.relationship === 'self' ? [] : [{ ...guardian, relationship: guardian.relationship }]));
 
             this.rows.set(
                 guardians.map((guardian) => ({

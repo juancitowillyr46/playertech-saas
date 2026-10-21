@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Convocatoria cerrada</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="padding: 14px 16px; border-bottom: 1px solid #D9D9D9; font-weight: 700; font-size: 16px;">Academia C</div>
+<div style="margin: 14px 16px 0; padding: 12px; border: 1px solid #999999; border-radius: 8px; background: #F2F2F2; font-weight: 600;">La convocatoria está cerrada. Ya no se reciben respuestas.</div>
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 6px;">
+<h1 style="margin: 0; font-size: 18px;">Partido contra Club Atlético Norte</h1>
+<span>Sábado 24 de octubre · llegar 8:15 a. m. · inicia 9:00 a. m.</span>
+<span>Cancha A, Calle 63, Medellín</span>
+<span style="color: #555555;">Uniforme rojo, canilleras y $15.000</span>
+</div>
+<div style="padding: 0 16px; display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; font-size: 16px;">Tus respuestas</h2>
+<div style="display: flex; justify-content: space-between; align-items: center; min-height: 48px; border-bottom: 1px solid #D9D9D9;"><span>Samuel V. · Samu</span><strong>Sí</strong></div>
+<div style="display: flex; justify-content: space-between; align-items: center; min-height: 48px; border-bottom: 1px solid #D9D9D9;"><span>Tomás V.</span><strong>Sí, provisional</strong></div>
+<p style="margin: 4px 0 0; color: #555555;">¿Necesitas cambiar algo? Escríbele a la academia.</p>
+</div>
+<div style="margin: 24px 16px 0; padding-top: 14px; border-top: 1px dashed #999999; color: #555555; font-size: 13px;">Variante: si la actividad se canceló, el aviso dice «Se canceló la actividad» y se ve igual, en modo lectura.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -5,7 +5,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { TextareaModule } from 'primeng/textarea';
 import { FormDrawer } from '../../../../shared/components/form-drawer/form-drawer';
 import { Activity } from '../../../activities/models/activity.models';
-import { RELATIONSHIP_LABELS, shortName } from '../../../players/models/player.models';
+import { relationshipLabel, shortName } from '../../../players/models/player.models';
 import { listMessage, personalMessage } from '../../messages/call-up-messages';
 import { callUpLink, copyText, openWhatsapp, whatsappChat } from '../../messages/whatsapp';
 import { CallUpList, CallUpPlayer, INTRO_MAX } from '../../models/call-up.models';
@@ -96,7 +96,7 @@ export class MessageDrawer {
         }
 
         if (player.guardians.length > 0) {
-            return player.guardians.map((guardian, index) => ({ key: String(index), label: `${guardian.fullName} · ${RELATIONSHIP_LABELS[guardian.relationship]}`, phone: guardian.phone }));
+            return player.guardians.map((guardian, index) => ({ key: String(index), label: `${guardian.fullName} · ${relationshipLabel(guardian.relationship)}`, phone: guardian.phone }));
         }
 
         return player.phone ? [{ key: 'player', label: player.firstNames, phone: player.phone }] : [];

@@ -3,6 +3,7 @@ import { AppError } from '../../../core/errors/app-error';
 import { randomUuid } from '../../../core/storage/data/random-uuid';
 import { dayKey, dayLabel, toInstant, weeklyDates } from '../../../shared/text/colombia-time';
 import { todayInColombia } from '../../../shared/text/search-text';
+import { CallUpRepository } from '../../call-ups/data/call-up.repository';
 import { VenueRepository } from '../../venues/data/venue.repository';
 import { ActivityRepository } from '../data/activity.repository';
 import { ExternalFieldRepository } from '../data/external-field.repository';
@@ -79,6 +80,10 @@ export class ActivitiesService {
     private readonly repository = inject(ActivityRepository);
     private readonly fields = inject(ExternalFieldRepository);
     private readonly venues = inject(VenueRepository);
+    private readonly callUps = inject(CallUpRepository);
+
+    /** Confirmados (solo Sí) sobre convocados por actividad convocada, para «12/17» (spec 013, FR-014). */
+    readonly confirmations = signal<ReadonlyMap<string, { readonly yes: number; readonly total: number }>>(new Map());
 
     readonly activities = signal<readonly Activity[]>([]);
     readonly status = signal<ActivitiesStatus>('loading');
@@ -107,9 +112,31 @@ export class ActivitiesService {
         this.status.set('loading');
 
         try {
-            this.apply(await this.repository.list(when));
+            const activities = await this.repository.list(when);
+
+            this.apply(activities);
+            void this.loadConfirmations(activities);
         } catch {
             this.status.set('error');
+        }
+    }
+
+    /** Si los totales no llegan, la lista muestra «Convocada» como antes. */
+    private async loadConfirmations(activities: readonly Activity[]): Promise<void> {
+        const ids = activities.filter((activity) => activity.hasCallUp).map((activity) => activity.id);
+
+        try {
+            const confirmations = new Map<string, { yes: number; total: number }>();
+
+            for (const summary of await this.callUps.summaries(ids)) {
+                const current = confirmations.get(summary.activityId) ?? { yes: 0, total: 0 };
+
+                confirmations.set(summary.activityId, { yes: current.yes + summary.yes, total: current.total + summary.total });
+            }
+
+            this.confirmations.set(confirmations);
+        } catch {
+            this.confirmations.set(new Map());
         }
     }
 

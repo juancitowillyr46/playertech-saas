@@ -8,7 +8,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { FormDrawer } from '../../../../shared/components/form-drawer/form-drawer';
 import { normalizePhone } from '../../../../shared/forms/phone.validator';
 import { searchKey } from '../../../../shared/text/search-text';
-import { accompaniesLabel, GuardianAssignment, Relationship, RELATIONSHIP_LABELS } from '../../models/player.models';
+import { accompaniesLabel, GuardianAssignment, Relationship, RELATIONSHIP_LABELS, relationshipLabel } from '../../models/player.models';
 import { GuardianChoice } from '../../services/player-detail.service';
 
 /** Partículas de apellidos compuestos («de la Cruz») que no sirven para sugerir. */
@@ -140,7 +140,10 @@ export class GuardianPickerDrawer {
         const surnames = searchKey(this.playerLastNames())
             .split(/\s+/)
             .filter((word) => word.length > 2 && !SURNAME_PARTICLES.has(word));
-        const isSuggested = (option: GuardianChoice) => searchKey(option.fullName).split(/\s+/).some((word) => surnames.includes(word));
+        const isSuggested = (option: GuardianChoice) =>
+            searchKey(option.fullName)
+                .split(/\s+/)
+                .some((word) => surnames.includes(word));
         const suggested = available.filter(isSuggested);
         const others = available.filter((option) => !isSuggested(option));
 
@@ -161,7 +164,7 @@ export class GuardianPickerDrawer {
     }
 
     protected relationshipLabel(option: GuardianChoice): string {
-        return option.linkedAs ? RELATIONSHIP_LABELS[option.linkedAs].toLocaleLowerCase('es-CO') : '';
+        return option.linkedAs ? relationshipLabel(option.linkedAs).toLocaleLowerCase('es-CO') : '';
     }
 
     protected accompanies(option: GuardianChoice): string {

@@ -43,6 +43,8 @@ async function setup(options: { player?: Partial<Record<string, ReturnType<typeo
         removeFromPlayer: vi.fn().mockResolvedValue(undefined),
         listGuardians: vi.fn().mockResolvedValue([]),
         assign: vi.fn().mockResolvedValue(1),
+        pending: vi.fn().mockResolvedValue([]),
+        review: vi.fn().mockResolvedValue(undefined),
         ...options.guardian
     };
     const messages = { add: vi.fn() };
@@ -277,5 +279,46 @@ describe('PlayerPage', { timeout: 20_000 }, () => {
             expect(screen.queryByRole('button', { name: 'Copiar de un hermano' })).toBeNull();
         });
     });
-});
 
+    describe('por validar (spec 013, HU-040)', () => {
+        const PENDING = { linkId: 'gl9', deviceId: 'd9', guardianName: 'Luis Gómez', declaredName: 'Luis', relationship: 'father', phone: '3005550099', at: '2030-10-20T01:02:00.000Z', phoneMatch: false };
+
+        it('valida directo y rechaza con confirmación (CA-001, CA-003 y CA-004 de HU-040)', async () => {
+            const { user, guardians, messages } = await setup({ guardian: { pending: vi.fn().mockResolvedValue([PENDING]) } });
+
+            const block = screen.getByRole('list', { name: 'Acudientes por validar' });
+            expect(within(block).getByText('Luis · papá')).toBeTruthy();
+            expect(within(block).getByText(/3005550099 · Desde el enlace/)).toBeTruthy();
+
+            await user.click(within(block).getByRole('button', { name: 'Validar a Luis · papá' }));
+            expect(guardians.review).toHaveBeenCalledWith('gl9', 'd9', 'validate');
+            expect(toasts(messages)).toContain('Acudiente validado.');
+
+            await user.click(within(block).getByRole('button', { name: 'Rechazar a Luis · papá' }));
+            const confirm = await screen.findByRole('alertdialog', { name: '¿Rechazar a Luis?' });
+            await user.click(within(confirm).getByRole('button', { name: 'Rechazar' }));
+            expect(guardians.review).toHaveBeenCalledWith('gl9', 'd9', 'reject');
+        });
+
+        it('sin pendientes no muestra el bloque', async () => {
+            await setup();
+
+            expect(screen.queryByRole('heading', { name: 'Por validar' })).toBeNull();
+        });
+    });
+
+    it('un jugador que responde él mismo no figura como su acudiente y se puede quitar (spec 013)', async () => {
+        const self = { ...CARLOS, linkId: 'l9', fullName: 'Samuel Vargas', phone: '3104440015', relationship: 'self' as const, otherPlayers: [] };
+        const { user, guardians } = await setup({ guardian: { listByPlayer: vi.fn().mockResolvedValue([self]) } });
+
+        expect(screen.getByText('Responde él mismo')).toBeTruthy();
+        expect(screen.getByText('Aún no tiene acudientes.')).toBeTruthy();
+        expect(screen.queryByRole('list', { name: 'Acudientes del jugador' })).toBeNull();
+
+        await user.click(screen.getByRole('button', { name: 'Dejar de reconocer el celular 3104440015' }));
+        const confirm = await screen.findByRole('alertdialog', { name: '¿Dejar de reconocer este celular?' });
+        await user.click(within(confirm).getByRole('button', { name: 'Quitar' }));
+
+        expect(guardians.removeFromPlayer).toHaveBeenCalledWith('l9');
+    });
+});

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Seguimiento de la convocatoria</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<div style="height: 56px; padding: 0 16px; display: flex; align-items: center; border-bottom: 1px solid #D9D9D9; font-weight: 700;">‹ Partido contra Club Atlético Norte</div>
+<div style="flex-grow: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden;">
+<div style="display: flex; align-items: center; justify-content: space-between;">
+<h2 style="margin: 0; font-size: 18px;">Convocatoria</h2>
+<span style="padding: 2px 8px; border: 1px solid #333333; border-radius: 4px; font-size: 12px; font-weight: 600;">ABIERTA</span>
+</div>
+<span style="color: #555555;">Responden hasta el viernes 23, 8:00 p. m.</span>
+<div style="display: flex; align-items: center; gap: 8px;">
+<div style="flex-grow: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; text-align: center;">
+<div style="padding: 6px 0; border-radius: 6px; background: #E6E6E6;"><strong style="font-size: 18px;">12</strong><br><span style="font-size: 12px;">Sí</span></div>
+<div style="padding: 6px 0; border-radius: 6px; background: #F2F2F2;"><strong style="font-size: 18px;">2</strong><br><span style="font-size: 12px;">Provisional</span></div>
+<div style="padding: 6px 0; border-radius: 6px; background: #F2F2F2;"><strong style="font-size: 18px;">1</strong><br><span style="font-size: 12px;">No</span></div>
+<div style="padding: 6px 0; border-radius: 6px; border: 1px dashed #999999;"><strong style="font-size: 18px;">2</strong><br><span style="font-size: 12px;">Sin resp.</span></div>
+</div>
+<button aria-label="Actualizar" style="width: 44px; height: 44px; border: 1px solid #333333; border-radius: 8px; background: #FFFFFF; font-size: 18px;">↻</button>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 12px; border: 1px solid #D9D9D9; border-radius: 8px;">
+<span><strong>Sub-12</strong> <span style="color: #555555;">· 12/17</span></span>
+<button style="height: 40px; padding: 0 12px; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600;">Mensaje</button>
+</div>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #D9D9D9;">
+<div style="min-height: 52px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #D9D9D9;">
+<a href="PlayerDrawer.dc.html" style="flex-grow: 1; display: flex; flex-direction: column; text-decoration: none;"><span>Samuel V. · Samu</span><span style="font-size: 12px; color: #555555;">No · Enfermedad · mamá, 2:10 p. m.</span></a>
+<span style="padding: 2px 6px; border: 1px solid #333333; border-radius: 4px; font-size: 11px; font-weight: 600;">SIN VALIDAR</span>
+<span style="padding: 2px 6px; border-radius: 4px; background: #333333; color: #FFFFFF; font-size: 12px;">No</span>
+</div>
+<div style="min-height: 52px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #D9D9D9;">
+<span style="flex-grow: 1; display: flex; flex-direction: column;"><span>Santiago D. · Santi</span><span style="font-size: 12px; color: #555555;">papá, 9:30 a. m.</span></span>
+<span style="padding: 2px 6px; border-radius: 4px; background: #E6E6E6; font-size: 12px;">Sí</span>
+</div>
+<div style="min-height: 52px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #D9D9D9;">
+<span style="flex-grow: 1; display: flex; flex-direction: column;"><span>Tomás M.</span><span style="font-size: 12px; color: #555555;">Provisional · Horario · mamá, ayer</span></span>
+<span style="padding: 2px 6px; border-radius: 4px; background: #F2F2F2; border: 1px solid #999999; font-size: 12px;">Provisional</span>
+</div>
+<div style="min-height: 52px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #D9D9D9;">
+<span style="flex-grow: 1;">Jerónimo R.</span>
+<span style="padding: 2px 6px; border-radius: 4px; border: 1px dashed #999999; font-size: 12px;">Sin respuesta</span>
+<button style="height: 40px; padding: 0 8px; border: 0; background: transparent; font-weight: 600;">Enviar</button>
+</div>
+<span style="padding: 8px 0; color: #555555;">… 13 más</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
