@@ -1,16 +1,22 @@
+import { GuardianRepository } from '../../players/data/guardian.repository';
 import { TestBed } from '@angular/core/testing';
 import { PlayerRepository } from '../../players/data/player.repository';
 import { CallUpRepository } from '../data/call-up.repository';
 import { Activity } from '../../activities/models/activity.models';
-import { CallUp } from '../models/call-up.models';
+import { CallUp, CurrentResponse } from '../models/call-up.models';
 import { CallUpService } from './call-up.service';
 const activity: Pick<Activity, 'id' | 'startsAt'> = { id: 'a', startsAt: '2030-10-26T14:00:00.000Z' };
 const callUp: CallUp = { id: 'c', activityId: 'a', deadline: null, closedAt: null, lists: [] };
 describe('CallUpService', () => {
     it('carga, calcula apertura y refresca tras crear', async () => {
-        const repository = { getByActivity: vi.fn().mockResolvedValue(callUp), create: vi.fn().mockResolvedValue(undefined) };
+        const repository = { getByActivity: vi.fn().mockResolvedValue(callUp), responses: vi.fn().mockResolvedValue([]), create: vi.fn().mockResolvedValue(undefined) };
         TestBed.configureTestingModule({
-            providers: [CallUpService, { provide: CallUpRepository, useValue: repository }, { provide: PlayerRepository, useValue: { listPlayers: vi.fn().mockResolvedValue([{ isActive: true }, { isActive: false }]) } }]
+            providers: [
+                CallUpService,
+                { provide: CallUpRepository, useValue: repository },
+                { provide: GuardianRepository, useValue: { review: vi.fn().mockResolvedValue(undefined) } },
+                { provide: PlayerRepository, useValue: { listPlayers: vi.fn().mockResolvedValue([{ isActive: true }, { isActive: false }]) } }
+            ]
         });
         const service = TestBed.inject(CallUpService);
         await service.load(activity as Activity);
@@ -20,9 +26,16 @@ describe('CallUpService', () => {
         expect(repository.getByActivity).toHaveBeenCalledTimes(2);
     });
     it('isOpen considera fecha límite, inicio y cierre manual', async () => {
-        const repository = { getByActivity: vi.fn().mockResolvedValue(callUp) };
+        const repository = { getByActivity: vi.fn().mockResolvedValue(callUp), responses: vi.fn().mockResolvedValue([]) };
         TestBed.resetTestingModule();
-        TestBed.configureTestingModule({ providers: [CallUpService, { provide: CallUpRepository, useValue: repository }, { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }] });
+        TestBed.configureTestingModule({
+            providers: [
+                CallUpService,
+                { provide: CallUpRepository, useValue: repository },
+                { provide: GuardianRepository, useValue: { review: vi.fn().mockResolvedValue(undefined) } },
+                { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }
+            ]
+        });
         const service = TestBed.inject(CallUpService);
         await service.load({ ...activity, startsAt: '2030-10-26T14:00:00.000Z' } as Activity);
         expect(service.isOpen()).toBe(true);
@@ -37,13 +50,21 @@ describe('CallUpService', () => {
     it('adjust aplica quitar, mover, sumar y la fecha límite en una sola operación (CA-002 y CA-003 de HU-008)', async () => {
         const repository = {
             getByActivity: vi.fn().mockResolvedValue(callUp),
+            responses: vi.fn().mockResolvedValue([]),
             removePlayer: vi.fn().mockResolvedValue(undefined),
             movePlayer: vi.fn().mockResolvedValue(undefined),
             addPlayers: vi.fn().mockResolvedValue(undefined),
             setDeadline: vi.fn().mockResolvedValue(undefined)
         };
         TestBed.resetTestingModule();
-        TestBed.configureTestingModule({ providers: [CallUpService, { provide: CallUpRepository, useValue: repository }, { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }] });
+        TestBed.configureTestingModule({
+            providers: [
+                CallUpService,
+                { provide: CallUpRepository, useValue: repository },
+                { provide: GuardianRepository, useValue: { review: vi.fn().mockResolvedValue(undefined) } },
+                { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }
+            ]
+        });
         const service = TestBed.inject(CallUpService);
         await service.load(activity as Activity);
 
@@ -57,13 +78,43 @@ describe('CallUpService', () => {
     });
 
     it('deadlineConflicts: un nuevo inicio en o antes de la fecha límite abierta', async () => {
-        const repository = { getByActivity: vi.fn().mockResolvedValue({ ...callUp, deadline: '2030-10-25T23:00:00.000Z' }) };
+        const repository = { getByActivity: vi.fn().mockResolvedValue({ ...callUp, deadline: '2030-10-25T23:00:00.000Z' }), responses: vi.fn().mockResolvedValue([]) };
         TestBed.resetTestingModule();
-        TestBed.configureTestingModule({ providers: [CallUpService, { provide: CallUpRepository, useValue: repository }, { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }] });
+        TestBed.configureTestingModule({
+            providers: [
+                CallUpService,
+                { provide: CallUpRepository, useValue: repository },
+                { provide: GuardianRepository, useValue: { review: vi.fn().mockResolvedValue(undefined) } },
+                { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }
+            ]
+        });
         const service = TestBed.inject(CallUpService);
         await service.load(activity as Activity);
 
         expect(service.deadlineConflicts('2030-10-25T22:00:00.000Z')).toBe(true);
         expect(service.deadlineConflicts('2030-10-26T15:00:00.000Z')).toBe(false);
+    });
+
+    it('calcula los totales, responde como owner y revisa con el repositorio de acudientes (spec 013)', async () => {
+        const response = (playerId: string, listId: string, answer: 'yes' | 'maybe' | 'no' | null) => ({ playerId, listId, answer }) as CurrentResponse;
+        const repository = {
+            getByActivity: vi.fn().mockResolvedValue({ ...callUp, lists: [] }),
+            responses: vi.fn().mockResolvedValue([response('p1', 'l1', 'yes'), response('p2', 'l1', null), response('p3', 'l2', 'no')]),
+            respondAsOwner: vi.fn().mockResolvedValue(undefined)
+        };
+        const guardians = { review: vi.fn().mockResolvedValue(undefined) };
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({ providers: [CallUpService, { provide: CallUpRepository, useValue: repository }, { provide: GuardianRepository, useValue: guardians }, { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }] });
+        const service = TestBed.inject(CallUpService);
+        await service.load(activity as Activity);
+
+        expect(service.totals()).toEqual({ total: 3, yes: 1, maybe: 0, no: 1, unanswered: 1 });
+        expect(service.listTotals('l1')).toMatchObject({ total: 2, yes: 1 });
+        await service.respondAsOwner('p2', { answer: 'no', reason: null, reasonText: null });
+        await service.review('gl1', null, 'validate');
+
+        expect(repository.respondAsOwner).toHaveBeenCalledWith('c', 'p2', { answer: 'no', reason: null, reasonText: null });
+        expect(guardians.review).toHaveBeenCalledWith('gl1', null, 'validate');
+        expect(repository.responses).toHaveBeenCalledTimes(3);
     });
 });

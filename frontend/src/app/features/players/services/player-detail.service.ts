@@ -4,7 +4,7 @@ import { LegalDocumentsRepository } from '../../../core/legal/data/legal-documen
 import { normalizePhone } from '../../../shared/forms/phone.validator';
 import { AddGuardianResult, GuardianRepository } from '../data/guardian.repository';
 import { GroupsNotSavedError, PlayerRepository } from '../data/player.repository';
-import { GroupRef, Guardian, GuardianAssignment, GuardianInput, GuardianOption, PlayerInput, PlayerSummary, Relationship } from '../models/player.models';
+import { GroupRef, Guardian, GuardianAssignment, GuardianInput, GuardianOption, LinkRelationship, PendingGuardian, PlayerInput, PlayerSummary, Relationship, ReviewDecision } from '../models/player.models';
 import { cleanPlayerInput } from './players.service';
 
 export type PlayerDetailStatus = 'loading' | 'ready' | 'not_found' | 'error';
@@ -13,7 +13,7 @@ export type PlayerDetailStatus = 'loading' | 'ready' | 'not_found' | 'error';
 export interface GuardianChoice extends GuardianOption {
     readonly alreadyLinked: boolean;
     /** Parentesco con este jugador, si ya es su acudiente. */
-    readonly linkedAs: Relationship | null;
+    readonly linkedAs: LinkRelationship | null;
 }
 
 /**
@@ -28,6 +28,10 @@ export class PlayerDetailService {
 
     readonly player = signal<PlayerSummary | null>(null);
     readonly guardians = signal<readonly Guardian[]>([]);
+    /** El jugador responde él mismo desde su celular (vínculo «el jugador», spec 013): no es un acudiente. */
+    readonly selfResponder = signal<Guardian | null>(null);
+    /** Acudientes por validar desde el enlace (spec 013, HU-040). */
+    readonly pending = signal<readonly PendingGuardian[]>([]);
     readonly groups = signal<readonly GroupRef[]>([]);
     readonly status = signal<PlayerDetailStatus>('loading');
     readonly busy = signal(false);
@@ -39,9 +43,10 @@ export class PlayerDetailService {
         this.status.set('loading');
 
         try {
-            const [player, guardians, groups] = await Promise.all([this.players.getPlayer(id), this.guardianRepository.listByPlayer(id), this.players.listGroups()]);
+            const [player, guardians, groups, pending] = await Promise.all([this.players.getPlayer(id), this.guardianRepository.listByPlayer(id), this.players.listGroups(), this.guardianRepository.pending(id)]);
             this.player.set(player);
-            this.guardians.set(guardians);
+            this.setGuardians(guardians);
+            this.pending.set(pending);
             this.groups.set(groups);
             this.status.set('ready');
         } catch (error) {
@@ -132,8 +137,18 @@ export class PlayerDetailService {
         return assigned;
     }
 
+    /** Validar o rechazar a quien se identificó desde el enlace (HU-040). */
+    review(item: PendingGuardian, decision: ReviewDecision): Promise<void> {
+        return this.run(() => this.guardianRepository.review(item.linkId, item.deviceId, decision));
+    }
+
     removeGuardian(guardian: Guardian): Promise<void> {
         return this.run(() => this.guardianRepository.removeFromPlayer(guardian.linkId));
+    }
+
+    private setGuardians(links: readonly Guardian[]): void {
+        this.guardians.set(links.filter((link) => link.relationship !== 'self'));
+        this.selfResponder.set(links.find((link) => link.relationship === 'self') ?? null);
     }
 
     private async run(operation: () => Promise<unknown>, reload = true): Promise<void> {
@@ -163,9 +178,10 @@ export class PlayerDetailService {
     /** Relee sin pasar a carga; si el jugador ya no existe, pasa a `not_found`. */
     private async refresh(): Promise<void> {
         try {
-            const [player, guardians] = await Promise.all([this.players.getPlayer(this.playerId), this.guardianRepository.listByPlayer(this.playerId)]);
+            const [player, guardians, pending] = await Promise.all([this.players.getPlayer(this.playerId), this.guardianRepository.listByPlayer(this.playerId), this.guardianRepository.pending(this.playerId)]);
             this.player.set(player);
-            this.guardians.set(guardians);
+            this.setGuardians(guardians);
+            this.pending.set(pending);
         } catch (error) {
             if (error instanceof AppError && error.code === 'not_found') {
                 this.status.set('not_found');

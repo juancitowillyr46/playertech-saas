@@ -1,6 +1,6 @@
 # HU-011 — Seguimiento de respuestas
 
-**Épica:** EP-07 — Seguimiento de respuestas · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-07 — Seguimiento de respuestas · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 013)
 **Spec:** 013 (respuesta y seguimiento)
 
 ## Historia de usuario

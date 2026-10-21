@@ -1,4 +1,4 @@
-import { Guardian, GuardianAssignment, GuardianInput, GuardianOption, Relationship } from '../models/player.models';
+import { Guardian, GuardianAssignment, GuardianInput, GuardianOption, PendingGuardian, Relationship, ReviewDecision } from '../models/player.models';
 
 export interface AddGuardianResult {
     readonly guardianExisted: boolean;
@@ -31,4 +31,10 @@ export abstract class GuardianRepository {
 
     /** Asigna acudientes ya registrados, validados y sin duplicar; devuelve cuántos asignó. */
     abstract assign(playerId: string, assignments: readonly GuardianAssignment[]): Promise<number>;
+
+    /** Vínculos y dispositivos pendientes de validar del jugador (spec 013, HU-040). */
+    abstract pending(playerId: string): Promise<readonly PendingGuardian[]>;
+
+    /** Validar o rechazar; única vía de revisión, la usan la ficha y el seguimiento (principio IV). */
+    abstract review(linkId: string | null, deviceId: string | null, decision: ReviewDecision): Promise<void>;
 }

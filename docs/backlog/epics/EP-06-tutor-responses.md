@@ -25,8 +25,8 @@ El acudiente puede:
 
 | ID | Historia | Estado |
 |---|---|---|
-| HU-009 | Abrir la convocatoria e identificarse | Definida |
-| HU-010 | Responder la convocatoria | Definida |
+| HU-009 | Abrir la convocatoria e identificarse | Terminada (entorno local) |
+| HU-010 | Responder la convocatoria | Terminada (entorno local) |
 
 ## Decisiones de la ideación (2026-10-18)
 

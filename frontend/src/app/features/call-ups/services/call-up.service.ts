@@ -1,9 +1,29 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Activity } from '../../activities/models/activity.models';
+import { GuardianRepository } from '../../players/data/guardian.repository';
 import { PlayerRepository } from '../../players/data/player.repository';
-import { GroupRef, PlayerSummary } from '../../players/models/player.models';
+import { GroupRef, PlayerSummary, ReviewDecision } from '../../players/models/player.models';
 import { CallUpRepository } from '../data/call-up.repository';
-import { CallUp, CallUpListInput } from '../models/call-up.models';
+import { CallUp, CallUpListInput, CurrentResponse, OwnerResponseInput, ResponseEntry } from '../models/call-up.models';
+
+/** Totales del seguimiento (HU-011, CA-001). */
+export interface ResponseTotals {
+    readonly total: number;
+    readonly yes: number;
+    readonly maybe: number;
+    readonly no: number;
+    readonly unanswered: number;
+}
+
+function totalsOf(responses: readonly CurrentResponse[]): ResponseTotals {
+    return {
+        total: responses.length,
+        yes: responses.filter((response) => response.answer === 'yes').length,
+        maybe: responses.filter((response) => response.answer === 'maybe').length,
+        no: responses.filter((response) => response.answer === 'no').length,
+        unanswered: responses.filter((response) => response.answer === null).length
+    };
+}
 
 /** Cambios del drawer «Ajustar convocados» sobre una convocatoria abierta (HU-008, CA-002 y CA-003). */
 export interface CallUpAdjustment {
@@ -27,15 +47,45 @@ export function callUpIsOpen(callUp: CallUp | null, activity: Pick<Activity, 'st
 export class CallUpService {
     private readonly repository = inject(CallUpRepository);
     private readonly players = inject(PlayerRepository);
+    private readonly guardians = inject(GuardianRepository);
 
     readonly callUp = signal<CallUp | null>(null);
+    /** Respuesta vigente de cada convocado activo (spec 013). */
+    readonly responses = signal<readonly CurrentResponse[]>([]);
+    readonly totals = computed(() => totalsOf(this.responses()));
     readonly activity = signal<Activity | null>(null);
     readonly busy = signal(false);
     readonly isOpen = computed(() => callUpIsOpen(this.callUp(), this.activity()));
 
     async load(activity: Activity): Promise<void> {
         this.activity.set(activity);
-        this.callUp.set(await this.repository.getByActivity(activity.id));
+        const callUp = await this.repository.getByActivity(activity.id);
+
+        this.responses.set(callUp ? await this.repository.responses(callUp.id) : []);
+        this.callUp.set(callUp);
+    }
+
+    /** Totales de una lista («12/17»). */
+    listTotals(listId: string): ResponseTotals {
+        return totalsOf(this.responses().filter((response) => response.listId === listId));
+    }
+
+    responseOf(playerId: string): CurrentResponse | null {
+        return this.responses().find((response) => response.playerId === playerId) ?? null;
+    }
+
+    history(playerId: string): Promise<readonly ResponseEntry[]> {
+        return this.repository.history(this.callUp()!.id, playerId);
+    }
+
+    /** El owner registra la respuesta, también con la convocatoria cerrada (DEC-46). */
+    respondAsOwner(playerId: string, input: OwnerResponseInput): Promise<void> {
+        return this.run(() => this.repository.respondAsOwner(this.callUp()!.id, playerId, input));
+    }
+
+    /** Validar o rechazar a quien respondió (HU-040). */
+    review(linkId: string | null, deviceId: string | null, decision: ReviewDecision): Promise<void> {
+        return this.run(() => this.guardians.review(linkId, deviceId, decision));
     }
 
     /** Jugadores activos (con sus grupos) que se pueden convocar o sumar. */

@@ -215,6 +215,17 @@ cuando `academy_id` representa una academia y `auth.uid()` representa un usuario
 
 Las políticas concretas deberán mantenerse versionadas mediante migraciones.
 
+### Acceso sin sesión (`anon`)
+
+`anon` no lee ni escribe ninguna tabla de negocio. Cuando una funcionalidad necesita acceso sin cuenta, como el enlace de una convocatoria (spec 013), se expone con funciones `security definer` con `search_path` vacío que:
+
+- reciben el secreto que autoriza el acceso (el token de la lista) y derivan de él la academia, nunca de un dato del cliente;
+- devuelven solo los campos necesarios y responden igual ante un secreto inválido, sin revelar si existe;
+- aplican las reglas de negocio en el servidor;
+- no usan `auth.uid()` ni el esquema `auth` (ADR-017).
+
+Las funciones auxiliares que usan internamente revocan `execute` a `public`, `anon` y `authenticated`. Las pruebas pgTAP comprueban que `anon` no tiene privilegios sobre las tablas.
+
 ---
 
 ## Aislamiento entre tenants

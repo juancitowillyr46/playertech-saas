@@ -41,4 +41,14 @@ El owner de la academia B no ve nada de la A. Pantallas a 360 px y en escritorio
 
 ## Resultados
 
-*(se completa al implementar)*
+Validado por el responsable desde su celular el 2026-10-21, con la academia C local (Sub-12 del 25/10, Sub-8 del 24/10, una convocatoria cerrada y una cancelada).
+
+- **Automáticas**: pgTAP 297/297 (51 nuevas); Vitest de `call-up-response`, `call-ups`, `activities` y `players`: 156/156; lint, `check:styles`, `check:bundle` y compilación en verde.
+- **1. Primera vez**: conforme; la lista muestra solo nombre, inicial y apodo; sin autorización no continúa; con el celular de un acudiente registrado no se duplica la persona.
+- **2. Responder y cambiar**: conforme; «Sí» directo, motivo opcional y «Otro» con texto; tras 3 cambios, «Escríbele a la academia»; dos acudientes suman al mismo límite.
+- **3. Dispositivo recordado**: conforme; entra directo y responde por los hermanos; en otra actividad de otro hijo solo pide el parentesco (corregido durante la validación).
+- **4. Situaciones especiales**: conforme; cerrada y cancelada en modo lectura; enlace inexistente sin datos.
+- **5. Seguimiento**: conforme; totales, «Actualizar», historial, respuesta registrada por el owner y «N/M» en la lista de actividades.
+- **6. Validar y rechazar**: conforme; coincidencia de celular, rechazo silencioso y bloque «Por validar» en la ficha.
+- **Jugador que responde por sí mismo**: conforme; se muestra como «Responde él mismo», no como su acudiente (ajuste de DEC-46 durante la validación).
+- **7. Experiencia**: maquetas aprobadas; detector de Impeccable sin hallazgos en la página del enlace (360 px, escritorio y enlace inexistente); pantallas del owner validadas en el celular.

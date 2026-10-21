@@ -25,7 +25,7 @@ Registrar a las personas que responden por cada jugador, para enviarles sus conv
 |---|---|---|
 | HU-034 | Acudientes del jugador (registro por el owner) | Terminada |
 | HU-035 | Asignar un acudiente ya registrado (DEC-43) | Terminada |
-| HU-040 | Validar o rechazar acudientes y dispositivos (spec 013) | Definida |
+| HU-040 | Validar o rechazar acudientes y dispositivos (spec 013) | Terminada (entorno local) |
 
 Los acudientes que nacen desde el enlace y la validación de vínculos se definen antes de la spec 4.
 

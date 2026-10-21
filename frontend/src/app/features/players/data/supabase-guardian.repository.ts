@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { AppError } from '../../../core/errors/app-error';
 import { mapSupabaseError } from '../../../core/errors/supabase-error.mapper';
 import { SUPABASE_CLIENT } from '../../../core/supabase/supabase-client';
-import { Guardian, GuardianAssignment, GuardianInput, GuardianOption, Relationship, shortName } from '../models/player.models';
+import { Guardian, GuardianAssignment, GuardianInput, GuardianOption, PendingGuardian, Relationship, ReviewDecision, shortName } from '../models/player.models';
 import { AddGuardianResult, GuardianRepository } from './guardian.repository';
 
 /** Vínculo con la persona y los demás jugadores que acompaña (para «También de…»). */
@@ -55,6 +55,48 @@ function toGuardian(row: LinkRow, playerId: string): Guardian {
             .filter((link) => link.player_id !== playerId && !link.deleted_at && link.players?.is_active && !link.players.deleted_at)
             .map((link) => shortName({ firstNames: link.players!.first_names, lastNames: link.players!.last_names }))
     };
+}
+
+/** Vínculos pendientes o validados del jugador con los dispositivos del acudiente (spec 013). */
+const PENDING_COLUMNS = 'id, relationship, status, created_at, guardians(full_name, phone, created_at, guardian_devices(id, status, declared_name, declared_relationship, created_at))';
+
+interface DeviceRow {
+    id: string;
+    status: string;
+    declared_name: string | null;
+    declared_relationship: Relationship | 'self';
+    created_at: string;
+}
+
+interface PendingRow {
+    id: string;
+    relationship: Relationship | 'self';
+    status: string;
+    created_at: string;
+    guardians: { full_name: string; phone: string; created_at: string; guardian_devices: DeviceRow[] } | null;
+}
+
+/** Un vínculo pendiente es un pendiente (con su último dispositivo pendiente); en uno validado, cada dispositivo nuevo lo es. */
+function toPending(row: PendingRow): PendingGuardian[] {
+    const guardian = row.guardians;
+
+    if (!guardian) {
+        return [];
+    }
+
+    const devices = guardian.guardian_devices.filter((device) => device.status === 'pending').sort((a, b) => b.created_at.localeCompare(a.created_at));
+    const item = (device: DeviceRow | null, linkId: string | null): PendingGuardian => ({
+        linkId,
+        deviceId: device?.id ?? null,
+        guardianName: guardian.full_name,
+        declaredName: device?.declared_name ?? null,
+        relationship: device?.declared_relationship ?? row.relationship,
+        phone: guardian.phone,
+        at: device?.created_at ?? row.created_at,
+        phoneMatch: !!device && guardian.created_at < device.created_at
+    });
+
+    return row.status === 'pending' ? [item(devices[0] ?? null, row.id)] : devices.map((device) => item(device, null));
 }
 
 /** Ninguna fila no eliminada actualizada (PGRST116) rechaza con not_found. */
@@ -113,7 +155,8 @@ export class SupabaseGuardianRepository extends GuardianRepository {
             throw mapSupabaseError(error);
         }
 
-        return (data as unknown as OptionRow[]).map(toOption);
+        // Quien solo responde por sí mismo (vínculos «el jugador») no es acudiente de nadie (spec 013).
+        return (data as unknown as OptionRow[]).filter((row) => !row.guardian_links.some((link) => !link.deleted_at && link.relationship === 'self')).map(toOption);
     }
 
     async assign(playerId: string, assignments: readonly GuardianAssignment[]): Promise<number> {
@@ -131,6 +174,25 @@ export class SupabaseGuardianRepository extends GuardianRepository {
         }
 
         return data ?? 0;
+    }
+
+    async pending(playerId: string): Promise<readonly PendingGuardian[]> {
+        const { data, error } = await this.client.from('guardian_links').select(PENDING_COLUMNS).eq('player_id', playerId).in('status', ['pending', 'validated']).is('deleted_at', null);
+
+        if (error || !data) {
+            throw mapSupabaseError(error);
+        }
+
+        return (data as unknown as PendingRow[]).flatMap(toPending).sort((a, b) => b.at.localeCompare(a.at));
+    }
+
+    async review(linkId: string | null, deviceId: string | null, decision: ReviewDecision): Promise<void> {
+        // La función acepta nulos en cualquiera de los dos ids; los tipos generados no lo reflejan.
+        const { error } = await this.client.rpc('review_guardian', { p_link_id: linkId as string, p_device_id: deviceId as string, p_decision: decision });
+
+        if (error) {
+            throw mapSupabaseError(error);
+        }
     }
 
     async updateGuardian(guardianId: string, input: { fullName: string; phone: string }): Promise<void> {

@@ -1,3 +1,4 @@
+import { CallUpRepository } from '../../../call-ups/data/call-up.repository';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
@@ -32,7 +33,7 @@ const ACTIVITIES = [
     activity('a3', '2030-10-26T20:00:00.000Z', { status: 'cancelled' })
 ];
 
-async function setup(overrides: { list?: ReturnType<typeof vi.fn>; fields?: unknown[] } = {}) {
+async function setup(overrides: { list?: ReturnType<typeof vi.fn>; fields?: unknown[]; summaries?: unknown[] } = {}) {
     const repository = {
         list: overrides.list ?? vi.fn().mockResolvedValue(ACTIVITIES),
         get: vi.fn(),
@@ -53,6 +54,7 @@ async function setup(overrides: { list?: ReturnType<typeof vi.fn>; fields?: unkn
         providers: [
             provideRouter([]),
             { provide: ActivityRepository, useValue: repository },
+            { provide: CallUpRepository, useValue: { summaries: vi.fn().mockResolvedValue(overrides.summaries ?? []) } },
             { provide: ExternalFieldRepository, useValue: fields },
             { provide: VenueRepository, useValue: venues },
             { provide: MessageService, useValue: messages },
@@ -130,5 +132,18 @@ describe('ActivitiesPage', { timeout: 20_000 }, () => {
 
         expect(fields.create).toHaveBeenCalledWith({ name: 'Cancha Nueva', address: null, city: null, directions: null });
         expect(messages.add).toHaveBeenCalledWith(expect.objectContaining({ summary: 'Cancha creada.' }));
+    });
+
+    it('una convocada muestra confirmados sobre convocados (CA-006 de HU-011)', async () => {
+        await setup({
+            list: vi.fn().mockResolvedValue([{ ...ACTIVITIES[1], hasCallUp: true }]),
+            summaries: [
+                { activityId: 'a2', callUpId: 'c', listId: 'l1', total: 10, yes: 7, maybe: 1, no: 1, unanswered: 1 },
+                { activityId: 'a2', callUpId: 'c', listId: 'l2', total: 7, yes: 5, maybe: 0, no: 0, unanswered: 2 }
+            ]
+        });
+
+        expect(await screen.findByText('12/17')).toBeTruthy();
+        expect(screen.getByLabelText('12 de 17 confirmados')).toBeTruthy();
     });
 });

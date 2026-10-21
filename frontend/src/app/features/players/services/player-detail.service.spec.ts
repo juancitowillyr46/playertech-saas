@@ -30,7 +30,9 @@ function setup(player: Partial<Record<keyof PlayerRepository, ReturnType<typeof 
             { guardianId: 'gd1', fullName: 'Carlos Vargas', phone: '3157779876', players: [{ playerId: 'p1', name: 'Samuel V.', relationship: 'father' }] },
             { guardianId: 'gd2', fullName: 'Diana Gómez', phone: '3105551234', players: [] }
         ]),
-        assign: vi.fn().mockResolvedValue(2)
+        assign: vi.fn().mockResolvedValue(2),
+        pending: vi.fn().mockResolvedValue([]),
+        review: vi.fn().mockResolvedValue(undefined)
     };
 
     TestBed.configureTestingModule({
@@ -147,4 +149,3 @@ describe('PlayerDetailService', () => {
         expect(guardians.listByPlayer).toHaveBeenCalledTimes(2);
     });
 });
-

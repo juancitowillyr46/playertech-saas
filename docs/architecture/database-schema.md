@@ -7,8 +7,7 @@ El documento se organiza por fases:
 | Sección | Estado |
 |---|---|
 | **Fase 1 — Fundación SaaS** | ✅ Vigente. Decisiones en ADR-012, ADR-013 y ADR-014 (`decisions.md`) |
-| **Fase 2 — Jugadores, grupos y acudientes; actividades y canchas** | ✅ Vigente (specs 009, 010 y 011). Decisiones en ADR-018 |
-| **Fase 2 — Pendiente** | Índice de las tablas de las specs siguientes; se documentan al implementarse |
+| **Fase 2 — Jugadores, acudientes, grupos, actividades, convocatorias y respuestas** | ✅ Vigente (specs 009 a 013). Decisiones en ADR-018 |
 
 ---
 
@@ -325,12 +324,29 @@ activities ─< call_ups ─< call_up_lists ─< call_up_players >─ players
 
 ---
 
-# Fase 2 — Pendiente
+# Fase 2 — Respuesta del acudiente y seguimiento (spec 013)
 
-Las tablas de las siguientes specs se documentan aquí cuando se implementan (ADR-018, DEC-37):
+Migración `20261021100000_call_up_responses.sql`. Detalle: [`specs/013-responses-tracking/data-model.md`](../../specs/013-responses-tracking/data-model.md) y [`contracts/database.md`](../../specs/013-responses-tracking/contracts/database.md).
 
-| Spec | Tablas previstas | Decisiones |
+```text
+guardians ─< guardian_devices
+    │              │
+    └─< guardian_links ──┐
+                         ▼
+call_ups ─< call_up_responses >─ players
+```
+
+| Tabla | Qué es | Borrado |
 |---|---|---|
-| 4 — Respuesta y seguimiento | Respuestas, historial y dispositivos | DEC-33, DEC-38, DEC-40, DEC-41 |
+| `guardian_devices` | Marca secreta del navegador de un acudiente (solo su huella SHA-256); pendiente, de confianza o revocada | Sin borrado: revocar es su baja |
+| `call_up_responses` | Historial de respuestas (Sí, Sí provisional, No; motivo de DEC-38), del acudiente o del owner | Sin borrado: solo inserciones |
+
+Cambios en tablas existentes: `guardians` y `guardian_links` tienen `source` (`owner` o `link`) y `created_by` nulo en las filas creadas desde el enlace; un vínculo rechazado lleva `deleted_at`.
+
+Vistas con `security_invoker`: `call_up_current_responses` (la última respuesta que cuenta por convocado, con quién la dio y si está sin validar) y `call_up_summaries` (totales por lista).
+
+**Vía pública** (sin cuenta): `public_call_up`, `public_identify` y `public_respond` son funciones `security definer` que solo puede ejecutar `anon` (y `authenticated`); derivan la academia del enlace, devuelven lo mínimo y aplican el cierre y el límite de 3 cambios. Ninguna tabla se abre a `anon`. El owner valida o rechaza con `review_guardian` y responde en nombre del acudiente por RLS.
+
+---
 
 El borrador anterior a la ideación de la Fase 2 está en [`docs/archive/database-schema-phase2-draft.md`](../archive/database-schema-phase2-draft.md) (no es fuente de verdad).

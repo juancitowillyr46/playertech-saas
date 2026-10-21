@@ -1,3 +1,5 @@
+import { TestBed } from '@angular/core/testing';
+import { GuardianRepository } from '../../../players/data/guardian.repository';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +9,7 @@ import { of } from 'rxjs';
 import { Activity } from '../../../activities/models/activity.models';
 import { PlayerRepository } from '../../../players/data/player.repository';
 import { CallUpRepository } from '../../data/call-up.repository';
-import { CallUp } from '../../models/call-up.models';
+import { CallUp, CurrentResponse, ResponseEntry } from '../../models/call-up.models';
 import { CallUpSection } from './call-up-section';
 
 const ACTIVITY: Activity = {
@@ -54,13 +56,17 @@ const CALL_UP: CallUp = {
     ]
 };
 
-async function setup(options: { activity?: Activity; callUp?: CallUp | null } = {}) {
+async function setup(options: { activity?: Activity; callUp?: CallUp | null; responses?: CurrentResponse[]; history?: ResponseEntry[] } = {}) {
     const repository = {
         getByActivity: vi.fn().mockResolvedValue(options.callUp === undefined ? CALL_UP : options.callUp),
         create: vi.fn().mockResolvedValue(undefined),
         close: vi.fn().mockResolvedValue(undefined),
-        saveIntro: vi.fn().mockResolvedValue(undefined)
+        saveIntro: vi.fn().mockResolvedValue(undefined),
+        responses: vi.fn().mockResolvedValue(options.responses ?? []),
+        history: vi.fn().mockResolvedValue(options.history ?? []),
+        respondAsOwner: vi.fn().mockResolvedValue(undefined)
     };
+    const guardians = { review: vi.fn().mockResolvedValue(undefined) };
     const messages = { add: vi.fn() };
     const result = await render(`<app-call-up-section [activity]="activity" /><p-confirmdialog />`, {
         imports: [CallUpSection, ConfirmDialog],
@@ -68,6 +74,7 @@ async function setup(options: { activity?: Activity; callUp?: CallUp | null } = 
         providers: [
             ConfirmationService,
             { provide: CallUpRepository, useValue: repository },
+            { provide: GuardianRepository, useValue: guardians },
             { provide: PlayerRepository, useValue: { listPlayers: vi.fn().mockResolvedValue([]), listGroups: vi.fn().mockResolvedValue([]) } },
             { provide: MessageService, useValue: messages },
             { provide: BreakpointObserver, useValue: { observe: () => of({ matches: true, breakpoints: {} }) } }
@@ -158,5 +165,102 @@ describe('CallUpSection', { timeout: 20_000 }, () => {
         expect(within(dialog).getByText(/no tiene acudientes ni celular/)).toBeTruthy();
         expect((within(dialog).getByRole('button', { name: 'Abrir WhatsApp' }) as HTMLButtonElement).disabled).toBe(true);
         expect(within(dialog).getByRole('button', { name: 'Copiar' })).toBeTruthy();
+    });
+
+    describe('seguimiento (spec 013, HU-011 y HU-040)', () => {
+        const PENDING: CurrentResponse = {
+            listId: 'l1',
+            playerId: 'p1',
+            answer: 'no',
+            reason: 'illness',
+            reasonText: null,
+            source: 'guardian',
+            at: '2030-10-20T19:10:00.000Z',
+            guardianName: 'Luz Ruiz',
+            relationship: 'mother',
+            linkId: 'gl1',
+            linkStatus: 'validated',
+            deviceId: 'd1',
+            deviceStatus: 'pending',
+            declaredName: 'Luz',
+            unvalidated: true,
+            phoneMatch: true
+        };
+        const UNANSWERED: CurrentResponse = {
+            ...PENDING,
+            playerId: 'p2',
+            answer: null,
+            reason: null,
+            source: null,
+            at: null,
+            guardianName: null,
+            relationship: null,
+            linkId: null,
+            linkStatus: null,
+            deviceId: null,
+            deviceStatus: null,
+            declaredName: null,
+            unvalidated: false,
+            phoneMatch: false
+        };
+        const HISTORY: ResponseEntry[] = [
+            { id: 'r2', answer: 'no', reason: 'illness', reasonText: null, source: 'guardian', at: '2030-10-20T19:10:00.000Z', guardianName: 'Luz Ruiz', relationship: 'mother', declaredName: 'Luz', counts: true },
+            { id: 'r1', answer: 'yes', reason: null, reasonText: null, source: 'guardian', at: '2030-10-20T14:30:00.000Z', guardianName: 'Carlos Ruiz', relationship: 'father', declaredName: 'Carlos', counts: true },
+            { id: 'r0', answer: 'yes', reason: null, reasonText: null, source: 'guardian', at: '2030-10-19T13:00:00.000Z', guardianName: 'Otro', relationship: 'father', declaredName: 'Luis', counts: false }
+        ];
+
+        it('muestra los totales, «0/2» por lista y el estado de cada convocado (CA-001, CA-002 y CA-004 de HU-011)', async () => {
+            await setup({ responses: [PENDING, UNANSWERED] });
+
+            const totals = screen.getByLabelText('Respuestas');
+            // En el DOM va primero la etiqueta y luego el número: se lee «Sí, 0».
+            expect(totals.textContent?.replace(/\s+/g, '')).toBe('Sí0Provisional0No1Sinrespuesta1');
+            expect(screen.getByText(/2 convocados · 0\/2/)).toBeTruthy();
+            expect(screen.getByText('Sin validar')).toBeTruthy();
+            expect(screen.getByText(/Enfermedad o lesión · mamá/)).toBeTruthy();
+            expect(screen.getByText('Sin respuesta', { selector: '.p-tag-label' })).toBeTruthy();
+        });
+
+        it('«Actualizar» relee las respuestas (CA-007 de HU-011)', async () => {
+            const { repository, user } = await setup({ responses: [PENDING, UNANSWERED] });
+
+            await user.click(screen.getByRole('button', { name: 'Actualizar respuestas' }));
+
+            expect(repository.responses).toHaveBeenCalledTimes(2);
+        });
+
+        it('el drawer del jugador muestra el historial y registra la respuesta del owner (CA-003 y CA-005 de HU-011)', async () => {
+            const { repository, messages, user } = await setup({ responses: [PENDING, UNANSWERED], history: HISTORY });
+
+            await user.click(screen.getByRole('button', { name: 'Respuesta de Mateo R.' }));
+            const dialog = await screen.findByRole('dialog', { name: 'Mateo Ruiz' });
+            const history = within(dialog).getByRole('list');
+            expect(within(history).getAllByRole('listitem')).toHaveLength(3);
+            expect(within(history).getByText(/\(rechazada\)/).className).toContain('line-through');
+
+            await user.click(within(dialog).getByRole('button', { name: 'Sí' }));
+            await user.click(within(dialog).getByRole('button', { name: 'Guardar respuesta' }));
+
+            expect(repository.respondAsOwner).toHaveBeenCalledWith('c1', 'p1', { answer: 'yes', reason: null, reasonText: null });
+            expect(messages.add).toHaveBeenCalledWith(expect.objectContaining({ summary: 'Respuesta registrada.' }));
+        });
+
+        it('valida directo y rechaza con confirmación, con la coincidencia de celular (CA-001 a CA-003 de HU-040)', async () => {
+            const { user } = await setup({ responses: [PENDING, UNANSWERED], history: HISTORY });
+            const guardians = TestBed.inject(GuardianRepository) as unknown as { review: ReturnType<typeof vi.fn> };
+
+            await user.click(screen.getByRole('button', { name: 'Respuesta de Mateo R.' }));
+            const dialog = await screen.findByRole('dialog', { name: 'Mateo Ruiz' });
+            expect(within(dialog).getByText(/Luz \(mamá\) respondió desde un celular nuevo/)).toBeTruthy();
+            expect(within(dialog).getByText(/coincide con Luz Ruiz/)).toBeTruthy();
+
+            await user.click(within(dialog).getByRole('button', { name: 'Validar' }));
+            expect(guardians.review).toHaveBeenCalledWith(null, 'd1', 'validate');
+
+            await user.click(within(dialog).getByRole('button', { name: 'Rechazar' }));
+            const confirm = await screen.findByRole('alertdialog', { name: '¿Rechazar a quien respondió?' });
+            await user.click(within(confirm).getByRole('button', { name: 'Rechazar' }));
+            expect(guardians.review).toHaveBeenCalledWith(null, 'd1', 'reject');
+        });
     });
 });

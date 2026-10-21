@@ -148,8 +148,14 @@ Registro de los riesgos de seguridad que el MVP acepta de forma consciente y de 
 - **Origen:** DEC-31 (ADR-018), ideación de la Fase 2 del 2026-10-18.
 - **Riesgo:** el acudiente responde sin cuenta, desde el enlace del grupo. Si el enlace sale del grupo, alguien podría ver los convocados (nombre e inicial del apellido) y responder por un jugador.
 - **Por qué se acepta:** reemplaza el mensaje manual de hoy (que suele listar los nombres completos en el grupo) sin servicios externos ni cuentas para los acudientes. La respuesta solo afecta la confirmación de una actividad.
-- **Mitigaciones:**
-  - en la spec de la respuesta: enlace impredecible que caduca al cierre; solo nombre e inicial del apellido; cada vínculo nuevo, y cada dispositivo nuevo aunque el celular coincida con un acudiente registrado, queda pendiente hasta que el owner lo valida, y sus respuestas se distinguen; máximo 3 cambios de respuesta por jugador; registro de quién respondió y cuándo;
+- **Mitigaciones** (implementadas en la spec 013):
+  - enlace impredecible (128 bits) que deja de aceptar respuestas al cierre; un enlace inválido no revela si existe;
+  - `anon` no accede a ninguna tabla: solo a tres funciones que devuelven lo mínimo (nombre e inicial del apellido, nunca celulares ni respuestas de otros);
+  - el formulario para identificarse es el mismo exista o no el celular, para no revelar qué celulares están registrados;
+  - la llave del dispositivo la genera el servidor y solo se guarda su huella;
+  - cada vínculo nuevo, y cada dispositivo nuevo aunque el celular coincida con un acudiente registrado, queda pendiente hasta que el owner lo valida; sus respuestas se distinguen y el owner ve la coincidencia de celular;
+  - rechazar descarta el vínculo, la respuesta deja de contar y el dispositivo deja de reconocerse, sin avisar a quien fue rechazado;
+  - máximo 3 cambios de respuesta por jugador, garantizado en la base de datos; registro inmutable de quién respondió y cuándo;
   - en el MVP+: código de un solo uso por SMS o WhatsApp, cuando exista la integración oficial.
 
 ## Principio

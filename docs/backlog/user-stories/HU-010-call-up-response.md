@@ -1,6 +1,6 @@
 # HU-010 — Responder la convocatoria
 
-**Épica:** EP-06 — Respuesta del acudiente · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-06 — Respuesta del acudiente · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 013)
 **Spec:** 013 (respuesta y seguimiento)
 
 ## Historia de usuario

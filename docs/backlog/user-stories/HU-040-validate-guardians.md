@@ -1,6 +1,6 @@
 # HU-040 — Validar o rechazar acudientes y dispositivos
 
-**Épica:** EP-10 — Acudientes · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-10 — Acudientes · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 013)
 **Spec:** 013 (respuesta y seguimiento)
 
 ## Historia de usuario

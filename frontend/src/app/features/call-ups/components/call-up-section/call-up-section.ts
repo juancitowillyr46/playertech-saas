@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, signal, untracked } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
@@ -8,12 +8,14 @@ import { ERROR_MESSAGES } from '../../../../core/errors/error-messages';
 import { dateLabel, fromInstant, timeLabel } from '../../../../shared/text/colombia-time';
 import { todayInColombia } from '../../../../shared/text/search-text';
 import { Activity, isPast } from '../../../activities/models/activity.models';
-import { GroupRef, PlayerSummary, shortName } from '../../../players/models/player.models';
-import { CallUpList, CallUpListInput, CallUpPlayer } from '../../models/call-up.models';
+import { GroupRef, PlayerSummary, ReviewDecision, shortName } from '../../../players/models/player.models';
+import { CallUpList, CallUpListInput, CallUpPlayer, OwnerResponseInput, ResponseAnswer, ResponseEntry } from '../../models/call-up.models';
+import { answerText, responseSummary } from '../../models/response-labels';
 import { CallUpAdjustment, CallUpService } from '../../services/call-up.service';
 import { CallUpDrawer } from '../call-up-drawer/call-up-drawer';
 import { MessageDrawer } from '../message-drawer/message-drawer';
 import { CallUpNotice, NoticeDrawer } from '../notice-drawer/notice-drawer';
+import { ResponseDrawer } from '../response-drawer/response-drawer';
 
 const STAMP = 'border-2 border-current uppercase tracking-wider';
 
@@ -23,7 +25,7 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
  */
 @Component({
     selector: 'app-call-up-section',
-    imports: [ButtonModule, MessageModule, TagModule, CallUpDrawer, MessageDrawer, NoticeDrawer],
+    imports: [ButtonModule, MessageModule, TagModule, CallUpDrawer, MessageDrawer, NoticeDrawer, ResponseDrawer],
     providers: [CallUpService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
@@ -45,21 +47,50 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
                     <p class="m-0 text-muted-color">Solo se convoca a actividades próximas y no canceladas.</p>
                 }
             } @else {
-                <p class="m-0 mb-4 text-muted-color">{{ deadlineText() }}</p>
+                <p class="m-0 mb-3 text-muted-color">{{ deadlineText() }}</p>
+
+                <!-- Seguimiento (spec 013, HU-011): totales de toda la convocatoria y «Actualizar». -->
+                <div class="mb-4 flex items-stretch gap-2">
+                    <dl class="m-0 grid flex-1 grid-cols-4 gap-1 text-center" aria-label="Respuestas">
+                        @for (item of totalItems(); track item.label) {
+                            <div class="flex flex-col-reverse rounded-border bg-emphasis px-1 py-2">
+                                <dt class="text-sm">{{ item.label }}</dt>
+                                <dd class="m-0 text-lg font-bold">{{ item.value }}</dd>
+                            </div>
+                        }
+                    </dl>
+                    <p-button icon="pi pi-refresh" [outlined]="true" ariaLabel="Actualizar respuestas" [loading]="refreshing()" (onClick)="refresh()" />
+                </div>
 
                 @for (list of callUp()!.lists; track list.id) {
                     <div class="mb-4">
                         <div class="mb-2 flex items-center justify-between gap-3 rounded-border border border-(--p-content-border-color) py-2 pr-2 pl-3">
                             <span class="min-w-0">
                                 <span class="font-semibold">{{ list.groupName ?? 'Convocados' }}</span>
-                                <span class="text-muted-color"> · {{ list.players.length === 1 ? '1 convocado' : list.players.length + ' convocados' }}</span>
+                                <span class="text-muted-color"> · {{ list.players.length === 1 ? '1 convocado' : list.players.length + ' convocados' }} · {{ confirmedOf(list) }}</span>
                             </span>
                             <p-button label="Mensaje" icon="pi pi-comment" [ariaLabel]="'Mensaje para ' + (list.groupName ?? 'los convocados')" (onClick)="openMessage(list, null)" />
                         </div>
                         <ul class="m-0 list-none border-t border-(--p-content-border-color) p-0" [attr.aria-label]="'Convocados de ' + (list.groupName ?? 'la convocatoria')">
                             @for (player of list.players; track player.playerId) {
-                                <li class="flex min-h-11 items-center justify-between gap-2 border-b border-(--p-content-border-color) pl-1">
-                                    <span class="min-w-0 truncate">{{ playerLabel(player) }}</span>
+                                <li class="flex min-h-13 items-center gap-2 border-b border-(--p-content-border-color) pl-1">
+                                    <button
+                                        type="button"
+                                        class="flex min-w-0 flex-1 cursor-pointer flex-col items-start justify-center gap-0.5 border-0 bg-transparent py-1.5 text-left text-color"
+                                        [attr.aria-label]="'Respuesta de ' + playerLabel(player)"
+                                        (click)="openResponse(player)"
+                                    >
+                                        <span class="max-w-full truncate">{{ playerLabel(player) }}</span>
+                                        @if (summaryOf(player); as summary) {
+                                            <span class="max-w-full truncate text-sm text-muted-color">
+                                                @if (service.responseOf(player.playerId)?.unvalidated) {
+                                                    <strong class="text-color">Sin validar</strong> ·
+                                                }
+                                                {{ summary }}
+                                            </span>
+                                        }
+                                    </button>
+                                    <p-tag [severity]="severityOf(player)" [value]="answerOf(player)" />
                                     <p-button label="Enviar" [text]="true" [ariaLabel]="'Enviar a ' + playerLabel(player)" (onClick)="openMessage(list, player)" />
                                 </li>
                             }
@@ -100,6 +131,17 @@ const STAMP = 'border-2 border-current uppercase tracking-wider';
             (failed)="warn($event)"
             (closed)="messageOpen.set(false)"
         />
+        <app-response-drawer
+            [open]="responseOpen()"
+            [player]="responsePlayer()"
+            [response]="responsePlayer() ? service.responseOf(responsePlayer()!.playerId) : null"
+            [history]="responseHistory()"
+            [busy]="service.busy()"
+            [error]="responseError()"
+            (respond)="respondAsOwner($event)"
+            (review)="review($event)"
+            (closed)="responseOpen.set(false)"
+        />
         <app-notice-drawer [open]="noticeOpen()" [notice]="notice()" [lists]="callUp()?.lists ?? []" (done)="notify($event)" (failed)="warn($event)" (closed)="noticeOpen.set(false)" />
     `
 })
@@ -122,6 +164,22 @@ export class CallUpSection {
     protected readonly messagePlayer = signal<CallUpPlayer | null>(null);
     protected readonly noticeOpen = signal(false);
     protected readonly notice = signal<CallUpNotice | null>(null);
+    protected readonly responseOpen = signal(false);
+    protected readonly responsePlayer = signal<CallUpPlayer | null>(null);
+    protected readonly responseHistory = signal<readonly ResponseEntry[]>([]);
+    protected readonly responseError = signal<string | null>(null);
+    protected readonly refreshing = signal(false);
+
+    protected readonly totalItems = computed(() => {
+        const totals = this.service.totals();
+
+        return [
+            { label: 'Sí', value: totals.yes },
+            { label: 'Provisional', value: totals.maybe },
+            { label: 'No', value: totals.no },
+            { label: 'Sin respuesta', value: totals.unanswered }
+        ];
+    });
 
     /** Próxima y programada (CA-007 de HU-007). */
     protected readonly convocable = computed(() => this.activity().status === 'scheduled' && !isPast(this.activity()));
@@ -152,6 +210,15 @@ export class CallUpSection {
             const activity = this.activity();
             untracked(() => void this.load(activity));
         });
+
+        // Al volver a la pestaña se traen las respuestas nuevas (FR-016; sin actualización en vivo).
+        const onVisible = () => {
+            if (document.visibilityState === 'visible' && this.callUp() && !this.service.busy()) {
+                void this.refresh();
+            }
+        };
+        document.addEventListener('visibilitychange', onVisible);
+        inject(DestroyRef).onDestroy(() => document.removeEventListener('visibilitychange', onVisible));
     }
 
     /** Abierta ahora (el detalle lo consulta antes de cancelar o cambiar la actividad). */
@@ -169,6 +236,106 @@ export class CallUpSection {
         await this.service.refresh();
         this.notice.set(notice);
         this.noticeOpen.set(true);
+    }
+
+    /** «12/17»: confirmados (solo Sí) sobre convocados de la lista (FR-010). */
+    protected confirmedOf(list: CallUpList): string {
+        const totals = this.service.listTotals(list.id);
+
+        return `${totals.yes}/${totals.total}`;
+    }
+
+    protected answerOf(player: CallUpPlayer): string {
+        return answerText(this.service.responseOf(player.playerId)?.answer ?? null);
+    }
+
+    protected summaryOf(player: CallUpPlayer): string {
+        return responseSummary(this.service.responseOf(player.playerId));
+    }
+
+    protected severityOf(player: CallUpPlayer): 'success' | 'warn' | 'danger' | 'secondary' {
+        const severities: Record<ResponseAnswer, 'success' | 'warn' | 'danger'> = { yes: 'success', maybe: 'warn', no: 'danger' };
+        const answer = this.service.responseOf(player.playerId)?.answer;
+
+        return answer ? severities[answer] : 'secondary';
+    }
+
+    protected async refresh(): Promise<void> {
+        this.refreshing.set(true);
+
+        try {
+            await this.service.refresh();
+        } catch (error) {
+            this.toastError(error);
+        } finally {
+            this.refreshing.set(false);
+        }
+    }
+
+    protected async openResponse(player: CallUpPlayer): Promise<void> {
+        this.responseError.set(null);
+        this.responsePlayer.set(player);
+
+        try {
+            this.responseHistory.set(await this.service.history(player.playerId));
+            this.responseOpen.set(true);
+        } catch (error) {
+            this.toastError(error);
+        }
+    }
+
+    protected async respondAsOwner(input: OwnerResponseInput): Promise<void> {
+        const player = this.responsePlayer();
+
+        if (!player) {
+            return;
+        }
+
+        this.responseError.set(null);
+
+        try {
+            await this.service.respondAsOwner(player.playerId, input);
+            this.responseOpen.set(false);
+            this.notify('Respuesta registrada.');
+        } catch (error) {
+            this.responseError.set(this.messageFor(error));
+        }
+    }
+
+    /** Validar va directo; rechazar pide confirmación (FR-012). */
+    protected review(decision: ReviewDecision): void {
+        const player = this.responsePlayer();
+        const response = player ? this.service.responseOf(player.playerId) : null;
+
+        if (!player || !response) {
+            return;
+        }
+
+        const apply = async () => {
+            try {
+                await this.service.review(response.linkStatus === 'pending' ? response.linkId : null, response.deviceStatus === 'pending' ? response.deviceId : null, decision);
+                this.responseHistory.set(await this.service.history(player.playerId));
+                this.notify(decision === 'validate' ? 'Acudiente validado.' : 'Rechazado: su respuesta ya no cuenta.');
+            } catch (error) {
+                this.responseError.set(this.messageFor(error));
+            }
+        };
+
+        if (decision === 'validate') {
+            void apply();
+
+            return;
+        }
+
+        this.confirmation.confirm({
+            header: '¿Rechazar a quien respondió?',
+            message: 'Su respuesta dejará de contar y ese celular ya no se reconocerá. No se le avisará.',
+            acceptLabel: 'Rechazar',
+            rejectLabel: 'Volver',
+            rejectButtonProps: { outlined: true },
+            acceptButtonProps: { severity: 'danger' },
+            accept: () => void apply()
+        });
     }
 
     protected playerLabel(player: CallUpPlayer): string {
