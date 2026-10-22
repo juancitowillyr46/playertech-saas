@@ -10,7 +10,7 @@
   - la tabla `call_up_visits`, una visita por usuario y convocatoria;
   - la función `mark_call_up_seen`;
   - dos vistas con `security_invoker`: `guardian_pending_reviews` (todos los pendientes de la academia, la misma regla de la spec 013) y `call_up_new_responses` (respuestas de acudientes posteriores a la visita del usuario).
-- **Contador** (R3): `core/notices` tiene un repositorio abstracto y un servicio raíz. Se actualiza al navegar (como máximo cada 30 segundos), al volver a la pestaña y tras validar. La barra inferior y el menú lateral muestran un `p-badge` en «Actividades».
+- **Contador** (R3): `core/notices` tiene un repositorio abstracto y un servicio raíz. Se actualiza al navegar (como máximo cada 30 segundos), al volver a la pestaña y tras validar. La barra inferior y el menú lateral muestran un `p-badge` en «Inicio» (ajuste del 2026-10-22).
 - **Inicio y drawer** (R4): la sección «Avisos» va arriba del resumen. El drawer de pendientes, agrupados por jugador, vive en `features/players` y reutiliza `GuardianRepository.review`.
 - **Visto** (R5): `CallUpService.load` marca la convocatoria como vista y refresca los avisos.
 - **Maquetas** antes de las tareas (R6).
@@ -74,7 +74,7 @@ supabase/migrations/20261022100000_in_app_notices.sql
 supabase/tests/database/120-in-app-notices.test.sql
 frontend/src/app/
 ├── core/notices/                     # NUEVO: repositorio abstracto, Supabase, NoticesService
-├── layout/component/                 # app.bottomnav y app.menuitem: contador en «Actividades»
+├── layout/component/                 # app.bottomnav y app.menuitem: contador en «Inicio»
 ├── features/home/pages/home-page     # sección «Avisos»
 ├── features/players/components/pending-reviews-drawer   # NUEVO
 ├── features/players/data             # pendingByAcademy; pending lee la vista

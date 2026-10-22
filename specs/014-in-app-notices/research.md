@@ -23,7 +23,7 @@ Decisiones técnicas de la spec 014. Las de producto están en DEC-41, DEC-46 y 
   - al volver a la pestaña (`visibilitychange`);
   - al terminar una validación, con `refresh()` explícito.
 
-  La barra inferior y el menú lateral muestran un `p-badge` en el destino «Actividades» cuando `pendingCount > 0`, con «99+» a partir de 100.
+  La barra inferior y el menú lateral muestran un `p-badge` en el destino «Inicio» (ajuste del 2026-10-22) cuando `pendingCount > 0`, con «99+» a partir de 100.
 - **Motivo**: la navegación es del layout (core) y no puede depender de una feature; el repositorio abstracto vive en `core/notices` como los demás de core (`AcademyContext`, legal). Sin Realtime (DEC-46).
 - **Alternativa descartada**: consultar en cada navegación sin límite, que gasta datos móviles (PRODUCT.md, datos limitados).
 

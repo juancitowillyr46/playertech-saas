@@ -45,8 +45,6 @@ export class SupabaseHomeSummaryRepository extends HomeSummaryRepository {
             throw mapSupabaseError(error);
         }
 
-        return data
-            ? { id: data.id, bucket: data.bucket as StorageBucket, storageKey: data.storage_key, mimeType: data.mime_type, sizeBytes: data.size_bytes }
-            : null;
+        return data ? { id: data.id, bucket: data.bucket as StorageBucket, storageKey: data.storage_key, mimeType: data.mime_type, sizeBytes: data.size_bytes } : null;
     }
 }

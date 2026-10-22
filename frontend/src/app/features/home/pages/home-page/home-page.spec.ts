@@ -1,3 +1,6 @@
+import { MessageService } from 'primeng/api';
+import { GuardianRepository } from '../../../players/data/guardian.repository';
+import { noticesMock } from '../../../../testing/notices-mock';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
@@ -19,6 +22,9 @@ async function setup(loadSummary: () => Promise<HomeSummaryData> = () => Promise
         providers: [
             provideRouter([]),
             { provide: AcademyContextService, useValue: { academy: signal({ id: 'a', name: 'Academia Los Andes', logoFileId: null }) } },
+            noticesMock(),
+            { provide: MessageService, useValue: { add: vi.fn() } },
+            { provide: GuardianRepository, useValue: { pendingByAcademy: vi.fn().mockResolvedValue([]), review: vi.fn() } },
             { provide: HomeSummaryRepository, useValue: { loadSummary: load } },
             { provide: FileStorageRepository, useValue: { getUrl: vi.fn() } }
         ]

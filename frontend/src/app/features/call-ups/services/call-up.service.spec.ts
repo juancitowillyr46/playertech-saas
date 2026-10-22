@@ -1,3 +1,4 @@
+import { noticesMock } from '../../../testing/notices-mock';
 import { GuardianRepository } from '../../players/data/guardian.repository';
 import { TestBed } from '@angular/core/testing';
 import { PlayerRepository } from '../../players/data/player.repository';
@@ -15,6 +16,7 @@ describe('CallUpService', () => {
                 CallUpService,
                 { provide: CallUpRepository, useValue: repository },
                 { provide: GuardianRepository, useValue: { review: vi.fn().mockResolvedValue(undefined) } },
+                noticesMock(),
                 { provide: PlayerRepository, useValue: { listPlayers: vi.fn().mockResolvedValue([{ isActive: true }, { isActive: false }]) } }
             ]
         });
@@ -33,6 +35,7 @@ describe('CallUpService', () => {
                 CallUpService,
                 { provide: CallUpRepository, useValue: repository },
                 { provide: GuardianRepository, useValue: { review: vi.fn().mockResolvedValue(undefined) } },
+                noticesMock(),
                 { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }
             ]
         });
@@ -62,6 +65,7 @@ describe('CallUpService', () => {
                 CallUpService,
                 { provide: CallUpRepository, useValue: repository },
                 { provide: GuardianRepository, useValue: { review: vi.fn().mockResolvedValue(undefined) } },
+                noticesMock(),
                 { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }
             ]
         });
@@ -85,6 +89,7 @@ describe('CallUpService', () => {
                 CallUpService,
                 { provide: CallUpRepository, useValue: repository },
                 { provide: GuardianRepository, useValue: { review: vi.fn().mockResolvedValue(undefined) } },
+                noticesMock(),
                 { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }
             ]
         });
@@ -104,7 +109,9 @@ describe('CallUpService', () => {
         };
         const guardians = { review: vi.fn().mockResolvedValue(undefined) };
         TestBed.resetTestingModule();
-        TestBed.configureTestingModule({ providers: [CallUpService, { provide: CallUpRepository, useValue: repository }, { provide: GuardianRepository, useValue: guardians }, { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }] });
+        TestBed.configureTestingModule({
+            providers: [CallUpService, { provide: CallUpRepository, useValue: repository }, { provide: GuardianRepository, useValue: guardians }, noticesMock(), { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }]
+        });
         const service = TestBed.inject(CallUpService);
         await service.load(activity as Activity);
 
@@ -116,5 +123,31 @@ describe('CallUpService', () => {
         expect(repository.respondAsOwner).toHaveBeenCalledWith('c', 'p2', { answer: 'no', reason: null, reasonText: null });
         expect(guardians.review).toHaveBeenCalledWith('gl1', null, 'validate');
         expect(repository.responses).toHaveBeenCalledTimes(3);
+    });
+
+    it('al cargar marca la convocatoria como vista y refresca los avisos (CA-003 de HU-041)', async () => {
+        const repository = { getByActivity: vi.fn().mockResolvedValue(callUp), responses: vi.fn().mockResolvedValue([]), markSeen: vi.fn().mockResolvedValue(undefined) };
+        const notices = noticesMock();
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            providers: [CallUpService, { provide: CallUpRepository, useValue: repository }, notices, { provide: GuardianRepository, useValue: { review: vi.fn() } }, { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }]
+        });
+
+        await TestBed.inject(CallUpService).load(activity as Activity);
+
+        await vi.waitFor(() => expect(notices.useValue.refresh).toHaveBeenCalled());
+        expect(repository.markSeen).toHaveBeenCalledWith('c');
+    });
+
+    it('si marcar visto falla, la carga sigue', async () => {
+        const repository = { getByActivity: vi.fn().mockResolvedValue(callUp), responses: vi.fn().mockResolvedValue([]), markSeen: vi.fn().mockRejectedValue(new Error('red')) };
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            providers: [CallUpService, { provide: CallUpRepository, useValue: repository }, noticesMock(), { provide: GuardianRepository, useValue: { review: vi.fn() } }, { provide: PlayerRepository, useValue: { listPlayers: vi.fn() } }]
+        });
+        const service = TestBed.inject(CallUpService);
+
+        await expect(service.load(activity as Activity)).resolves.toBeUndefined();
+        expect(service.callUp()).toEqual(callUp);
     });
 });

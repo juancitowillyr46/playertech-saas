@@ -30,17 +30,37 @@ description: "Lista de tareas para los avisos en la aplicación (Fase 2, spec 4b
   - Prettier solo en los archivos tocados.
 - **ADR-017:** `current_user_id()`; sin `auth.uid()` nuevos. La migración se aplica con `npx supabase migration up`, nunca con `db:reset`.
 
+## Notas de implementación
+
+- **Academia actual**: `current_academy_id()` devuelve la membresía activa del usuario, y DEC-02 limita hoy a una academia por persona. El filtro de las vistas queda listo para cuando haya varias; las pruebas lo cubren con el aislamiento entre A y B.
+- **Respuestas vistas**: `seen_at` usa `clock_timestamp()`, igual que las respuestas, para que el orden sea correcto también dentro de una transacción.
+- **Contador**: cuenta un dispositivo una sola vez aunque acompañe a varios jugadores (`countPending`).
+  - Se dibuja con `p-overlaybadge` en la barra inferior y `p-badge` en el menú lateral, sin CSS propio.
+  - El nombre accesible es «Actividades, N acudientes por validar».
+- **«Por validar»**: la ficha (spec 013) y el drawer del inicio leen la misma vista `guardian_pending_reviews` (una sola regla).
+  - Validar desde la ficha, desde el seguimiento o desde el drawer refresca el contador al momento.
+- **El drawer** vive en `features/players` con su servicio `PendingReviewsService`, y la sección «Avisos» en `features/home/components/notices-section`. El inicio provee `ConfirmationService` y su `p-confirmdialog`.
+- **Ajustes de la validación en el celular (2026-10-22)**:
+  - el contador pasó de «Actividades» a «Inicio», junto al aviso que abre «Por validar»;
+  - el drawer agrupa por **persona**: el mismo celular aparecía una vez por jugador y, al validar uno, desaparecían todos. Validar confirma el celular y todos sus vínculos nuevos; rechazar los descarta sin tocar los vínculos ya validados (DEC-47 y HU-041 ajustadas).
+- **Pruebas**: `testing/notices-mock.ts` simula `NoticesService` en las pruebas de los servicios que lo refrescan.
+- **Revisión (T015)**: el detector de Impeccable no encontró hallazgos en el código nuevo. Las pantallas requieren sesión: se revisaron en el código (44 a 52 px, textos de al menos 14 px, tokens) y quedan para la validación en el celular.
+- **Resultados**:
+  - pgTAP 315/315 (18 nuevas);
+  - Vitest de `core/notices`, `layout`, `home`, `players`, `call-ups`, `call-up-response` y `activities`: 206/206;
+  - lint, `check:styles` y compilación en verde.
+
 ---
 
 ## Fase 1: Configuración
 
-- [ ] T001 Comprobar `npm run db:test` en verde (297/297)
+- [X] T001 Comprobar `npm run db:test` en verde (297/297)
 
 ---
 
 ## Fase 2: Fundaciones (bloqueantes)
 
-- [ ] T002 Escribir `supabase/tests/database/120-in-app-notices.test.sql` con todo lo de `contracts/contracts.md` (base de datos), sobre `tests.academy_of('academia-a')` y la B:
+- [X] T002 Escribir `supabase/tests/database/120-in-app-notices.test.sql` con todo lo de `contracts/contracts.md` (base de datos), sobre `tests.academy_of('academia-a')` y la B:
   - **`guardian_pending_reviews`:**
     - un vínculo pendiente con su dispositivo en una fila;
     - el dispositivo nuevo de un vínculo validado en otra;
@@ -58,7 +78,7 @@ description: "Lista de tareas para los avisos en la aplicación (Fase 2, spec 4b
     - el owner B no ve pendientes, respuestas nuevas ni visitas de A;
     - B no marca una convocatoria de A;
     - `anon` no tiene acceso.
-- [ ] T003 Crear `supabase/migrations/20261022100000_in_app_notices.sql` según `data-model.md`:
+- [X] T003 Crear `supabase/migrations/20261022100000_in_app_notices.sql` según `data-model.md`:
   - **Tabla `call_up_visits`:**
     - PK `(call_up_id, user_id)`;
     - FK compuesta a `call_ups`;
@@ -69,9 +89,9 @@ description: "Lista de tareas para los avisos en la aplicación (Fase 2, spec 4b
   - **Vistas** `guardian_pending_reviews` y `call_up_new_responses` con `security_invoker = true`, filtradas por `academy_id = current_academy_id()`.
   - **GRANT**, sin `anon`.
   - **Comentarios** en español.
-- [ ] T004 Aplicar con `npx supabase migration up`, ejecutar `npm run db:test` en verde y luego `npm run db:types`
-- [ ] T005 [P] Documentar la tabla y las vistas en `docs/architecture/database-schema.md` (sección de la spec 014)
-- [ ] T006 Crear `frontend/src/app/core/notices/` con:
+- [X] T004 Aplicar con `npx supabase migration up`, ejecutar `npm run db:test` en verde y luego `npm run db:types`
+- [X] T005 [P] Documentar la tabla y las vistas en `docs/architecture/database-schema.md` (sección de la spec 014)
+- [X] T006 Crear `frontend/src/app/core/notices/` con:
   - `notices.models.ts` (`NewResponsesNotice`: `callUpId`, `activityId`, título, fecha y `newCount`);
   - `notices.repository.ts` (abstracto: `pendingCount` y `newResponses`);
   - `supabase-notices.repository.ts` y su `.spec.ts`;
@@ -87,22 +107,22 @@ description: "Lista de tareas para los avisos en la aplicación (Fase 2, spec 4b
 
 ## Fase 3: US1 — Contador en la navegación (P1) 🎯 MVP
 
-- [ ] T007 [US1] En `frontend/src/app/layout/component/app.bottomnav.ts` y `app.menuitem.ts`, mostrar un `p-badge` en el destino «Actividades» cuando `NoticesService.pendingCount() > 0`:
+- [X] T007 [US1] En `frontend/src/app/layout/component/app.bottomnav.ts` y `app.menuitem.ts`, mostrar un `p-badge` en el destino «Actividades» cuando `NoticesService.pendingCount() > 0`:
   - el valor es el número, o «99+» a partir de 100;
   - el nombre accesible es «Actividades, N acudientes por validar»;
   - el destino se identifica por su ruta `/activities`.
 
   Ajustar la posición solo con utilidades o tokens; sin CSS sobre `.p-badge`.
-- [ ] T008 [US1] Escribir pruebas en `app.bottomnav.spec.ts` y en el menú: con y sin pendientes, y «99+» (CA-001 de HU-041)
+- [X] T008 [US1] Escribir pruebas en `app.bottomnav.spec.ts` y en el menú: con y sin pendientes, y «99+» (CA-001 de HU-041)
 
 ---
 
 ## Fase 4: US2 — Avisos del inicio y visto (P1)
 
-- [ ] T009 [US2] Añadir `markSeen(callUpId)` a `features/call-ups/data/call-up.repository.ts`, a su implementación (RPC `mark_call_up_seen`) y a su prueba. En `CallUpService.load`, después de leer las respuestas:
+- [X] T009 [US2] Añadir `markSeen(callUpId)` a `features/call-ups/data/call-up.repository.ts`, a su implementación (RPC `mark_call_up_seen`) y a su prueba. En `CallUpService.load`, después de leer las respuestas:
   - llamar a `markSeen`, sin bloquear ni fallar la carga si falla;
   - después, llamar a `NoticesService.refresh()`.
-- [ ] T010 [US2] En `features/home/pages/home-page/home-page.ts`, añadir la sección **«Avisos»** arriba del resumen, según `mockups/Main.dc.html` y `Desktop.dc.html`:
+- [X] T010 [US2] En `features/home/pages/home-page/home-page.ts`, añadir la sección **«Avisos»** arriba del resumen, según `mockups/Main.dc.html` y `Desktop.dc.html`:
   - «N acudientes por validar» con un botón que abre el drawer de la Fase 5;
   - hasta 5 avisos de respuestas nuevas, ordenados por fecha de la actividad, con texto «N respuestas nuevas · <título> · <día>» y `routerLink` a `/activities/:id`;
   - «Ver más (N)» muestra el resto;
@@ -110,18 +130,18 @@ description: "Lista de tareas para los avisos en la aplicación (Fase 2, spec 4b
   - la sección no aparece si no hay avisos;
   - si falla la lectura, se omite la sección sin romper el inicio y el contador conserva su último valor (FR-009);
   - se refresca al entrar al inicio.
-- [ ] T011 [US2] Escribir pruebas en `home-page.spec.ts` y `call-up.service.spec.ts` para CA-002 y CA-003 de HU-041: avisos, enlace, «Ver más», sin avisos sin sección, y `load` que marca visto y refresca
+- [X] T011 [US2] Escribir pruebas en `home-page.spec.ts` y `call-up.service.spec.ts` para CA-002 y CA-003 de HU-041: avisos, enlace, «Ver más», sin avisos sin sección, y `load` que marca visto y refresca
 
 ---
 
 ## Fase 5: US3 — Drawer de pendientes (P1)
 
-- [ ] T012 [US3] En `features/players/data`:
+- [X] T012 [US3] En `features/players/data`:
   - añadir `pendingByAcademy()`, que lee `guardian_pending_reviews` con el jugador (`AcademyPendingGuardian` en `player.models.ts`);
   - cambiar `pending(playerId)` para que lea la misma vista filtrada por jugador (una sola regla, R1);
   - llamar a `NoticesService.refresh()` después de validar o rechazar en `PlayerDetailService.review` y en `CallUpService.review` (spec 013), para que el contador no espere al siguiente intervalo (FR-007);
   - actualizar las pruebas del repositorio.
-- [ ] T013 [US3] Crear `features/players/components/pending-reviews-drawer/pending-reviews-drawer.ts` (`FormDrawer`, sin guardar, «Cerrar»), según `mockups/Pending.dc.html`:
+- [X] T013 [US3] Crear `features/players/components/pending-reviews-drawer/pending-reviews-drawer.ts` (`FormDrawer`, sin guardar, «Cerrar»), según `mockups/Pending.dc.html`:
   - título «Por validar (N)»;
   - grupos por jugador, con su nombre completo;
   - en cada pendiente:
@@ -131,26 +151,26 @@ description: "Lista de tareas para los avisos en la aplicación (Fase 2, spec 4b
     - «Validar» (directo) y «Rechazar» (con confirmación), con `GuardianRepository.review` y un aviso breve de éxito;
   - al terminar, recarga la lista y llama a `NoticesService.refresh()`;
   - vacío: «No hay acudientes por validar».
-- [ ] T014 [US3] Abrir el drawer desde el aviso del inicio (T010) y escribir `pending-reviews-drawer.spec.ts` para CA-004 de HU-041: grupos, validar, rechazar con confirmación y el estado vacío
+- [X] T014 [US3] Abrir el drawer desde el aviso del inicio (T010) y escribir `pending-reviews-drawer.spec.ts` para CA-004 de HU-041: grupos, validar, rechazar con confirmación y el estado vacío
 
 ---
 
 ## Fase 6: US4 — Revisión (P2)
 
-- [ ] T015 [US4] Revisar con Impeccable, a 360 px y en escritorio, en claro y oscuro: el contador, la sección «Avisos» y el drawer. Comprobar 44 px, foco, etiquetas, nombres accesibles del contador, y textos de al menos 14 px
+- [X] T015 [US4] Revisar con Impeccable, a 360 px y en escritorio, en claro y oscuro: el contador, la sección «Avisos» y el drawer. Comprobar 44 px, foco, etiquetas, nombres accesibles del contador, y textos de al menos 14 px
 
 ---
 
 ## Fase 7: Cierre
 
-- [ ] T016 Ejecutar:
+- [X] T016 Ejecutar:
   - `npm run db:test`;
   - Vitest de `core/notices`, `layout`, `features/home`, `features/players` y `features/call-ups`.
 
   Después, una sola vez, `npm run lint`, `npm run check:styles` y `npm run build`.
-- [ ] T017 Recorrer `quickstart.md` y anotar los resultados; el responsable valida desde el celular
-- [ ] T018 Confirmar que la academia A del seed no tiene visitas y que `npm run db:test` está en verde
-- [ ] T019 [P] Marcar HU-041 como «Terminada (entorno local)» en la HU, en EP-07, en `docs/backlog/README.md` y en `AGENTS.md`
+- [X] T017 Recorrer `quickstart.md` y anotar los resultados; el responsable valida desde el celular
+- [X] T018 Confirmar que la academia A del seed no tiene visitas y que `npm run db:test` está en verde
+- [X] T019 [P] Marcar HU-041 como «Terminada (entorno local)» en la HU, en EP-07, en `docs/backlog/README.md` y en `AGENTS.md`
 - [ ] T020 Tras el merge y con autorización: `npm run db:push`, primero con `--dry-run`
 
 ---

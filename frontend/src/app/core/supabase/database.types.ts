@@ -238,6 +238,13 @@ export type Database = {
                         foreignKeyName: 'call_up_lists_academy_id_call_up_id_fkey';
                         columns: ['academy_id', 'call_up_id'];
                         isOneToOne: false;
+                        referencedRelation: 'call_up_new_responses';
+                        referencedColumns: ['academy_id', 'call_up_id'];
+                    },
+                    {
+                        foreignKeyName: 'call_up_lists_academy_id_call_up_id_fkey';
+                        columns: ['academy_id', 'call_up_id'];
+                        isOneToOne: false;
                         referencedRelation: 'call_ups';
                         referencedColumns: ['academy_id', 'id'];
                     },
@@ -283,6 +290,13 @@ export type Database = {
                     player_id?: string;
                 };
                 Relationships: [
+                    {
+                        foreignKeyName: 'call_up_players_academy_id_call_up_id_fkey';
+                        columns: ['academy_id', 'call_up_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'call_up_new_responses';
+                        referencedColumns: ['academy_id', 'call_up_id'];
+                    },
                     {
                         foreignKeyName: 'call_up_players_academy_id_call_up_id_fkey';
                         columns: ['academy_id', 'call_up_id'];
@@ -361,6 +375,13 @@ export type Database = {
                         foreignKeyName: 'call_up_responses_academy_id_call_up_id_fkey';
                         columns: ['academy_id', 'call_up_id'];
                         isOneToOne: false;
+                        referencedRelation: 'call_up_new_responses';
+                        referencedColumns: ['academy_id', 'call_up_id'];
+                    },
+                    {
+                        foreignKeyName: 'call_up_responses_academy_id_call_up_id_fkey';
+                        columns: ['academy_id', 'call_up_id'];
+                        isOneToOne: false;
                         referencedRelation: 'call_ups';
                         referencedColumns: ['academy_id', 'id'];
                     },
@@ -391,6 +412,49 @@ export type Database = {
                         isOneToOne: false;
                         referencedRelation: 'players';
                         referencedColumns: ['academy_id', 'id'];
+                    }
+                ];
+            };
+            call_up_visits: {
+                Row: {
+                    academy_id: string;
+                    call_up_id: string;
+                    seen_at: string;
+                    user_id: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    call_up_id: string;
+                    seen_at?: string;
+                    user_id?: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    call_up_id?: string;
+                    seen_at?: string;
+                    user_id?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'call_up_visits_academy_id_call_up_id_fkey';
+                        columns: ['academy_id', 'call_up_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'call_up_new_responses';
+                        referencedColumns: ['academy_id', 'call_up_id'];
+                    },
+                    {
+                        foreignKeyName: 'call_up_visits_academy_id_call_up_id_fkey';
+                        columns: ['academy_id', 'call_up_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'call_ups';
+                        referencedColumns: ['academy_id', 'id'];
+                    },
+                    {
+                        foreignKeyName: 'call_up_visits_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
                     }
                 ];
             };
@@ -1105,6 +1169,13 @@ export type Database = {
                         foreignKeyName: 'call_up_players_academy_id_call_up_id_fkey';
                         columns: ['academy_id', 'call_up_id'];
                         isOneToOne: false;
+                        referencedRelation: 'call_up_new_responses';
+                        referencedColumns: ['academy_id', 'call_up_id'];
+                    },
+                    {
+                        foreignKeyName: 'call_up_players_academy_id_call_up_id_fkey';
+                        columns: ['academy_id', 'call_up_id'];
+                        isOneToOne: false;
                         referencedRelation: 'call_ups';
                         referencedColumns: ['academy_id', 'id'];
                     },
@@ -1131,6 +1202,27 @@ export type Database = {
                     }
                 ];
             };
+            call_up_new_responses: {
+                Row: {
+                    academy_id: string | null;
+                    activity_id: string | null;
+                    activity_opponent: string | null;
+                    activity_starts_at: string | null;
+                    activity_status: string | null;
+                    activity_type: string | null;
+                    call_up_id: string | null;
+                    new_count: number | null;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'call_ups_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    }
+                ];
+            };
             call_up_summaries: {
                 Row: {
                     academy_id: string | null;
@@ -1144,6 +1236,13 @@ export type Database = {
                     yes: number | null;
                 };
                 Relationships: [
+                    {
+                        foreignKeyName: 'call_up_players_academy_id_call_up_id_fkey';
+                        columns: ['academy_id', 'call_up_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'call_up_new_responses';
+                        referencedColumns: ['academy_id', 'call_up_id'];
+                    },
                     {
                         foreignKeyName: 'call_up_players_academy_id_call_up_id_fkey';
                         columns: ['academy_id', 'call_up_id'];
@@ -1166,6 +1265,24 @@ export type Database = {
                         referencedColumns: ['academy_id', 'id'];
                     }
                 ];
+            };
+            guardian_pending_reviews: {
+                Row: {
+                    academy_id: string | null;
+                    created_at: string | null;
+                    declared_name: string | null;
+                    device_id: string | null;
+                    guardian_name: string | null;
+                    link_id: string | null;
+                    phone: string | null;
+                    phone_match: boolean | null;
+                    player_first_names: string | null;
+                    player_id: string | null;
+                    player_last_names: string | null;
+                    player_nickname: string | null;
+                    relationship: string | null;
+                };
+                Relationships: [];
             };
         };
         Functions: {
@@ -1209,6 +1326,7 @@ export type Database = {
             guardian_responses_count: { Args: { p_call_up_id: string; p_player_id: string }; Returns: number };
             has_academy_role: { Args: { p_academy_id: string; p_roles: string[] }; Returns: boolean };
             is_academy_member: { Args: { p_academy_id: string }; Returns: boolean };
+            mark_call_up_seen: { Args: { p_call_up_id: string }; Returns: undefined };
             normalize_name: { Args: { p_text: string }; Returns: string };
             player_short_name: { Args: { p_first_names: string; p_last_names: string }; Returns: string };
             public_call_up: { Args: { p_device_keys: string[]; p_token: string }; Returns: Json };

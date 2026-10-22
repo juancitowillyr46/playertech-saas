@@ -1,6 +1,6 @@
 # HU-041 — Avisos en la aplicación
 
-**Épica:** EP-07 — Seguimiento de respuestas · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-07 — Seguimiento de respuestas · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 014)
 **Spec:** 014 (avisos en la aplicación)
 
 ## Historia de usuario
@@ -12,7 +12,7 @@
 ### CA-001 — Contador en la navegación
 **Dado** acudientes o dispositivos pendientes de validar,
 **cuando** el owner navega por la aplicación,
-**entonces** «Actividades» muestra un contador con el número de pendientes; sin pendientes, no muestra nada. Las respuestas nuevas no suman al contador (DEC-47).
+**entonces** «Inicio» muestra un contador (ajuste del 2026-10-22) con el número de pendientes; sin pendientes, no muestra nada. Las respuestas nuevas no suman al contador (DEC-47).
 
 ### CA-002 — Aviso en el inicio
 **Dado** pendientes por validar o respuestas nuevas,
@@ -27,7 +27,7 @@
 ### CA-004 — Validar desde el aviso
 **Dado** el aviso de pendientes,
 **cuando** el owner lo toca,
-**entonces** se abre un drawer con todos los pendientes de la academia agrupados por jugador, y puede validar o rechazar cada uno sin buscar la actividad (HU-040).
+**entonces** se abre un drawer con todos los pendientes de la academia agrupados por persona (su celular, los vínculos nuevos y los jugadores que ya acompaña), y puede validar o rechazar a cada persona sin buscar la actividad (HU-040; ajuste del 2026-10-22).
 
 ## Reglas de negocio
 

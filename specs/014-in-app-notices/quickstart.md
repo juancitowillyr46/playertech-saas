@@ -12,7 +12,7 @@
 
 ## 1. Contador (CA-001)
 
-Identificarse desde un enlace como dos acudientes nuevos. En el celular, la barra inferior muestra «2» en «Actividades»; en escritorio, el menú lateral. Validar a uno desde su ficha y navegar: «1». Sin pendientes, sin número.
+Identificarse desde un enlace como dos acudientes nuevos. En el celular, la barra inferior muestra «2» en «Inicio»; en escritorio, el menú lateral. Validar a uno desde su ficha y navegar: «1». Sin pendientes, sin número.
 
 ## 2. Avisos del inicio (CA-002 y CA-003)
 
@@ -28,4 +28,10 @@ El owner de la academia B no ve nada de A. Pantallas a 360 px y en escritorio, e
 
 ## Resultados
 
-*(se completa al implementar)*
+Validado por el responsable desde su celular el 2026-10-22, con la academia C local.
+
+- **Automáticas**: pgTAP 315/315 (18 nuevas); Vitest de `core/notices`, `layout`, `home`, `players`, `call-ups`, `call-up-response` y `activities` en verde; lint, `check:styles` y compilación en verde.
+- **1. Contador**: conforme, en «Inicio» (se movió desde «Actividades» durante la validación); desaparece sin pendientes.
+- **2. Avisos del inicio**: conforme; respuestas nuevas por convocatoria que llevan a la actividad y desaparecen al abrirla; las respuestas del owner no generan aviso.
+- **3. Drawer de pendientes**: conforme, agrupado por persona (ajuste durante la validación: el mismo celular aparecía una vez por jugador); validar confirma el celular y todos sus vínculos nuevos.
+- **4. Aislamiento y experiencia**: pgTAP de aislamiento A/B; detector de Impeccable sin hallazgos en el código nuevo; pantallas validadas en el celular.

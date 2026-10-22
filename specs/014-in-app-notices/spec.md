@@ -20,7 +20,7 @@ Como owner, quiero ver en la navegación cuántos acudientes esperan validación
 
 **Motivo de prioridad**: Validar es la protección de la identificación sin códigos (SEC-03); un pendiente olvidado deja respuestas «sin validar».
 
-**Prueba independiente**: Con dos personas identificadas desde un enlace y sin validar, el owner ve «2» junto a «Actividades» en el celular; al validarlas, el contador desaparece.
+**Prueba independiente**: Con dos personas identificadas desde un enlace y sin validar, el owner ve «2» junto a «Inicio» en el celular; al validarlas, el contador desaparece.
 
 **Referencia**: CA-001 de HU-041; DEC-47.
 
@@ -96,12 +96,12 @@ Como owner, quiero que estos avisos se vean claros en el celular, y el responsab
 
 ### Functional Requirements
 
-- **FR-001**: La navegación DEBE mostrar junto a «Actividades» el número de acudientes y dispositivos pendientes de validar de la academia actual; sin pendientes, no muestra nada. Las respuestas nuevas NO DEBEN sumar al contador (DEC-47).
+- **FR-001**: La navegación DEBE mostrar junto a «Inicio» (ajuste del 2026-10-22) el número de acudientes y dispositivos pendientes de validar de la academia actual; sin pendientes, no muestra nada. Las respuestas nuevas NO DEBEN sumar al contador (DEC-47).
 - **FR-002**: El inicio DEBE mostrar un aviso «N acudientes por validar» cuando haya pendientes, que abre el drawer de pendientes.
 - **FR-003**: El inicio DEBE mostrar un aviso por cada convocatoria con respuestas nuevas («N respuestas nuevas en …», con la actividad y su fecha), que lleva a esa actividad.
 - **FR-004**: Una respuesta es nueva para el owner si se registró después de la última vez que él abrió la actividad de esa convocatoria, si la dio un acudiente (no el propio owner), si cuenta (no rechazada) y si el jugador sigue convocado.
 - **FR-005**: Al abrir la actividad de una convocatoria, sus respuestas DEBEN quedar vistas para ese owner.
-- **FR-006**: El drawer de pendientes DEBE listar todos los pendientes de la academia agrupados por jugador, con lo que muestra el bloque «Por validar» de la ficha (nombre declarado, parentesco, celular, cuándo y la coincidencia de celular), y permitir «Validar» y «Rechazar» (con confirmación) con la misma operación de HU-040.
+- **FR-006**: El drawer de pendientes DEBE listar todos los pendientes de la academia agrupados por persona (una tarjeta por celular nuevo, con los vínculos nuevos y los jugadores que ya acompaña; ajuste del 2026-10-22), con lo que muestra el bloque «Por validar» de la ficha (nombre declarado, parentesco, celular, cuándo y la coincidencia de celular), y permitir «Validar» y «Rechazar» (con confirmación) con la misma operación de HU-040.
 - **FR-007**: El contador y los avisos DEBEN actualizarse al navegar, al volver a la aplicación y tras validar o rechazar; no hay actualización en vivo (DEC-46).
 - **FR-008**: La marca de «visto» DEBE ser por owner y por convocatoria, y quedar aislada por academia: ningún owner ve ni altera la de otro.
 - **FR-009**: Cada operación exitosa DEBE confirmarse con un mensaje breve; los errores DEBEN mostrarse en español sin detalles técnicos.

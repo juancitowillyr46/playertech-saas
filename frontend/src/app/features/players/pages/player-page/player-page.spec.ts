@@ -1,3 +1,4 @@
+import { noticesMock } from '../../../../testing/notices-mock';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { provideRouter, Router } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
@@ -53,6 +54,7 @@ async function setup(options: { player?: Partial<Record<string, ReturnType<typeo
         providers: [
             provideRouter([]),
             { provide: PlayerRepository, useValue: players },
+            noticesMock(),
             { provide: GuardianRepository, useValue: guardians },
             { provide: LegalDocumentsRepository, useValue: { getCurrent: vi.fn().mockResolvedValue({ privacyPolicy: { url: 'https://legal/privacy', version: '1', type: 'privacy_policy' } }) } },
             { provide: MessageService, useValue: messages },

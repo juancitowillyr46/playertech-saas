@@ -51,15 +51,15 @@ export abstract class NoticesRepository {
 ## Interfaz
 
 - **Navegación** (barra inferior y menú lateral):
-  - en «Actividades», un `p-badge` con `pendingCount` («99+» a partir de 100);
+  - en «Inicio» (ajuste del 2026-10-22), un `p-badge` con `pendingCount` («99+» a partir de 100);
   - sin pendientes, nada;
-  - nombre accesible: «Actividades, 3 acudientes por validar».
+  - nombre accesible: «Inicio, 3 acudientes por validar».
 - **Inicio**, sección **«Avisos»** arriba del resumen; solo aparece si hay algo:
   - «3 acudientes por validar», con un botón que abre el drawer;
   - por convocatoria: «5 respuestas nuevas · Partido contra Club Norte · sábado 24», que lleva a `/activities/:id`;
   - hasta 5 avisos y «Ver más» para el resto.
 - **Drawer «Por validar»** (`features/players/components/pending-reviews-drawer`):
-  - grupos por jugador («Mateo Rodas»);
+  - una tarjeta por persona (ajuste del 2026-10-22), con «Nuevo vínculo: jugador (parentesco)» y «Ya es acudiente de: …»; «Validar» confirma el celular y todos sus vínculos nuevos;
   - en cada pendiente: nombre declarado, parentesco, celular, cuándo y «Coincide con…»;
   - botones «Validar» y «Rechazar» (con confirmación);
   - aviso breve de éxito;

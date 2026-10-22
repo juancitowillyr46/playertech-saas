@@ -237,6 +237,10 @@ export class SupabaseCallUpRepository extends CallUpRepository {
             counts: row.source === 'owner' || (row.guardian_links?.status !== 'rejected' && row.guardian_devices?.status !== 'revoked')
         }));
     }
+    async markSeen(callUpId: string): Promise<void> {
+        const { error } = await this.client.rpc('mark_call_up_seen', { p_call_up_id: callUpId });
+        if (error) throw mapSupabaseError(error);
+    }
     async respondAsOwner(callUpId: string, playerId: string, input: OwnerResponseInput): Promise<void> {
         const { error } = await this.client.from('call_up_responses').insert({
             academy_id: this.requireAcademy(),

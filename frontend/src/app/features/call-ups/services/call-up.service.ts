@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Activity } from '../../activities/models/activity.models';
+import { NoticesService } from '../../../core/notices/notices.service';
 import { GuardianRepository } from '../../players/data/guardian.repository';
 import { PlayerRepository } from '../../players/data/player.repository';
 import { GroupRef, PlayerSummary, ReviewDecision } from '../../players/models/player.models';
@@ -48,6 +49,7 @@ export class CallUpService {
     private readonly repository = inject(CallUpRepository);
     private readonly players = inject(PlayerRepository);
     private readonly guardians = inject(GuardianRepository);
+    private readonly notices = inject(NoticesService);
 
     readonly callUp = signal<CallUp | null>(null);
     /** Respuesta vigente de cada convocado activo (spec 013). */
@@ -63,6 +65,20 @@ export class CallUpService {
 
         this.responses.set(callUp ? await this.repository.responses(callUp.id) : []);
         this.callUp.set(callUp);
+
+        if (callUp) {
+            void this.markSeen(callUp.id);
+        }
+    }
+
+    /** Abrir la actividad deja vistas sus respuestas (DEC-47); si falla, la pantalla sigue igual. */
+    private async markSeen(callUpId: string): Promise<void> {
+        try {
+            await this.repository.markSeen(callUpId);
+            await this.notices.refresh();
+        } catch {
+            // Sin marca de visto, el aviso del inicio sigue hasta la próxima visita.
+        }
     }
 
     /** Totales de una lista («12/17»). */
@@ -85,7 +101,10 @@ export class CallUpService {
 
     /** Validar o rechazar a quien respondió (HU-040). */
     review(linkId: string | null, deviceId: string | null, decision: ReviewDecision): Promise<void> {
-        return this.run(() => this.guardians.review(linkId, deviceId, decision));
+        return this.run(async () => {
+            await this.guardians.review(linkId, deviceId, decision);
+            void this.notices.refresh();
+        });
     }
 
     /** Jugadores activos (con sus grupos) que se pueden convocar o sumar. */

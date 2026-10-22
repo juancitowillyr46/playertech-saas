@@ -77,6 +77,12 @@ export interface PendingGuardian {
     readonly phoneMatch: boolean;
 }
 
+/** Pendiente con su jugador, para el drawer de toda la academia (spec 014). */
+export interface AcademyPendingGuardian extends PendingGuardian {
+    readonly playerId: string;
+    readonly playerName: string;
+}
+
 export type ReviewDecision = 'validate' | 'reject';
 
 export interface GuardianAssignment {
