@@ -171,7 +171,7 @@ description: "Lista de tareas para los avisos en la aplicación (Fase 2, spec 4b
 - [X] T017 Recorrer `quickstart.md` y anotar los resultados; el responsable valida desde el celular
 - [X] T018 Confirmar que la academia A del seed no tiene visitas y que `npm run db:test` está en verde
 - [X] T019 [P] Marcar HU-041 como «Terminada (entorno local)» en la HU, en EP-07, en `docs/backlog/README.md` y en `AGENTS.md`
-- [ ] T020 Tras el merge y con autorización: `npm run db:push`, primero con `--dry-run`
+- [X] T020 Tras el merge y con autorización: `npm run db:push`, primero con `--dry-run`
 
 ---
 
