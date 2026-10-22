@@ -1,3 +1,4 @@
+import { noticesMock } from '../../../../testing/notices-mock';
 import { TestBed } from '@angular/core/testing';
 import { GuardianRepository } from '../../../players/data/guardian.repository';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -73,6 +74,7 @@ async function setup(options: { activity?: Activity; callUp?: CallUp | null; res
         componentProperties: { activity: options.activity ?? ACTIVITY },
         providers: [
             ConfirmationService,
+            noticesMock(),
             { provide: CallUpRepository, useValue: repository },
             { provide: GuardianRepository, useValue: guardians },
             { provide: PlayerRepository, useValue: { listPlayers: vi.fn().mockResolvedValue([]), listGroups: vi.fn().mockResolvedValue([]) } },

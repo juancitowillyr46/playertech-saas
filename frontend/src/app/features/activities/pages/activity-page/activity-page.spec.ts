@@ -1,3 +1,4 @@
+import { noticesMock } from '../../../../testing/notices-mock';
 import { GuardianRepository } from '../../../players/data/guardian.repository';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { provideRouter, Router } from '@angular/router';
@@ -46,6 +47,7 @@ async function setup(activity: Activity | Error = UPCOMING, callUp: CallUp | nul
             { provide: ActivityRepository, useValue: repository },
             { provide: ExternalFieldRepository, useValue: { list: vi.fn().mockResolvedValue([]) } },
             { provide: VenueRepository, useValue: { listVenues: vi.fn().mockResolvedValue([]) } },
+            noticesMock(),
             { provide: CallUpRepository, useValue: { getByActivity: vi.fn().mockResolvedValue(callUp), responses: vi.fn().mockResolvedValue([]) } },
             { provide: GuardianRepository, useValue: { review: vi.fn() } },
             { provide: PlayerRepository, useValue: { listPlayers: vi.fn().mockResolvedValue([]), listGroups: vi.fn().mockResolvedValue([]) } },

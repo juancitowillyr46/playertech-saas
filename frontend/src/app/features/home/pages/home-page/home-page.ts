@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageModule } from 'primeng/message';
 import { SkeletonModule } from 'primeng/skeleton';
 import { PageHeader } from '../../../../shared/components/page-header/page-header';
+import { NoticesSection } from '../../components/notices-section/notices-section';
 import { HomeSummaryService } from '../../services/home-summary.service';
 
 /**
@@ -14,11 +17,15 @@ import { HomeSummaryService } from '../../services/home-summary.service';
  */
 @Component({
     selector: 'app-home-page',
-    imports: [RouterLink, ButtonModule, MessageModule, SkeletonModule, PageHeader],
-    providers: [HomeSummaryService],
+    imports: [RouterLink, ButtonModule, ConfirmDialogModule, MessageModule, SkeletonModule, PageHeader, NoticesSection],
+    providers: [HomeSummaryService, ConfirmationService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <app-page-header title="Inicio" description="El resumen de tu academia." />
+
+        <!-- Avisos (spec 014): pendientes de validar y respuestas nuevas, arriba del resumen. -->
+        <app-notices-section />
+        <p-confirmdialog />
 
         @switch (home.status()) {
             @case ('loading') {

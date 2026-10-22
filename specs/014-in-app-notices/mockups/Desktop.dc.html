@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Menú lateral con contador</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 720px; height: 420px; box-sizing: border-box; display: flex; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;">
+<nav style="width: 220px; border-right: 1px solid #D9D9D9; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px;" aria-label="Menú">
+<span style="font-size: 12px; font-weight: 700; color: #555555; text-transform: uppercase; padding: 4px 8px;">General</span>
+<a href="#" style="min-height: 44px; display: flex; align-items: center; padding: 0 8px; border-radius: 6px; text-decoration: none; background: #F2F2F2; font-weight: 600;">Inicio</a>
+<a href="#" style="min-height: 44px; display: flex; align-items: center; padding: 0 8px; border-radius: 6px; text-decoration: none;">Jugadores</a>
+<a href="#" aria-label="Actividades, 3 acudientes por validar" style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; border-radius: 6px; text-decoration: none;">
+<span>Actividades</span><span style="min-width: 22px; height: 22px; border-radius: 11px; background: #222222; color: #FFFFFF; font-size: 12px; line-height: 22px; text-align: center; padding: 0 6px; box-sizing: border-box;">3</span></a>
+<span style="font-size: 12px; font-weight: 700; color: #555555; text-transform: uppercase; padding: 12px 8px 4px;">Configuración</span>
+<a href="#" style="min-height: 44px; display: flex; align-items: center; padding: 0 8px; border-radius: 6px; text-decoration: none;">Academia</a>
+<a href="#" style="min-height: 44px; display: flex; align-items: center; padding: 0 8px; border-radius: 6px; text-decoration: none;">Sedes</a>
+</nav>
+<div style="flex-grow: 1; padding: 24px; display: flex; flex-direction: column; gap: 10px;">
+<h1 style="margin: 0; font-size: 26px; padding-bottom: 8px; border-bottom: 2px solid #222222;">Inicio</h1>
+<h2 style="margin: 0; font-size: 16px;">Avisos</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+<a href="#" style="min-height: 52px; display: flex; align-items: center; padding: 0 12px; border: 2px solid #333333; border-radius: 8px; text-decoration: none; font-weight: 600;">3 acudientes por validar ›</a>
+<a href="#" style="min-height: 52px; display: flex; flex-direction: column; justify-content: center; padding: 6px 12px; border: 1px solid #D9D9D9; border-radius: 8px; text-decoration: none;"><strong>5 respuestas nuevas</strong><span style="color: #555555;">Partido · sábado 25</span></a>
+</div>
+<span style="color: #555555;">En escritorio el contador va en el menú lateral; los avisos, en dos columnas.</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":720,"height":420}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

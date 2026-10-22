@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { AppError } from '../../../core/errors/app-error';
 import { mapSupabaseError } from '../../../core/errors/supabase-error.mapper';
 import { SUPABASE_CLIENT } from '../../../core/supabase/supabase-client';
-import { Guardian, GuardianAssignment, GuardianInput, GuardianOption, PendingGuardian, Relationship, ReviewDecision, shortName } from '../models/player.models';
+import { AcademyPendingGuardian, fullNameWithNickname, Guardian, GuardianAssignment, GuardianInput, GuardianOption, LinkRelationship, PendingGuardian, Relationship, ReviewDecision, shortName } from '../models/player.models';
 import { AddGuardianResult, GuardianRepository } from './guardian.repository';
 
 /** Vínculo con la persona y los demás jugadores que acompaña (para «También de…»). */
@@ -57,46 +57,37 @@ function toGuardian(row: LinkRow, playerId: string): Guardian {
     };
 }
 
-/** Vínculos pendientes o validados del jugador con los dispositivos del acudiente (spec 013). */
-const PENDING_COLUMNS = 'id, relationship, status, created_at, guardians(full_name, phone, created_at, guardian_devices(id, status, declared_name, declared_relationship, created_at))';
-
-interface DeviceRow {
-    id: string;
-    status: string;
-    declared_name: string | null;
-    declared_relationship: Relationship | 'self';
-    created_at: string;
-}
+/** Pendientes de la vista `guardian_pending_reviews`: una sola regla para la ficha y el drawer (spec 014, R1). */
+const PENDING_COLUMNS = 'player_id, player_first_names, player_last_names, player_nickname, link_id, device_id, guardian_name, declared_name, relationship, phone, created_at, phone_match';
 
 interface PendingRow {
-    id: string;
-    relationship: Relationship | 'self';
-    status: string;
+    player_id: string;
+    player_first_names: string;
+    player_last_names: string;
+    player_nickname: string | null;
+    link_id: string | null;
+    device_id: string | null;
+    guardian_name: string;
+    declared_name: string | null;
+    relationship: LinkRelationship;
+    phone: string;
     created_at: string;
-    guardians: { full_name: string; phone: string; created_at: string; guardian_devices: DeviceRow[] } | null;
+    phone_match: boolean | null;
 }
 
-/** Un vínculo pendiente es un pendiente (con su último dispositivo pendiente); en uno validado, cada dispositivo nuevo lo es. */
-function toPending(row: PendingRow): PendingGuardian[] {
-    const guardian = row.guardians;
-
-    if (!guardian) {
-        return [];
-    }
-
-    const devices = guardian.guardian_devices.filter((device) => device.status === 'pending').sort((a, b) => b.created_at.localeCompare(a.created_at));
-    const item = (device: DeviceRow | null, linkId: string | null): PendingGuardian => ({
-        linkId,
-        deviceId: device?.id ?? null,
-        guardianName: guardian.full_name,
-        declaredName: device?.declared_name ?? null,
-        relationship: device?.declared_relationship ?? row.relationship,
-        phone: guardian.phone,
-        at: device?.created_at ?? row.created_at,
-        phoneMatch: !!device && guardian.created_at < device.created_at
-    });
-
-    return row.status === 'pending' ? [item(devices[0] ?? null, row.id)] : devices.map((device) => item(device, null));
+function toPending(row: PendingRow): AcademyPendingGuardian {
+    return {
+        linkId: row.link_id,
+        deviceId: row.device_id,
+        guardianName: row.guardian_name,
+        declaredName: row.declared_name,
+        relationship: row.relationship,
+        phone: row.phone,
+        at: row.created_at,
+        phoneMatch: row.phone_match ?? false,
+        playerId: row.player_id,
+        playerName: fullNameWithNickname({ firstNames: row.player_first_names, lastNames: row.player_last_names, nickname: row.player_nickname })
+    };
 }
 
 /** Ninguna fila no eliminada actualizada (PGRST116) rechaza con not_found. */
@@ -177,13 +168,23 @@ export class SupabaseGuardianRepository extends GuardianRepository {
     }
 
     async pending(playerId: string): Promise<readonly PendingGuardian[]> {
-        const { data, error } = await this.client.from('guardian_links').select(PENDING_COLUMNS).eq('player_id', playerId).in('status', ['pending', 'validated']).is('deleted_at', null);
+        return this.readPending(playerId);
+    }
+
+    pendingByAcademy(): Promise<readonly AcademyPendingGuardian[]> {
+        return this.readPending(null);
+    }
+
+    /** La vista filtra por la academia actual y hereda la RLS. Más recientes primero. */
+    private async readPending(playerId: string | null): Promise<readonly AcademyPendingGuardian[]> {
+        const query = this.client.from('guardian_pending_reviews').select(PENDING_COLUMNS);
+        const { data, error } = await (playerId ? query.eq('player_id', playerId) : query).order('created_at', { ascending: false });
 
         if (error || !data) {
             throw mapSupabaseError(error);
         }
 
-        return (data as unknown as PendingRow[]).flatMap(toPending).sort((a, b) => b.at.localeCompare(a.at));
+        return (data as unknown as PendingRow[]).map(toPending);
     }
 
     async review(linkId: string | null, deviceId: string | null, decision: ReviewDecision): Promise<void> {

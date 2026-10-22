@@ -128,36 +128,17 @@ describe('SupabaseGuardianRepository', () => {
         await expect(repository.assign('p2', assignments)).rejects.toMatchObject({ code: 'not_found' });
     });
 
-    it('pending: un vínculo pendiente con su dispositivo y el dispositivo nuevo de un vínculo validado (spec 013)', async () => {
-        const device = (id: string, status: string, created_at: string, declared_name: string) => ({ id, status, declared_name, declared_relationship: 'father', created_at });
-        const { repository } = setup([
-            {
-                data: [
-                    {
-                        id: 'gl1',
-                        relationship: 'father',
-                        status: 'pending',
-                        created_at: '2030-01-02',
-                        guardians: { full_name: 'Luis', phone: '3001110001', created_at: '2030-01-02', guardian_devices: [device('d1', 'pending', '2030-01-02', 'Luis')] }
-                    },
-                    {
-                        id: 'gl2',
-                        relationship: 'mother',
-                        status: 'validated',
-                        created_at: '2029-01-01',
-                        guardians: { full_name: 'Claudia', phone: '3009990001', created_at: '2029-01-01', guardian_devices: [device('d2', 'trusted', '2029-02-01', 'Claudia'), device('d3', 'pending', '2030-01-03', 'Otra')] }
-                    }
-                ],
-                error: null
-            }
+    it('pending y pendingByAcademy leen la vista de pendientes de la academia (specs 013 y 014)', async () => {
+        const row = { player_id: 'p1', player_first_names: 'Mateo', player_last_names: 'Rodas', player_nickname: null, link_id: null, device_id: 'd3', guardian_name: 'Claudia', declared_name: 'Otra', relationship: 'mother', phone: '3009990001', created_at: '2030-01-03', phone_match: true };
+        const { repository, from, args } = setup([
+            { data: [row], error: null },
+            { data: [row], error: null }
         ]);
 
-        const pending = await repository.pending('p1');
-
-        expect(pending).toEqual([
-            expect.objectContaining({ linkId: null, deviceId: 'd3', guardianName: 'Claudia', declaredName: 'Otra', phoneMatch: true }),
-            expect.objectContaining({ linkId: 'gl1', deviceId: 'd1', guardianName: 'Luis', phoneMatch: false })
-        ]);
+        expect(await repository.pending('p1')).toEqual([expect.objectContaining({ linkId: null, deviceId: 'd3', guardianName: 'Claudia', declaredName: 'Otra', phoneMatch: true })]);
+        expect(from).toHaveBeenCalledWith('guardian_pending_reviews');
+        expect(args('eq')).toContainEqual(['player_id', 'p1']);
+        expect(await repository.pendingByAcademy()).toEqual([expect.objectContaining({ playerId: 'p1', playerName: 'Mateo Rodas' })]);
     });
 
     it('review llama a la función con los dos ids (spec 013)', async () => {

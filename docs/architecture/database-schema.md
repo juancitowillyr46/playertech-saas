@@ -7,7 +7,7 @@ El documento se organiza por fases:
 | Sección | Estado |
 |---|---|
 | **Fase 1 — Fundación SaaS** | ✅ Vigente. Decisiones en ADR-012, ADR-013 y ADR-014 (`decisions.md`) |
-| **Fase 2 — Jugadores, acudientes, grupos, actividades, convocatorias y respuestas** | ✅ Vigente (specs 009 a 013). Decisiones en ADR-018 |
+| **Fase 2 — Jugadores, acudientes, grupos, actividades, convocatorias, respuestas y avisos** | ✅ Vigente (specs 009 a 014). Decisiones en ADR-018 |
 
 ---
 
@@ -346,6 +346,20 @@ Cambios en tablas existentes: `guardians` y `guardian_links` tienen `source` (`o
 Vistas con `security_invoker`: `call_up_current_responses` (la última respuesta que cuenta por convocado, con quién la dio y si está sin validar) y `call_up_summaries` (totales por lista).
 
 **Vía pública** (sin cuenta): `public_call_up`, `public_identify` y `public_respond` son funciones `security definer` que solo puede ejecutar `anon` (y `authenticated`); derivan la academia del enlace, devuelven lo mínimo y aplican el cierre y el límite de 3 cambios. Ninguna tabla se abre a `anon`. El owner valida o rechaza con `review_guardian` y responde en nombre del acudiente por RLS.
+
+---
+
+# Fase 2 — Avisos en la aplicación (spec 014)
+
+Migración `20261022100000_in_app_notices.sql`. Detalle: [`specs/014-in-app-notices/data-model.md`](../../specs/014-in-app-notices/data-model.md).
+
+| Tabla o vista | Qué es | Borrado |
+|---|---|---|
+| `call_up_visits` | Última vez que cada usuario abrió la actividad de una convocatoria; las respuestas posteriores son nuevas | Sin borrado: se sobrescribe |
+| `guardian_pending_reviews` (vista) | Acudientes y dispositivos por validar de la academia actual; la usan el contador, el drawer «Por validar» y la ficha del jugador | — |
+| `call_up_new_responses` (vista) | Respuestas de acudientes que el usuario aún no vio, por convocatoria | — |
+
+`mark_call_up_seen` marca vista una convocatoria para el usuario actual. Las vistas usan `security_invoker` y filtran por `current_academy_id()`; cada usuario solo lee y escribe sus visitas.
 
 ---
 

@@ -14,5 +14,7 @@ export abstract class CallUpRepository {
     abstract summaries(activityIds: readonly string[]): Promise<readonly CallUpSummary[]>;
     abstract history(callUpId: string, playerId: string): Promise<readonly ResponseEntry[]>;
     /** El owner registra o cambia la respuesta; no consume los cambios del acudiente (DEC-46). */
+    /** Las respuestas quedan vistas para el usuario actual (spec 014, CA-003 de HU-041). */
+    abstract markSeen(callUpId: string): Promise<void>;
     abstract respondAsOwner(callUpId: string, playerId: string, input: OwnerResponseInput): Promise<void>;
 }

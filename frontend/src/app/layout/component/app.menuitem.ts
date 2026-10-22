@@ -2,15 +2,18 @@ import { AfterViewInit, Component, computed, inject, input, OnInit, signal } fro
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MenuItem } from 'primeng/api';
+import { BadgeModule } from 'primeng/badge';
 import { RippleModule } from 'primeng/ripple';
 import { LayoutService } from '@/app/layout/service/layout.service';
+import { navigationBadge } from '@/app/core/notices/navigation-badge';
+import { NoticesService } from '@/app/core/notices/notices.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
     // Selector de atributo del layout adoptado de SakaiNG: se aplica sobre <li> para conservar la semántica de lista.
     // eslint-disable-next-line @angular-eslint/component-selector
     selector: '[app-menuitem]',
-    imports: [CommonModule, RouterModule, RippleModule],
+    imports: [CommonModule, RouterModule, RippleModule, BadgeModule],
     template: `
         @if (root() && isVisible()) {
             <div class="layout-menuitem-root-text">{{ item().label }}</div>
@@ -40,11 +43,15 @@ import { filter } from 'rxjs/operators';
                 [state]="item().state"
                 [queryParams]="item().queryParams"
                 [attr.target]="item().target"
+                [attr.aria-label]="badge()?.label ?? null"
                 tabindex="0"
                 pRipple
             >
                 <i [ngClass]="item().icon" class="layout-menuitem-icon"></i>
                 <span class="layout-menuitem-text">{{ item().label }}</span>
+                @if (badge(); as count) {
+                    <p-badge [value]="count.value" severity="danger" class="ml-auto" />
+                }
                 @if (hasChildren()) {
                     <i class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
                 }
@@ -106,6 +113,11 @@ import { filter } from 'rxjs/operators';
 })
 export class AppMenuitem implements OnInit, AfterViewInit {
     layoutService = inject(LayoutService);
+
+    private readonly notices = inject(NoticesService);
+
+    /** Contador de pendientes en «Actividades» (spec 014). */
+    protected readonly badge = computed(() => navigationBadge(this.item(), this.notices.pendingCount()));
 
     router = inject(Router);
 

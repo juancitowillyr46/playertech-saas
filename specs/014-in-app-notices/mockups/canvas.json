@@ -1,0 +1,15 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-10-21T23:40:00Z" },
+  "title": "Maquetas spec 014 — Avisos en la aplicación",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 360, "h": 760, "title": "1. Inicio con avisos y contador" },
+    "Pending.dc.html": { "x": 440, "y": 0, "w": 360, "h": 760, "title": "2. Drawer: por validar" },
+    "Desktop.dc.html": { "x": 880, "y": 0, "w": 720, "h": 420, "title": "3. Escritorio: menú lateral con contador" }
+  },
+  "order": ["Main.dc.html", "Pending.dc.html", "Desktop.dc.html"],
+  "notes": {},
+  "designSystems": []
+}

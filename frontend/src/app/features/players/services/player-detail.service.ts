@@ -1,5 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { AppError } from '../../../core/errors/app-error';
+import { NoticesService } from '../../../core/notices/notices.service';
 import { LegalDocumentsRepository } from '../../../core/legal/data/legal-documents.repository';
 import { normalizePhone } from '../../../shared/forms/phone.validator';
 import { AddGuardianResult, GuardianRepository } from '../data/guardian.repository';
@@ -32,6 +33,7 @@ export class PlayerDetailService {
     readonly selfResponder = signal<Guardian | null>(null);
     /** Acudientes por validar desde el enlace (spec 013, HU-040). */
     readonly pending = signal<readonly PendingGuardian[]>([]);
+    private readonly notices = inject(NoticesService);
     readonly groups = signal<readonly GroupRef[]>([]);
     readonly status = signal<PlayerDetailStatus>('loading');
     readonly busy = signal(false);
@@ -139,7 +141,10 @@ export class PlayerDetailService {
 
     /** Validar o rechazar a quien se identificó desde el enlace (HU-040). */
     review(item: PendingGuardian, decision: ReviewDecision): Promise<void> {
-        return this.run(() => this.guardianRepository.review(item.linkId, item.deviceId, decision));
+        return this.run(async () => {
+            await this.guardianRepository.review(item.linkId, item.deviceId, decision);
+            void this.notices.refresh();
+        });
     }
 
     removeGuardian(guardian: Guardian): Promise<void> {

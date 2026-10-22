@@ -1,3 +1,4 @@
+import { noticesMock } from '../../../testing/notices-mock';
 import { TestBed } from '@angular/core/testing';
 import { AppError } from '../../../core/errors/app-error';
 import { LegalDocumentsRepository } from '../../../core/legal/data/legal-documents.repository';
@@ -39,6 +40,7 @@ function setup(player: Partial<Record<keyof PlayerRepository, ReturnType<typeof 
         providers: [
             PlayerDetailService,
             { provide: PlayerRepository, useValue: players },
+            noticesMock(),
             { provide: GuardianRepository, useValue: guardians },
             { provide: LegalDocumentsRepository, useValue: { getCurrent: vi.fn().mockResolvedValue({ privacyPolicy: { url: 'https://legal/privacy' } }) } }
         ]

@@ -243,7 +243,7 @@ El proceso está en `docs/engineering/testing.md`, sección «Proceso de pruebas
 - [X] T030 Recorrer `quickstart.md` y anotar los resultados; el responsable valida desde el celular, con dos navegadores para simular a dos acudientes
 - [X] T031 Confirmar que la academia A del seed no tiene respuestas ni dispositivos y que `npm run db:test` está en verde
 - [X] T032 [P] Marcar HU-009, HU-010, HU-011 y HU-040 como «Terminada (entorno local)» en las HU, en EP-06, EP-07, EP-10, en `docs/backlog/README.md` y en `AGENTS.md`. Actualizar las mitigaciones de SEC-03 en `docs/engineering/security.md`
-- [ ] T033 Tras el merge y con autorización: `npm run db:push`, primero con `--dry-run`
+- [X] T033 Tras el merge y con autorización: `npm run db:push`, primero con `--dry-run`
 
 ---
 
