@@ -12,17 +12,22 @@
 ### CA-001 — Contador en la navegación
 **Dado** acudientes o dispositivos pendientes de validar,
 **cuando** el owner navega por la aplicación,
-**entonces** «Actividades» muestra un contador con el número de pendientes.
+**entonces** «Actividades» muestra un contador con el número de pendientes; sin pendientes, no muestra nada. Las respuestas nuevas no suman al contador (DEC-47).
 
 ### CA-002 — Aviso en el inicio
-**Dado** pendientes por validar o respuestas nuevas desde su última visita,
+**Dado** pendientes por validar o respuestas nuevas,
 **cuando** el owner abre el inicio,
-**entonces** ve un aviso («3 acudientes por validar», «5 respuestas nuevas») que lleva a la convocatoria correspondiente.
+**entonces** ve «3 acudientes por validar» y, por cada convocatoria con respuestas que aún no vio, «5 respuestas nuevas en el partido del sábado», que lleva a esa actividad.
 
-### CA-003 — Validar desde el aviso
+### CA-003 — Respuestas vistas
+**Dado** una convocatoria con respuestas nuevas,
+**cuando** el owner abre su actividad,
+**entonces** esas respuestas quedan vistas y el aviso de esa convocatoria desaparece del inicio (DEC-47).
+
+### CA-004 — Validar desde el aviso
 **Dado** el aviso de pendientes,
 **cuando** el owner lo toca,
-**entonces** puede validar o rechazar sin buscar la actividad (HU-040).
+**entonces** se abre un drawer con todos los pendientes de la academia agrupados por jugador, y puede validar o rechazar cada uno sin buscar la actividad (HU-040).
 
 ## Reglas de negocio
 
@@ -31,4 +36,4 @@
 
 ## Decisiones relacionadas
 
-ADR-018: DEC-41 y DEC-46.
+ADR-018: DEC-41, DEC-46 y DEC-47.
