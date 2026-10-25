@@ -26,7 +26,7 @@ Decisiones técnicas de la spec 015. Las de producto están en DEC-48 (ADR-018).
 
 ## R4 — Mensaje y WhatsApp
 
-- **Decisión**: función pura `absenceMessage({ recipientFirstName, playerFirstName, activity })`, por ejemplo «Hola, Juan. Mateo no llegó hoy al entrenamiento de las 4:00 p. m. en la Sede principal. ¿Está todo bien?». Reutiliza `whatsappChat`, `openWhatsapp` y `copyText` de la spec 012. Los destinatarios siguen la misma regla de «Enviar»: los acudientes validados y, si no tiene, el celular del jugador. Al abrir el chat o copiar, `mark_absence_notified`.
+- **Decisión**: función pura `absenceMessage({ recipientFirstName, playerFirstName, activity })`, por ejemplo «Hola, Juan. Mateo no llegó hoy al entrenamiento de las 4:00 p. m. en Sede principal. ¿Está todo bien?». Reutiliza `whatsappChat`, `openWhatsapp` y `copyText` de la spec 012. Los destinatarios siguen la misma regla de «Enviar»: los acudientes validados y, si no tiene, el celular del jugador. Al abrir el chat o copiar, `mark_absence_notified`.
 - **Motivo**: DEC-31 y DEC-45 (sin envío automático); el mensaje no se guarda (DEC-48).
 
 ## R5 — Frontend: feature `absences`

@@ -1,6 +1,6 @@
 # HU-042 — Marcar a quien no llegó y avisar al acudiente
 
-**Épica:** EP-15 — Aviso de inasistencia · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-15 — Aviso de inasistencia · **Fase:** 2 — Negocio · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 015)
 **Spec:** 015 (aviso de inasistencia)
 
 ## Historia de usuario

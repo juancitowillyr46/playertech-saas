@@ -11,6 +11,7 @@ import { AppError } from '../../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../../core/errors/error-messages';
 import { dayLabel, fromInstant, timeLabel } from '../../../../shared/text/colombia-time';
 import { todayInColombia } from '../../../../shared/text/search-text';
+import { AbsenceSection } from '../../../absences/components/absence-section/absence-section';
 import { CallUpSection } from '../../../call-ups/components/call-up-section/call-up-section';
 import { ActivityFormDrawer } from '../../components/activity-form-drawer/activity-form-drawer';
 import { ExternalFieldDrawer } from '../../components/external-field-drawer/external-field-drawer';
@@ -28,7 +29,7 @@ type DetailStatus = 'loading' | 'ready' | 'not_found' | 'error';
  */
 @Component({
     selector: 'app-activity-page',
-    imports: [RouterLink, ButtonModule, ConfirmDialogModule, MenuModule, MessageModule, SkeletonModule, TagModule, ActivityFormDrawer, ExternalFieldDrawer, CallUpSection],
+    imports: [RouterLink, ButtonModule, ConfirmDialogModule, MenuModule, MessageModule, SkeletonModule, TagModule, ActivityFormDrawer, ExternalFieldDrawer, CallUpSection, AbsenceSection],
     providers: [ActivitiesService, ExternalFieldsService, ConfirmationService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
@@ -71,7 +72,12 @@ type DetailStatus = 'loading' | 'ready' | 'not_found' | 'error';
                             <dd class="m-0">{{ time(current.callAt) }}</dd>
                         }
                         <dt class="text-muted-color">{{ current.endsAt ? 'Inicio · fin' : 'Inicio' }}</dt>
-                        <dd class="m-0">{{ time(current.startsAt) }}@if (current.endsAt) { – {{ time(current.endsAt) }} }</dd>
+                        <dd class="m-0">
+                            {{ time(current.startsAt) }}
+                            @if (current.endsAt) {
+                                – {{ time(current.endsAt) }}
+                            }
+                        </dd>
                         @if (current.tournament) {
                             <dt class="text-muted-color">Torneo</dt>
                             <dd class="m-0">{{ current.tournament }}</dd>
@@ -101,6 +107,7 @@ type DetailStatus = 'loading' | 'ready' | 'not_found' | 'error';
                     }
 
                     <app-call-up-section [activity]="current" />
+                    <app-absence-section [activity]="current" />
 
                     <app-activity-form-drawer [open]="editOpen()" [activity]="current" [places]="places()" [busy]="activities.busy()" [error]="formError()" (save)="update($event)" (newField)="fieldOpen.set(true)" (closed)="editOpen.set(false)" />
                     <app-external-field-drawer [open]="fieldOpen()" [busy]="fields.busy()" [error]="fieldError()" [isTaken]="isFieldTaken" (save)="createField($event)" (closed)="fieldOpen.set(false)" />

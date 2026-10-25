@@ -28,4 +28,5 @@ Al día siguiente: solo lectura. El owner de la academia B no ve nada de A. Pant
 
 ## Resultados
 
-*(se completa al implementar)*
+- Automáticas: pgTAP 334/334 (19 nuevas) y Vitest 26/26 (2026-10-24).
+- Pasos 1 a 4 en el celular: validados por el responsable (2026-10-24).

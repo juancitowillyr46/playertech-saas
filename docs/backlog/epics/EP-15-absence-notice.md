@@ -22,7 +22,7 @@ Que el owner, al ver en la cancha que un jugador no llegó, lo marque y le escri
 
 | ID | Historia | Estado |
 |---|---|---|
-| [HU-042](../user-stories/HU-042-absence-notice.md) | Marcar a quien no llegó y avisar al acudiente | Definida |
+| [HU-042](../user-stories/HU-042-absence-notice.md) | Marcar a quien no llegó y avisar al acudiente | Terminada (entorno local; spec 015) |
 
 ## Decisiones
 

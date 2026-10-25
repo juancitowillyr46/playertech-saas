@@ -44,7 +44,7 @@ La forma de invocar los comandos depende del agente (en Claude Code: `/speckit-s
 - **Documentación de referencia obligatoria (principio XI):** el `plan.md` de cada spec incluye esa sección con los documentos de `docs/` que aplican, qué se toma de cada uno y qué partes no aplican. La plantilla del plan ya la trae (`.specify/templates/overrides/plan-template.md`). **Antes de implementar, se leen todos los documentos de esa lista.** Los comandos de Spec Kit solo cargan automáticamente la Constitución y los archivos de `specs/`.
 - Una spec cubre una o varias HU de la misma épica y **referencia** sus criterios de aceptación (por ejemplo, "CA-002 de HU-014") en lugar de copiarlos.
 - Definition of Ready, Definition of Done y estados de las HU: `docs/backlog/README.md`.
-- Estado actual: Fase 1 — Fundación SaaS terminada (T-00, T-01, T-02, EP-00, EP-01, EP-09, EP-12). **Fase 2 — Negocio** en curso (ADR-018): specs 009 (jugadores, acudientes y grupos), 010 (asignar acudientes ya registrados), 011 (actividades y canchas), 012 (convocatoria y mensaje de WhatsApp), 013 (respuesta del acudiente y seguimiento) y 014 (avisos en la aplicación) terminadas.
+- Estado actual: Fase 1 — Fundación SaaS terminada (T-00, T-01, T-02, EP-00, EP-01, EP-09, EP-12). **Fase 2 — Negocio** en curso (ADR-018): specs 009 (jugadores, acudientes y grupos), 010 (asignar acudientes ya registrados), 011 (actividades y canchas), 012 (convocatoria y mensaje de WhatsApp), 013 (respuesta del acudiente y seguimiento), 014 (avisos en la aplicación) y 015 (aviso de inasistencia) terminadas.
 
 ## Reglas de arquitectura que no se negocian
 

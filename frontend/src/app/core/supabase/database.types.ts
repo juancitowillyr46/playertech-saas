@@ -962,6 +962,67 @@ export type Database = {
                 };
                 Relationships: [];
             };
+            player_absences: {
+                Row: {
+                    academy_id: string;
+                    activity_id: string;
+                    created_at: string;
+                    deleted_at: string | null;
+                    id: string;
+                    marked_at: string;
+                    marked_by: string;
+                    notified_at: string | null;
+                    player_id: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    academy_id: string;
+                    activity_id: string;
+                    created_at?: string;
+                    deleted_at?: string | null;
+                    id?: string;
+                    marked_at?: string;
+                    marked_by?: string;
+                    notified_at?: string | null;
+                    player_id: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    academy_id?: string;
+                    activity_id?: string;
+                    created_at?: string;
+                    deleted_at?: string | null;
+                    id?: string;
+                    marked_at?: string;
+                    marked_by?: string;
+                    notified_at?: string | null;
+                    player_id?: string;
+                    updated_at?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'player_absences_academy_id_activity_id_fkey';
+                        columns: ['academy_id', 'activity_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'activities';
+                        referencedColumns: ['academy_id', 'id'];
+                    },
+                    {
+                        foreignKeyName: 'player_absences_academy_id_fkey';
+                        columns: ['academy_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'academies';
+                        referencedColumns: ['id'];
+                    },
+                    {
+                        foreignKeyName: 'player_absences_academy_id_player_id_fkey';
+                        columns: ['academy_id', 'player_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'players';
+                        referencedColumns: ['academy_id', 'id'];
+                    }
+                ];
+            };
             players: {
                 Row: {
                     academy_id: string;
@@ -1326,6 +1387,7 @@ export type Database = {
             guardian_responses_count: { Args: { p_call_up_id: string; p_player_id: string }; Returns: number };
             has_academy_role: { Args: { p_academy_id: string; p_roles: string[] }; Returns: boolean };
             is_academy_member: { Args: { p_academy_id: string }; Returns: boolean };
+            mark_absence_notified: { Args: { p_activity_id: string; p_player_id: string }; Returns: string };
             mark_call_up_seen: { Args: { p_call_up_id: string }; Returns: undefined };
             normalize_name: { Args: { p_text: string }; Returns: string };
             player_short_name: { Args: { p_first_names: string; p_last_names: string }; Returns: string };
@@ -1375,6 +1437,7 @@ export type Database = {
             };
             public_respond: { Args: { p_answer: string; p_device_key: string; p_player_id: string; p_reason: string; p_reason_text: string; p_token: string }; Returns: Json };
             review_guardian: { Args: { p_decision: string; p_device_id: string; p_link_id: string }; Returns: undefined };
+            set_absence: { Args: { p_absent: boolean; p_activity_id: string; p_player_id: string }; Returns: undefined };
             set_primary_venue: { Args: { p_venue_id: string }; Returns: undefined };
             slugify: { Args: { p_text: string }; Returns: string };
             storage_object_academy_id: { Args: { p_name: string }; Returns: string };
