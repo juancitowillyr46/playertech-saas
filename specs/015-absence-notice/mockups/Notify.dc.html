@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Avisar al acudiente</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;" role="dialog" aria-label="Avisar">
+<div style="height: 56px; padding: 0 8px 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<h1 style="margin: 0; font-size: 18px;">Avisar: Mateo Rodas</h1>
+<a href="Groups.dc.html" aria-label="Cerrar" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px;">✕</a>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px;">
+<legend style="margin-bottom: 8px; font-weight: 600;">¿A quién le escribes?</legend>
+<label style="min-height: 52px; padding: 6px 12px; border: 2px solid #333333; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+<input type="radio" name="to" checked style="width: 20px; height: 20px;">
+<span style="display: flex; flex-direction: column;"><strong>Juan Rodas · papá</strong><span style="color: #555555;">312 595 3354</span></span>
+</label>
+<label style="min-height: 52px; padding: 6px 12px; border: 1px solid #D9D9D9; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+<input type="radio" name="to" style="width: 20px; height: 20px;">
+<span style="display: flex; flex-direction: column;"><strong>Laura Pérez · mamá</strong><span style="color: #555555;">300 111 2233</span></span>
+</label>
+</fieldset>
+<label style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-weight: 600;">Tu mensaje</span>
+<textarea rows="5" style="padding: 10px 12px; border: 1px solid #888888; border-radius: 8px; font: inherit; resize: none;">Hola, Juan. Mateo no llegó hoy al entrenamiento de las 4:00 p. m. en la Sede principal. ¿Está todo bien?</textarea>
+<span style="color: #555555; font-size: 13px;">Puedes cambiarlo antes de enviarlo. No se guarda.</span>
+</label>
+<div style="padding: 10px 12px; border: 1px dashed #BBBBBB; border-radius: 8px; color: #555555;">
+Sin celular registrado: solo aparece «Copiar mensaje».
+</div>
+</div>
+<div style="padding: 12px 16px; border-top: 1px solid #D9D9D9; display: flex; flex-direction: column; gap: 8px;">
+<a href="Groups.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: #333333; color: #FFFFFF; font-weight: 600; text-decoration: none;">Abrir WhatsApp</a>
+<a href="Groups.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border: 1px solid #333333; border-radius: 8px; font-weight: 600; text-decoration: none;">Copiar mensaje</a>
+<span style="text-align: center; color: #555555; font-size: 13px;">Al abrir o copiar, Mateo queda «Avisado» con la hora.</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
