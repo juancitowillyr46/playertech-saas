@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 import { AppError } from '../../../../core/errors/app-error';
+import { AbsenceRepository } from '../../../absences/data/absence.repository';
 import { CallUpRepository } from '../../../call-ups/data/call-up.repository';
 import { CallUp } from '../../../call-ups/models/call-up.models';
 import { PlayerRepository } from '../../../players/data/player.repository';
@@ -48,6 +49,7 @@ async function setup(activity: Activity | Error = UPCOMING, callUp: CallUp | nul
             { provide: ExternalFieldRepository, useValue: { list: vi.fn().mockResolvedValue([]) } },
             { provide: VenueRepository, useValue: { listVenues: vi.fn().mockResolvedValue([]) } },
             noticesMock(),
+            { provide: AbsenceRepository, useValue: { list: vi.fn().mockResolvedValue([]) } },
             { provide: CallUpRepository, useValue: { getByActivity: vi.fn().mockResolvedValue(callUp), responses: vi.fn().mockResolvedValue([]) } },
             { provide: GuardianRepository, useValue: { review: vi.fn() } },
             { provide: PlayerRepository, useValue: { listPlayers: vi.fn().mockResolvedValue([]), listGroups: vi.fn().mockResolvedValue([]) } },

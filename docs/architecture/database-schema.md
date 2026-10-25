@@ -361,6 +361,16 @@ Migración `20261022100000_in_app_notices.sql`. Detalle: [`specs/014-in-app-noti
 
 `mark_call_up_seen` marca vista una convocatoria para el usuario actual. Las vistas usan `security_invoker` y filtran por `current_academy_id()`; cada usuario solo lee y escribe sus visitas.
 
+# Fase 2 — Aviso de inasistencia (spec 015)
+
+Migración `20261024100000_player_absences.sql`. Detalle: [`specs/015-absence-notice/data-model.md`](../../specs/015-absence-notice/data-model.md).
+
+| Tabla | Qué es | Borrado |
+|---|---|---|
+| `player_absences` | Jugadores que no llegaron a una actividad, marcados por excepción (DEC-48), con el último aviso (`notified_at`) | Lógico: desmarcar pone `deleted_at`; volver a marcar lo limpia y conserva el aviso |
+
+`set_absence` marca o desmarca y `mark_absence_notified` registra «Avisado» y devuelve la hora; ambas exigen al owner. Un trigger solo deja escribir en actividades programadas y desde su inicio hasta el final de ese día en Colombia (`activity_not_scheduled`, `absence_window_closed`). Lectura: miembros de la academia; sin acceso para `anon`.
+
 ---
 
 El borrador anterior a la ideación de la Fase 2 está en [`docs/archive/database-schema-phase2-draft.md`](../archive/database-schema-phase2-draft.md) (no es fuente de verdad).

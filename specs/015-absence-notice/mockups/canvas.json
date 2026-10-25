@@ -1,0 +1,16 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-10-24T15:00:00Z" },
+  "title": "Maquetas spec 015 — Aviso de inasistencia",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 360, "h": 760, "title": "1. Actividad: «¿Quién no llegó?» y resumen" },
+    "Groups.dc.html": { "x": 440, "y": 0, "w": 360, "h": 760, "title": "2. Lista por grupos (sin convocatoria)" },
+    "CallUp.dc.html": { "x": 880, "y": 0, "w": 360, "h": 760, "title": "3. Lista de convocados (partido)" },
+    "Notify.dc.html": { "x": 1320, "y": 0, "w": 360, "h": 760, "title": "4. Drawer: avisar al acudiente" }
+  },
+  "order": ["Main.dc.html", "Groups.dc.html", "CallUp.dc.html", "Notify.dc.html"],
+  "notes": {},
+  "designSystems": []
+}

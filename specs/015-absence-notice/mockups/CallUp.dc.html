@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>¿Quién no llegó? convocados</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;" role="dialog" aria-label="¿Quién no llegó?">
+<div style="height: 56px; padding: 0 8px 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D9D9D9;">
+<h1 style="margin: 0; font-size: 18px;">¿Quién no llegó?</h1>
+<a href="Main.dc.html" aria-label="Cerrar" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px;">✕</a>
+</div>
+<div style="flex-grow: 1; padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;">
+<span style="color: #555555;">Partido vs. Club Atlético · 16 convocados</span>
+<section style="display: flex; flex-direction: column; gap: 6px;" aria-labelledby="yes">
+<h2 id="yes" style="margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: #555555;">Dijeron Sí (12)</h2>
+<div style="min-height: 52px; padding: 6px 12px; border: 1px solid #D9D9D9; border-radius: 8px; display: flex; align-items: center;">
+<span>Alejandro Cardona</span>
+</div>
+<div style="min-height: 52px; padding: 6px 8px 6px 12px; border: 2px solid #333333; border-radius: 8px; background: #F0F0F0; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+<div style="display: flex; flex-direction: column;">
+<strong>Mateo Rodas</strong>
+<span style="font-size: 13px;">Dijo Sí · No llegó</span>
+</div>
+<a href="Notify.dc.html" style="height: 40px; padding: 0 12px; display: flex; align-items: center; border: 1px solid #333333; border-radius: 8px; font-weight: 600; text-decoration: none; background: #FFFFFF;">Avisar</a>
+</div>
+<div style="min-height: 52px; padding: 6px 12px; border: 1px solid #D9D9D9; border-radius: 8px; display: flex; align-items: center;">
+<span>Juan Pablo Ríos «Juanpa»</span>
+</div>
+<span style="color: #555555; font-size: 13px;">… 9 más</span>
+</section>
+<section style="display: flex; flex-direction: column; gap: 6px;" aria-labelledby="pending">
+<h2 id="pending" style="margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: #555555;">Provisional o sin respuesta (2)</h2>
+<div style="min-height: 52px; padding: 6px 12px; border: 1px solid #D9D9D9; border-radius: 8px; display: flex; flex-direction: column; justify-content: center;">
+<span>Simón Restrepo</span>
+<span style="font-size: 13px; color: #555555;">Sin respuesta</span>
+</div>
+<div style="min-height: 52px; padding: 6px 12px; border: 1px solid #D9D9D9; border-radius: 8px; display: flex; flex-direction: column; justify-content: center;">
+<span>Tomás Arango</span>
+<span style="font-size: 13px; color: #555555;">Provisional</span>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 6px;" aria-labelledby="no">
+<h2 id="no" style="margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: #555555;">Avisaron que no (2)</h2>
+<div style="min-height: 44px; padding: 6px 12px; border: 1px dashed #BBBBBB; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; color: #555555;">
+<span>Santiago Mejía · Dijo No (viaje)</span>
+</div>
+<span style="color: #555555; font-size: 13px;">Ya avisaron: no hace falta marcarlos.</span>
+</section>
+</div>
+<div style="padding: 12px 16px; border-top: 1px solid #D9D9D9; display: flex; flex-direction: column; gap: 8px;">
+<span style="text-align: center; font-weight: 600;">1 no llegó · 0 avisados</span>
+<a href="Main.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border: 1px solid #333333; border-radius: 8px; font-weight: 600; text-decoration: none;">Listo</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -189,11 +189,13 @@ Las siguientes funcionalidades no forman parte del MVP v1:
 
 ### Asistencia
 
-- Registro de asistencia real al entrenamiento o competencia.
+- Registro de asistencia real al entrenamiento o competencia (lista completa de presentes).
 - Control de asistencia por entrenador.
 - Historial de asistencia.
 
 La convocatoria y confirmación de participación **no representan asistencia**.
+
+> **Excepción incluida en el MVP** (DEC-48, 2026-10-23): el **aviso de inasistencia por excepción**. El owner marca solo a quien no llegó y le escribe a su acudiente por WhatsApp (EP-15, HU-042). La asistencia formal sigue en la Etapa 2.
 
 ### Estadísticas
 

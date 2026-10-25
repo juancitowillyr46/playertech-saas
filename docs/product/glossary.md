@@ -89,5 +89,5 @@ Este documento define los términos utilizados en PlayerTech para mantener un le
 - **Tutor** representa al adulto responsable que actúa en nombre del jugador en determinados procesos.
 - **Actividad** es el concepto general; **Entrenamiento** y **Competencia** son tipos de actividad.
 - **Convocatoria** representa la solicitud de participación; **Respuesta** representa la decisión registrada por el tutor.
-- **Confirmación de participación no significa asistencia**. La asistencia corresponde a un proceso diferente que no forma parte del MVP v1.
+- **Confirmación de participación no significa asistencia**. La asistencia formal corresponde a un proceso diferente que no forma parte del MVP v1; el MVP solo incluye el **aviso de inasistencia**: marcar a quien no llegó y avisar a su acudiente (DEC-48).
 - Los términos del dominio deben mantenerse consistentes entre historias de usuario, interfaz, documentación y código.

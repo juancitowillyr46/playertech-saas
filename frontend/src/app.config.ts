@@ -25,6 +25,8 @@ import { ExternalFieldRepository } from './app/features/activities/data/external
 import { SupabaseActivityRepository } from './app/features/activities/data/supabase-activity.repository';
 import { SupabaseExternalFieldRepository } from './app/features/activities/data/supabase-external-field.repository';
 import { CallUpRepository } from './app/features/call-ups/data/call-up.repository';
+import { AbsenceRepository } from './app/features/absences/data/absence.repository';
+import { SupabaseAbsenceRepository } from './app/features/absences/data/supabase-absence.repository';
 import { NoticesRepository } from './app/core/notices/notices.repository';
 import { SupabaseNoticesRepository } from './app/core/notices/supabase-notices.repository';
 import { PublicCallUpRepository } from './app/features/call-up-response/data/public-call-up.repository';
@@ -71,6 +73,7 @@ export const appConfig: ApplicationConfig = {
         { provide: CallUpRepository, useClass: SupabaseCallUpRepository },
         { provide: PublicCallUpRepository, useClass: SupabasePublicCallUpRepository },
         { provide: NoticesRepository, useClass: SupabaseNoticesRepository },
+        { provide: AbsenceRepository, useClass: SupabaseAbsenceRepository },
         { provide: HomeSummaryRepository, useClass: SupabaseHomeSummaryRepository },
         { provide: AcademyProfileRepository, useClass: SupabaseAcademyProfileRepository },
         provideAppInitializer(async () => {
