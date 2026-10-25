@@ -159,7 +159,7 @@ description: "Lista de tareas del aviso de inasistencia (Fase 2, spec 5)"
 - [X] T018 Ejecutar Prettier en los archivos tocados, `npm run lint`, `npm run check:styles`, `npm run build` y las pruebas de la spec (`npx ng test --watch=false --include src/app/features/absences --include src/app/features/activities/pages/activity-page`); `npm run db:test` completo
 - [X] T019 Completar las notas de implementación de este archivo y los resultados de `quickstart.md`; actualizar el estado en `AGENTS.md`, `docs/backlog/README.md`, HU-042 y EP-15
 - [X] T020 Validación del responsable en el celular (`quickstart.md`, pasos 1 a 4)
-- [ ] T021 Tras el merge y con autorización: `npm run db:push -- --dry-run` y luego `npm run db:push`
+- [X] T021 Tras el merge y con autorización: `npm run db:push -- --dry-run` y luego `npm run db:push`
 
 ---
 
