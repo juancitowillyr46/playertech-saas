@@ -25,7 +25,7 @@ insert into auth.users (
     extensions.crypt('PlayerTech-Local-2026', extensions.gen_salt('bf')),
     now(),
     '{"provider":"email","providers":["email"]}',
-    '{"academy_name":"Academia A","full_name":"Owner A","legal_acceptances":{"terms":"2026-10-v1","privacy_policy":"2026-10-v1"}}',
+    '{"academy_name":"Academia A","full_name":"Owner A","legal_acceptances":{"terms":"2026-10-v2","privacy_policy":"2026-10-v2"}}',
     now(), now(),
     '', '', '', ''
   ),
@@ -37,7 +37,7 @@ insert into auth.users (
     extensions.crypt('PlayerTech-Local-2026', extensions.gen_salt('bf')),
     now(),
     '{"provider":"email","providers":["email"]}',
-    '{"academy_name":"Academia B","full_name":"Owner B","legal_acceptances":{"terms":"2026-10-v1","privacy_policy":"2026-10-v1"}}',
+    '{"academy_name":"Academia B","full_name":"Owner B","legal_acceptances":{"terms":"2026-10-v2","privacy_policy":"2026-10-v2"}}',
     now(), now(),
     '', '', '', ''
   );

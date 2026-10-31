@@ -8,7 +8,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { debounceTime } from 'rxjs';
 import { AppError } from '../../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../../core/errors/error-messages';
+import { LegalDocument } from '../../../../core/legal/models/legal.models';
 import { FormDrawer } from '../../../../shared/components/form-drawer/form-drawer';
+import { LegalDocumentDialog } from '../../../../shared/components/legal-document-dialog/legal-document-dialog';
 import { checkboxPt, fieldA11y } from '../../../../shared/forms/field-a11y';
 import { normalizePhone, PHONE_ERROR, phoneValidator } from '../../../../shared/forms/phone.validator';
 import { Guardian, Relationship, RELATIONSHIP_LABELS } from '../../models/player.models';
@@ -34,7 +36,7 @@ function requiredTrimmed(control: AbstractControl<string>): ValidationErrors | n
  */
 @Component({
     selector: 'app-guardian-drawer',
-    imports: [ReactiveFormsModule, CheckboxModule, InputTextModule, MessageModule, RadioButtonModule, FormDrawer],
+    imports: [ReactiveFormsModule, CheckboxModule, InputTextModule, MessageModule, RadioButtonModule, FormDrawer, LegalDocumentDialog],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <app-form-drawer [open]="open()" [title]="title()" [busy]="detail.busy()" [dirty]="form.dirty" [saveLabel]="guardian() ? 'Guardar' : 'Agregar acudiente'" (save)="submit()" (closed)="closed.emit()">
@@ -100,14 +102,16 @@ function requiredTrimmed(control: AbstractControl<string>): ValidationErrors | n
                     <div class="flex flex-col gap-2">
                         <div class="flex items-start gap-3">
                             <p-checkbox formControlName="consent" [binary]="true" inputId="guardianConsent" [pt]="consentPt()" />
-                            <label for="guardianConsent" class="leading-normal">
-                                El acudiente autoriza el tratamiento de sus datos según la
-                                @if (policyUrl(); as url) {
-                                    <a [href]="url" target="_blank" rel="noopener" class="font-semibold text-primary underline underline-offset-4">Política de Tratamiento de Datos</a>.
+                            <span class="leading-normal">
+                                <label id="guardianConsent-label" for="guardianConsent">El acudiente autoriza el tratamiento de sus datos según la</label>&ngsp;
+                                @if (policy(); as document) {
+                                    <button id="guardianConsent-document" type="button" class="cursor-pointer border-0 bg-transparent p-0 font-semibold text-primary underline underline-offset-4" (click)="read(document)">
+                                        Política de Tratamiento de Datos</button
+                                    >.
                                 } @else {
-                                    Política de Tratamiento de Datos.
+                                    <span id="guardianConsent-document">Política de Tratamiento de Datos</span>.
                                 }
-                            </label>
+                            </span>
                         </div>
                         @if (errorOf('consent'); as message) {
                             <p-message id="guardianConsent-error" severity="error" variant="simple" size="small">{{ message }}</p-message>
@@ -116,6 +120,8 @@ function requiredTrimmed(control: AbstractControl<string>): ValidationErrors | n
                 }
             </form>
         </app-form-drawer>
+
+        <app-legal-document-dialog [document]="reading()" (closed)="reading.set(null)" />
     `
 })
 export class GuardianDrawer {
@@ -133,7 +139,9 @@ export class GuardianDrawer {
     protected readonly relationshipOptions = (Object.keys(RELATIONSHIP_LABELS) as Relationship[]).map((value) => ({ value, label: RELATIONSHIP_LABELS[value] }));
     protected readonly existingName = signal<string | null>(null);
     protected readonly formError = signal<string | null>(null);
-    protected readonly policyUrl = signal<string | null>(null);
+    protected readonly policy = signal<LegalDocument | null>(null);
+    /** Política abierta en el dialog (HU-043). */
+    protected readonly reading = signal<LegalDocument | null>(null);
 
     protected readonly form = inject(FormBuilder).nonNullable.group({
         phone: ['', [Validators.required, phoneValidator]],
@@ -146,7 +154,7 @@ export class GuardianDrawer {
     private submitted = false;
 
     protected readonly title = () => (this.guardian() ? 'Editar acudiente' : `Agregar acudiente${this.playerName() ? ' de ' + this.playerName() : ''}`);
-    protected readonly consentPt = () => checkboxPt('guardianConsent', !!this.errorOf('consent'));
+    protected readonly consentPt = () => checkboxPt('guardianConsent', !!this.errorOf('consent'), 'guardianConsent-label guardianConsent-document');
 
     constructor() {
         effect(() => {
@@ -265,8 +273,16 @@ export class GuardianDrawer {
         this.form.controls.consent.enable();
         this.form.reset({ phone: guardian?.phone ?? '', fullName: guardian?.fullName ?? '', relationship: guardian?.relationship && guardian.relationship !== 'self' ? guardian.relationship : '', consent: false });
 
-        if (!guardian && !this.policyUrl()) {
-            void this.detail.privacyPolicyUrl().then((url) => this.policyUrl.set(url));
+        if (!guardian && !this.policy()) {
+            void this.detail.privacyPolicy().then((document) => this.policy.set(document));
         }
+    }
+
+    /**
+     * Abre el documento en el dialog (HU-043). Su botón va fuera de la etiqueta de la casilla, así
+     * que leer no la marca (CA-002); la casilla se nombra con los dos (`aria-labelledby`).
+     */
+    protected read(document: LegalDocument): void {
+        this.reading.set(document);
     }
 }

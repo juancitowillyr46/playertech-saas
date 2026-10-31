@@ -9,6 +9,8 @@ import { MessageModule } from 'primeng/message';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SkeletonModule } from 'primeng/skeleton';
 import { LegalDocumentsRepository } from '../../../../core/legal/data/legal-documents.repository';
+import { LegalDocument } from '../../../../core/legal/models/legal.models';
+import { LegalDocumentDialog } from '../../../../shared/components/legal-document-dialog/legal-document-dialog';
 import { normalizePhone, PHONE_ERROR } from '../../../../shared/forms/phone.validator';
 import { dateLabel, fromInstant, timeLabel } from '../../../../shared/text/colombia-time';
 import { searchKey, todayInColombia } from '../../../../shared/text/search-text';
@@ -34,7 +36,7 @@ const SEARCH_FROM = 12;
  */
 @Component({
     selector: 'app-call-up-response',
-    imports: [FormsModule, ButtonModule, CheckboxModule, IconFieldModule, InputIconModule, InputTextModule, MessageModule, RadioButtonModule, SkeletonModule, ResponseCard],
+    imports: [FormsModule, ButtonModule, CheckboxModule, IconFieldModule, InputIconModule, InputTextModule, MessageModule, RadioButtonModule, SkeletonModule, ResponseCard, LegalDocumentDialog],
     providers: [CallUpResponseService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
@@ -161,15 +163,17 @@ const SEARCH_FROM = 12;
                                     </fieldset>
                                     @if (!service.knownDevice()) {
                                         <div class="flex items-start gap-3">
-                                            <p-checkbox inputId="guardianConsent" name="guardianConsent" [binary]="true" [ngModel]="consent()" (ngModelChange)="consent.set($event)" />
-                                            <label for="guardianConsent">
-                                                Autorizo el tratamiento de mis datos según la
-                                                @if (policyUrl(); as url) {
-                                                    <a [href]="url" target="_blank" rel="noopener" class="font-semibold text-primary underline underline-offset-4">Política de Tratamiento de Datos</a>.
+                                            <p-checkbox inputId="guardianConsent" name="guardianConsent" [binary]="true" [ngModel]="consent()" (ngModelChange)="consent.set($event)" [pt]="consentPt" />
+                                            <span>
+                                                <label id="guardianConsent-label" for="guardianConsent">Autorizo el tratamiento de mis datos según la</label>&ngsp;
+                                                @if (policy(); as document) {
+                                                    <button id="guardianConsent-document" type="button" class="cursor-pointer border-0 bg-transparent p-0 font-semibold text-primary underline underline-offset-4" (click)="read(document)">
+                                                        Política de Tratamiento de Datos</button
+                                                    >.
                                                 } @else {
-                                                    Política de Tratamiento de Datos.
+                                                    <span id="guardianConsent-document">Política de Tratamiento de Datos</span>.
                                                 }
-                                            </label>
+                                            </span>
                                         </div>
                                         <p class="m-0 text-sm text-muted-color">Solo la academia ve tus datos y confirmará que eres acudiente.</p>
                                     }
@@ -205,6 +209,8 @@ const SEARCH_FROM = 12;
                 }
             }
         </main>
+
+        <app-legal-document-dialog [document]="reading()" (closed)="reading.set(null)" />
     `
 })
 export class CallUpResponsePage implements OnInit {
@@ -223,7 +229,11 @@ export class CallUpResponsePage implements OnInit {
     protected readonly consent = signal(false);
     protected readonly identifyError = signal<string | null>(null);
     protected readonly responseErrors = signal<Partial<Record<string, string>>>({});
-    protected readonly policyUrl = signal<string | null>(null);
+    protected readonly policy = signal<LegalDocument | null>(null);
+    /** La casilla se nombra con su etiqueta y el nombre del documento (HU-043). */
+    protected readonly consentPt = { input: { 'aria-labelledby': 'guardianConsent-label guardianConsent-document' } };
+    /** Política abierta en el dialog (HU-043). */
+    protected readonly reading = signal<LegalDocument | null>(null);
 
     protected readonly activity = computed(() => this.service.callUp()?.activity ?? null);
     protected readonly roster = computed(() => this.service.callUp()?.roster ?? []);
@@ -271,8 +281,16 @@ export class CallUpResponsePage implements OnInit {
         void this.service.load(this.token());
         void this.legal
             .getCurrent()
-            .then((documents) => this.policyUrl.set(documents.privacyPolicy.url))
-            .catch(() => this.policyUrl.set(null));
+            .then((documents) => this.policy.set(documents.privacyPolicy))
+            .catch(() => this.policy.set(null));
+    }
+
+    /**
+     * Abre el documento en el dialog (HU-043). Su botón va fuera de la etiqueta de la casilla, así
+     * que leer no la marca (CA-002); la casilla se nombra con los dos (`aria-labelledby`).
+     */
+    protected read(document: LegalDocument): void {
+        this.reading.set(document);
     }
 
     protected reload(): void {

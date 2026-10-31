@@ -14,12 +14,14 @@ function setup(result: { data: unknown; error: unknown }) {
     return { repository: TestBed.inject(SupabaseLegalDocumentsRepository), from, eq };
 }
 
-const TERMS = { type: 'terms', version: '2026-10-v1', url: 'https://playertech.app/legal/terms/2026-10-v1' };
-const PRIVACY = { type: 'privacy_policy', version: '2026-10-v1', url: 'https://playertech.app/legal/privacy_policy/2026-10-v1' };
+const TERMS_ROW = { type: 'terms', version: '2026-10-v2', url: '/legal/terms/2026-10-v2.html', published_at: '2026-10-25T05:00:00+00:00' };
+const PRIVACY_ROW = { type: 'privacy_policy', version: '2026-10-v2', url: '/legal/privacy_policy/2026-10-v2.html', published_at: '2026-10-25T05:00:00+00:00' };
+const TERMS = { type: 'terms', version: '2026-10-v2', url: '/legal/terms/2026-10-v2.html', publishedAt: '2026-10-25T05:00:00+00:00' };
+const PRIVACY = { type: 'privacy_policy', version: '2026-10-v2', url: '/legal/privacy_policy/2026-10-v2.html', publishedAt: '2026-10-25T05:00:00+00:00' };
 
 describe('SupabaseLegalDocumentsRepository', () => {
     it('devuelve las versiones vigentes de ambos documentos', async () => {
-        const { repository, from, eq } = setup({ data: [TERMS, PRIVACY], error: null });
+        const { repository, from, eq } = setup({ data: [TERMS_ROW, PRIVACY_ROW], error: null });
 
         await expect(repository.getCurrent()).resolves.toEqual({ terms: TERMS, privacyPolicy: PRIVACY });
         expect(from).toHaveBeenCalledWith('legal_documents');
@@ -27,7 +29,7 @@ describe('SupabaseLegalDocumentsRepository', () => {
     });
 
     it('rechaza con AppError unknown si falta uno de los dos documentos', async () => {
-        const { repository } = setup({ data: [TERMS], error: null });
+        const { repository } = setup({ data: [TERMS_ROW], error: null });
 
         await expect(repository.getCurrent()).rejects.toMatchObject({ code: 'unknown' });
     });

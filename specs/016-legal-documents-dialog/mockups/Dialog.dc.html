@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Dialog del documento</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#222}a:hover{color:#000}
+</style>
+</helmet>
+<div style="width: 360px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #222222; font-family: system-ui, sans-serif; font-size: 14px;" role="dialog" aria-label="Términos y Condiciones">
+<div style="padding: 12px 8px 12px 16px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; border-bottom: 1px solid #D9D9D9;">
+<div style="display: flex; flex-direction: column; gap: 2px;">
+<h1 style="margin: 0; font-size: 18px;">Términos y Condiciones</h1>
+<span style="color: #555555; font-size: 13px;">Versión 2026-10-v2 · publicada el 25 de octubre de 2026</span>
+</div>
+<a href="Main.dc.html" aria-label="Cerrar" style="width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px;">✕</a>
+</div>
+<div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; line-height: 1.5;">
+<p style="margin: 0; padding: 8px 10px; border: 1px dashed #888888; border-radius: 6px; color: #555555;">Borrador sujeto a revisión legal.</p>
+<h2 style="margin: 0; font-size: 16px;">1. Objeto</h2>
+<p style="margin: 0;">PlayerTech es una plataforma para que las academias deportivas organicen sus jugadores, acudientes, actividades y convocatorias…</p>
+<h2 style="margin: 0; font-size: 16px;">2. Cuenta y acceso</h2>
+<p style="margin: 0;">La persona que registra la academia es su administradora (owner) y responde por el uso de la cuenta…</p>
+<h2 style="margin: 0; font-size: 16px;">3. Obligaciones de la academia</h2>
+<ul style="margin: 0; padding-left: 20px;">
+<li>Contar con la autorización de los titulares de los datos que carga.</li>
+<li>Para los menores, la de su representante legal.</li>
+</ul>
+<span style="color: #555555;">… el texto continúa; se desplaza dentro del dialog</span>
+</div>
+<div style="padding: 12px 16px; border-top: 1px solid #D9D9D9;">
+<a href="Main.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border: 1px solid #333333; border-radius: 8px; font-weight: 600; text-decoration: none;">Cerrar</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

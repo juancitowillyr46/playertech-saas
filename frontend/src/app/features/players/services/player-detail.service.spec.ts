@@ -42,7 +42,10 @@ function setup(player: Partial<Record<keyof PlayerRepository, ReturnType<typeof 
             { provide: PlayerRepository, useValue: players },
             noticesMock(),
             { provide: GuardianRepository, useValue: guardians },
-            { provide: LegalDocumentsRepository, useValue: { getCurrent: vi.fn().mockResolvedValue({ privacyPolicy: { url: 'https://legal/privacy' } }) } }
+            {
+                provide: LegalDocumentsRepository,
+                useValue: { getCurrent: vi.fn().mockResolvedValue({ privacyPolicy: { type: 'privacy_policy', version: '2026-10-v2', url: '/legal/privacy_policy/2026-10-v2.html', publishedAt: '2026-10-25T05:00:00Z' } }) }
+            }
         ]
     });
 
@@ -119,10 +122,10 @@ describe('PlayerDetailService', () => {
         expect(service.status()).toBe('not_found');
     });
 
-    it('privacyPolicyUrl devuelve el enlace vigente', async () => {
+    it('privacyPolicy devuelve la política vigente', async () => {
         const { service } = setup();
 
-        expect(await service.privacyPolicyUrl()).toBe('https://legal/privacy');
+        expect((await service.privacyPolicy())?.url).toBe('/legal/privacy_policy/2026-10-v2.html');
     });
 
     it('guardianOptions marca los que ya son de este jugador (CA-004 de HU-035)', async () => {

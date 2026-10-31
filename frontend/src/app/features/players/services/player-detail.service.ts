@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { AppError } from '../../../core/errors/app-error';
 import { NoticesService } from '../../../core/notices/notices.service';
 import { LegalDocumentsRepository } from '../../../core/legal/data/legal-documents.repository';
+import { LegalDocument } from '../../../core/legal/models/legal.models';
 import { normalizePhone } from '../../../shared/forms/phone.validator';
 import { AddGuardianResult, GuardianRepository } from '../data/guardian.repository';
 import { GroupsNotSavedError, PlayerRepository } from '../data/player.repository';
@@ -75,9 +76,9 @@ export class PlayerDetailService {
     }
 
     /** Enlace a la Política de Tratamiento de Datos vigente, para la autorización (DEC-39). */
-    async privacyPolicyUrl(): Promise<string | null> {
+    async privacyPolicy(): Promise<LegalDocument | null> {
         try {
-            return (await this.legalDocuments.getCurrent()).privacyPolicy.url;
+            return (await this.legalDocuments.getCurrent()).privacyPolicy;
         } catch {
             return null;
         }

@@ -9,7 +9,8 @@ import { PasswordModule } from 'primeng/password';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AppError } from '../../../core/errors/app-error';
 import { ERROR_MESSAGES } from '../../../core/errors/error-messages';
-import { CurrentLegalDocuments } from '../../../core/legal/models/legal.models';
+import { CurrentLegalDocuments, LegalDocument } from '../../../core/legal/models/legal.models';
+import { LegalDocumentDialog } from '../../../shared/components/legal-document-dialog/legal-document-dialog';
 import { checkboxPt, FieldA11y, fieldA11y, passwordPt } from '../../../shared/forms/field-a11y';
 import { RegistrationService } from '../services/registration.service';
 import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-match';
@@ -21,7 +22,7 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
  */
 @Component({
     selector: 'app-register-page',
-    imports: [ReactiveFormsModule, RouterLink, ButtonModule, CheckboxModule, InputTextModule, MessageModule, PasswordModule, ProgressSpinnerModule],
+    imports: [ReactiveFormsModule, RouterLink, ButtonModule, CheckboxModule, InputTextModule, MessageModule, PasswordModule, ProgressSpinnerModule, LegalDocumentDialog],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div class="mb-6 border-b-2 border-(--p-text-color) pb-4">
@@ -45,7 +46,16 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
                 <h2 class="m-0 text-base">Tu academia</h2>
                 <div class="flex flex-col gap-2">
                     <label for="academyName" class="font-medium">Nombre de la academia</label>
-                    <input pInputText id="academyName" formControlName="academyName" autocomplete="organization" class="w-full" [invalid]="invalid('academyName')" [attr.aria-invalid]="a11y('academyName')['aria-invalid']" [attr.aria-describedby]="a11y('academyName')['aria-describedby']" />
+                    <input
+                        pInputText
+                        id="academyName"
+                        formControlName="academyName"
+                        autocomplete="organization"
+                        class="w-full"
+                        [invalid]="invalid('academyName')"
+                        [attr.aria-invalid]="a11y('academyName')['aria-invalid']"
+                        [attr.aria-describedby]="a11y('academyName')['aria-describedby']"
+                    />
                     @if (showError('academyName', 'required')) {
                         <p-message id="academyName-error" severity="error" variant="simple" size="small">Ingresa el nombre de la academia.</p-message>
                     }
@@ -54,7 +64,16 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
                 <h2 class="m-0 mt-3 border-t border-(--p-content-border-color) pt-5 text-base">Tu cuenta</h2>
                 <div class="flex flex-col gap-2">
                     <label for="fullName" class="font-medium">Tu nombre</label>
-                    <input pInputText id="fullName" formControlName="fullName" autocomplete="name" class="w-full" [invalid]="invalid('fullName')" [attr.aria-invalid]="a11y('fullName')['aria-invalid']" [attr.aria-describedby]="a11y('fullName')['aria-describedby']" />
+                    <input
+                        pInputText
+                        id="fullName"
+                        formControlName="fullName"
+                        autocomplete="name"
+                        class="w-full"
+                        [invalid]="invalid('fullName')"
+                        [attr.aria-invalid]="a11y('fullName')['aria-invalid']"
+                        [attr.aria-describedby]="a11y('fullName')['aria-describedby']"
+                    />
                     @if (showError('fullName', 'required')) {
                         <p-message id="fullName-error" severity="error" variant="simple" size="small">Ingresa tu nombre.</p-message>
                     }
@@ -62,7 +81,17 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
 
                 <div class="flex flex-col gap-2">
                     <label for="email" class="font-medium">Correo</label>
-                    <input pInputText id="email" type="email" formControlName="email" autocomplete="email" class="w-full" [invalid]="invalid('email')" [attr.aria-invalid]="a11y('email')['aria-invalid']" [attr.aria-describedby]="a11y('email')['aria-describedby']" />
+                    <input
+                        pInputText
+                        id="email"
+                        type="email"
+                        formControlName="email"
+                        autocomplete="email"
+                        class="w-full"
+                        [invalid]="invalid('email')"
+                        [attr.aria-invalid]="a11y('email')['aria-invalid']"
+                        [attr.aria-describedby]="a11y('email')['aria-describedby']"
+                    />
                     @if (showError('email', 'required')) {
                         <p-message id="email-error" severity="error" variant="simple" size="small">Ingresa tu correo.</p-message>
                     } @else if (showError('email', 'email')) {
@@ -78,7 +107,17 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
 
                 <div class="flex flex-col gap-2">
                     <label for="password" class="font-medium">Contraseña</label>
-                    <p-password inputId="password" formControlName="password" [feedback]="false" [toggleMask]="true" autocomplete="new-password" styleClass="w-full" inputStyleClass="w-full" [invalid]="invalid('password')" [pt]="passwordPt('password', invalid('password'))" />
+                    <p-password
+                        inputId="password"
+                        formControlName="password"
+                        [feedback]="false"
+                        [toggleMask]="true"
+                        autocomplete="new-password"
+                        styleClass="w-full"
+                        inputStyleClass="w-full"
+                        [invalid]="invalid('password')"
+                        [pt]="passwordPt('password', invalid('password'))"
+                    />
                     @if (showError('password', 'required') || showError('password', 'minlength')) {
                         <p-message id="password-error" severity="error" variant="simple" size="small">{{ passwordLengthMessage }}</p-message>
                     } @else {
@@ -88,7 +127,17 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
 
                 <div class="flex flex-col gap-2">
                     <label for="passwordConfirmation" class="font-medium">Confirmar contraseña</label>
-                    <p-password inputId="passwordConfirmation" formControlName="passwordConfirmation" [feedback]="false" [toggleMask]="true" autocomplete="new-password" styleClass="w-full" inputStyleClass="w-full" [invalid]="invalid('passwordConfirmation')" [pt]="passwordPt('passwordConfirmation', invalid('passwordConfirmation'))" />
+                    <p-password
+                        inputId="passwordConfirmation"
+                        formControlName="passwordConfirmation"
+                        [feedback]="false"
+                        [toggleMask]="true"
+                        autocomplete="new-password"
+                        styleClass="w-full"
+                        inputStyleClass="w-full"
+                        [invalid]="invalid('passwordConfirmation')"
+                        [pt]="passwordPt('passwordConfirmation', invalid('passwordConfirmation'))"
+                    />
                     @if (form.controls.passwordConfirmation.touched && form.hasError('passwordsMismatch')) {
                         <p-message id="passwordConfirmation-error" severity="error" variant="simple" size="small">Las contraseñas no coinciden.</p-message>
                     }
@@ -96,11 +145,11 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
 
                 <div class="mt-3 flex flex-col gap-2 border-t border-(--p-content-border-color) pt-5">
                     <div class="flex min-h-11 items-center gap-3">
-                        <p-checkbox inputId="acceptTerms" formControlName="acceptTerms" [binary]="true" [invalid]="invalid('acceptTerms')" [pt]="checkboxPt('acceptTerms', invalid('acceptTerms'))" />
-                        <label for="acceptTerms" class="flex-1 py-2.5">
-                            Acepto los
-                            <a [href]="legal()!.terms.url" target="_blank" rel="noopener" class="font-semibold text-primary underline underline-offset-4">Términos y Condiciones</a>
-                        </label>
+                        <p-checkbox inputId="acceptTerms" formControlName="acceptTerms" [binary]="true" [invalid]="invalid('acceptTerms')" [pt]="checkboxPt('acceptTerms', invalid('acceptTerms'), 'acceptTerms-label acceptTerms-document')" />
+                        <span class="flex-1 py-2.5">
+                            <label id="acceptTerms-label" for="acceptTerms">Acepto los</label>&ngsp;
+                            <button id="acceptTerms-document" type="button" class="cursor-pointer border-0 bg-transparent p-0 font-semibold text-primary underline underline-offset-4" (click)="read(legal()!.terms)">Términos y Condiciones</button>
+                        </span>
                     </div>
                     @if (showError('acceptTerms', 'required')) {
                         <p-message id="acceptTerms-error" severity="error" variant="simple" size="small">Debes aceptar los Términos y Condiciones.</p-message>
@@ -109,11 +158,19 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
 
                 <div class="flex flex-col gap-2">
                     <div class="flex min-h-11 items-center gap-3">
-                        <p-checkbox inputId="acceptPrivacy" formControlName="acceptPrivacy" [binary]="true" [invalid]="invalid('acceptPrivacy')" [pt]="checkboxPt('acceptPrivacy', invalid('acceptPrivacy'))" />
-                        <label for="acceptPrivacy" class="flex-1 py-2.5">
-                            Acepto la
-                            <a [href]="legal()!.privacyPolicy.url" target="_blank" rel="noopener" class="font-semibold text-primary underline underline-offset-4">Política de Tratamiento de Datos</a>
-                        </label>
+                        <p-checkbox
+                            inputId="acceptPrivacy"
+                            formControlName="acceptPrivacy"
+                            [binary]="true"
+                            [invalid]="invalid('acceptPrivacy')"
+                            [pt]="checkboxPt('acceptPrivacy', invalid('acceptPrivacy'), 'acceptPrivacy-label acceptPrivacy-document')"
+                        />
+                        <span class="flex-1 py-2.5">
+                            <label id="acceptPrivacy-label" for="acceptPrivacy">Acepto la</label>&ngsp;
+                            <button id="acceptPrivacy-document" type="button" class="cursor-pointer border-0 bg-transparent p-0 font-semibold text-primary underline underline-offset-4" (click)="read(legal()!.privacyPolicy)">
+                                Política de Tratamiento de Datos
+                            </button>
+                        </span>
                     </div>
                     @if (showError('acceptPrivacy', 'required')) {
                         <p-message id="acceptPrivacy-error" severity="error" variant="simple" size="small">Debes aceptar la Política de Tratamiento de Datos.</p-message>
@@ -128,6 +185,8 @@ import { MIN_PASSWORD_LENGTH, passwordsMatch } from '../validators/passwords-mat
             ¿Ya tienes cuenta?
             <a routerLink="/auth/login" class="font-semibold text-primary underline underline-offset-4">Inicia sesión</a>
         </p>
+
+        <app-legal-document-dialog [document]="reading()" (closed)="reading.set(null)" />
     `
 })
 export class RegisterPage implements OnInit {
@@ -149,9 +208,19 @@ export class RegisterPage implements OnInit {
         { validators: passwordsMatch('password', 'passwordConfirmation') }
     );
     protected readonly legal = signal<CurrentLegalDocuments | null>(null);
+    /** Documento abierto en el dialog (HU-043). */
+    protected readonly reading = signal<LegalDocument | null>(null);
     protected readonly loadError = signal<string | null>(null);
     protected readonly submitting = signal(false);
     protected readonly errorMessage = signal<string | null>(null);
+
+    /**
+     * Abre el documento en el dialog (HU-043). Su botón va fuera de la etiqueta de la casilla, así
+     * que leer no la marca (CA-002); la casilla se nombra con los dos (`aria-labelledby`).
+     */
+    protected read(document: LegalDocument): void {
+        this.reading.set(document);
+    }
 
     ngOnInit(): void {
         void this.loadLegalDocuments();
