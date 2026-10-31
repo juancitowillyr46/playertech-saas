@@ -27,4 +27,5 @@ Con la red cortada en el navegador, abre un documento: mensaje y «Abrir en otra
 
 ## Resultados
 
-*(se completa al implementar)*
+- Automáticas: pgTAP 340/340 (6 nuevas) y Vitest 134/134 (2026-10-25).
+- Pasos 1 a 4 en el celular: validados por el responsable (2026-10-31).

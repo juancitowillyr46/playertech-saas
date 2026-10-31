@@ -1,6 +1,6 @@
 # HU-043 — Leer los documentos legales sin salir del formulario
 
-**Épica:** EP-00 — Alta de academia · **Fase:** 2 — Negocio (antes del piloto) · **Prioridad:** MVP · **Estado:** Definida
+**Épica:** EP-00 — Alta de academia · **Fase:** 2 — Negocio (antes del piloto) · **Prioridad:** MVP · **Estado:** Terminada (entorno local; spec 016)
 **Spec:** 016 (documentos legales en la aplicación)
 
 ## Historia de usuario
@@ -32,7 +32,7 @@
 ## Reglas de negocio
 
 - Cada documento y versión es un archivo propio; una versión publicada no se modifica: un cambio de texto se publica como versión nueva (DEC-49).
-- El texto inicial es un borrador base para Colombia (Ley 1581 de 2012 y Decreto 1377 de 2013) con los datos del responsable como marcadores; lo revisa un abogado antes de cargar datos reales.
+- El texto inicial es un borrador base para Colombia (Ley 1581 de 2012 y Decreto 1377 de 2013); su responsable es la persona natural que opera la marca, hasta que exista la sociedad (DEC-49). Lo revisa un abogado antes de cargar datos reales.
 - La academia es la responsable de los datos de sus jugadores y acudientes; PlayerTech, la encargada. De los datos de la cuenta del owner, PlayerTech es la responsable.
 
 ## Decisiones relacionadas

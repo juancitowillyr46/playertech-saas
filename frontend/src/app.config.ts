@@ -12,7 +12,9 @@ import { AuthService } from './app/core/auth/auth.service';
 import { AuthRepository } from './app/core/auth/data/auth.repository';
 import { SupabaseAuthRepository } from './app/core/auth/data/supabase-auth.repository';
 import { APP_CONFIG, validateAppConfig } from './app/core/config/app-config';
+import { FetchLegalTextRepository } from './app/core/legal/data/fetch-legal-text.repository';
 import { LegalDocumentsRepository } from './app/core/legal/data/legal-documents.repository';
+import { LegalTextRepository } from './app/core/legal/data/legal-text.repository';
 import { SupabaseLegalDocumentsRepository } from './app/core/legal/data/supabase-legal-documents.repository';
 import { AcademyProfileRepository } from './app/features/academy-profile/data/academy-profile.repository';
 import { SupabaseAcademyProfileRepository } from './app/features/academy-profile/data/supabase-academy-profile.repository';
@@ -63,6 +65,7 @@ export const appConfig: ApplicationConfig = {
         { provide: AuthRepository, useClass: SupabaseAuthRepository },
         { provide: AcademyContextRepository, useClass: SupabaseAcademyContextRepository },
         { provide: LegalDocumentsRepository, useClass: SupabaseLegalDocumentsRepository },
+        { provide: LegalTextRepository, useClass: FetchLegalTextRepository },
         { provide: FileStorageRepository, useClass: SupabaseFileStorageRepository },
         { provide: VenueRepository, useClass: SupabaseVenueRepository },
         { provide: PlayerRepository, useClass: SupabasePlayerRepository },

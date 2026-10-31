@@ -4,17 +4,23 @@ import userEvent from '@testing-library/user-event';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AppError } from '../../../core/errors/app-error';
 import { LegalDocumentsRepository } from '../../../core/legal/data/legal-documents.repository';
+import { LegalTextRepository } from '../../../core/legal/data/legal-text.repository';
 import { RegisterPage } from './register';
 
 const LEGAL = {
-    terms: { type: 'terms', version: '2026-10-v1', url: 'https://playertech.app/legal/terms/2026-10-v1' },
-    privacyPolicy: { type: 'privacy_policy', version: '2026-10-v1', url: 'https://playertech.app/legal/privacy_policy/2026-10-v1' }
+    terms: { type: 'terms', version: '2026-10-v2', url: '/legal/terms/2026-10-v2.html', publishedAt: '2026-10-25T05:00:00Z' },
+    privacyPolicy: { type: 'privacy_policy', version: '2026-10-v2', url: '/legal/privacy_policy/2026-10-v2.html', publishedAt: '2026-10-25T05:00:00Z' }
 } as const;
 
 async function setup(getCurrent = vi.fn().mockResolvedValue(LEGAL)) {
     const auth = { signUp: vi.fn().mockResolvedValue(undefined) };
     const { fixture } = await render(RegisterPage, {
-        providers: [provideRouter([]), { provide: AuthService, useValue: auth }, { provide: LegalDocumentsRepository, useValue: { getCurrent } }]
+        providers: [
+            provideRouter([]),
+            { provide: AuthService, useValue: auth },
+            { provide: LegalDocumentsRepository, useValue: { getCurrent } },
+            { provide: LegalTextRepository, useValue: { getText: vi.fn((url: string) => Promise.resolve(`<h1>Doc</h1><p>Texto de ${url}</p>`)) } }
+        ]
     });
     const navigate = vi.spyOn(fixture.debugElement.injector.get(Router), 'navigateByUrl').mockResolvedValue(true);
 
@@ -31,12 +37,29 @@ async function fillValidForm(user: ReturnType<typeof userEvent.setup>) {
     await user.click(screen.getByRole('checkbox', { name: /Política de Tratamiento de Datos/ }));
 }
 
-describe('RegisterPage', () => {
-    it('muestra los enlaces a las versiones vigentes de los documentos legales', async () => {
-        await setup();
+describe('RegisterPage', { timeout: 20_000 }, () => {
+    it('abre cada documento en un dialog sin marcar la casilla ni perder lo escrito (CA-001 y CA-002 de HU-043)', async () => {
+        const { user } = await setup();
+        await user.type(await screen.findByLabelText('Nombre de la academia'), 'Academia Norte');
 
-        expect((await screen.findByRole('link', { name: 'Términos y Condiciones' })).getAttribute('href')).toBe(LEGAL.terms.url);
-        expect(screen.getByRole('link', { name: 'Política de Tratamiento de Datos' }).getAttribute('href')).toBe(LEGAL.privacyPolicy.url);
+        // El nombre del documento va separado del texto de la casilla.
+        const sentence = (name: string) => screen.getByRole('button', { name }).parentElement?.textContent?.replace(/\s+/g, ' ').trim();
+        expect(sentence('Términos y Condiciones')).toBe('Acepto los Términos y Condiciones');
+        expect(sentence('Política de Tratamiento de Datos')).toBe('Acepto la Política de Tratamiento de Datos');
+
+        await user.click(screen.getByRole('button', { name: 'Términos y Condiciones' }));
+        expect(await screen.findByRole('dialog', { name: 'Términos y Condiciones' })).toBeTruthy();
+        expect(await screen.findByText(`Texto de ${LEGAL.terms.url}`)).toBeTruthy();
+        expect(screen.getByText('Versión 2026-10-v2 · publicada el 25 de octubre de 2026')).toBeTruthy();
+        const close = screen.getAllByRole('button', { name: 'Cerrar' });
+        await user.click(close[close.length - 1]);
+
+        await user.click(screen.getByRole('button', { name: 'Política de Tratamiento de Datos' }));
+        expect(await screen.findByText(`Texto de ${LEGAL.privacyPolicy.url}`)).toBeTruthy();
+
+        expect((screen.getByRole('checkbox', { name: /Términos y Condiciones/ }) as HTMLInputElement).checked).toBe(false);
+        expect((screen.getByRole('checkbox', { name: /Política de Tratamiento de Datos/ }) as HTMLInputElement).checked).toBe(false);
+        expect((screen.getByLabelText('Nombre de la academia') as HTMLInputElement).value).toBe('Academia Norte');
     });
 
     it('exige todos los campos y ambas aceptaciones', async () => {
@@ -93,7 +116,7 @@ describe('RegisterPage', () => {
             password: 'Segura-2026',
             academyName: 'Academia Norte',
             fullName: 'Ana Pérez',
-            legalAcceptances: { terms: '2026-10-v1', privacyPolicy: '2026-10-v1' }
+            legalAcceptances: { terms: '2026-10-v2', privacyPolicy: '2026-10-v2' }
         });
         expect(navigate).toHaveBeenCalledWith('/auth/verify-email?email=ana%40playertech.test');
     });

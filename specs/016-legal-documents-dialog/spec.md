@@ -56,7 +56,7 @@ Como responsable de PlayerTech, quiero un borrador base de los dos documentos, a
 
 **Motivo de prioridad**: Sin texto, el dialog no tiene qué mostrar.
 
-**Prueba independiente**: Los dos documentos de la versión vigente se pueden leer completos, con sus secciones, y muestran como marcadores los datos del responsable que faltan.
+**Prueba independiente**: Los dos documentos de la versión vigente se pueden leer completos, con sus secciones, e identifican al responsable con su nombre, domicilio, correo y teléfono.
 
 **Referencia**: Reglas de negocio de HU-043; DEC-49.
 
@@ -87,7 +87,7 @@ Como responsable de PlayerTech, quiero un borrador base de los dos documentos, a
 - **FR-007**: Si el texto no se puede cargar, el dialog DEBE mostrar un mensaje en español y un enlace para abrir el documento en otra pestaña.
 - **FR-008**: La Política de Tratamiento de Datos DEBE cubrir, como borrador base para Colombia (Ley 1581 de 2012 y Decreto 1377 de 2013): responsable y encargado, datos que se tratan, finalidades, derechos del titular, procedimiento de consultas y reclamos, datos de menores, seguridad, transferencias y vigencia.
 - **FR-009**: Los Términos y Condiciones DEBEN cubrir: objeto, cuenta y acceso, obligaciones de la academia (incluida la autorización de los datos que carga), plan gratuito, propiedad intelectual, responsabilidad, suspensión y terminación, cambios y ley aplicable.
-- **FR-010**: Los datos del responsable que aún no existen (nombre o razón social, identificación, ciudad, dirección) DEBEN aparecer como marcadores visibles, y el documento DEBE indicar que es un borrador sujeto a revisión legal.
+- **FR-010**: Los documentos DEBEN identificar al responsable con su nombre, domicilio, correo y teléfono (artículo 13 del Decreto 1377 de 2013) e indicar que son un borrador sujeto a revisión legal. Mientras no exista la sociedad, el responsable es la persona natural que opera la marca (ajuste del 2026-10-25, DEC-49).
 - **FR-011**: El dialog DEBE cumplir `DESIGN.md` y `ui.md`, ocupar toda la pantalla en el celular, tener el foco dentro mientras está abierto, cerrarse con «Cerrar» y con Escape, y pasar la revisión de experiencia y accesibilidad (principio XIII).
 - **FR-012**: Cada criterio de HU-043 DEBE tener al menos una prueba automática o un paso de validación documentado.
 

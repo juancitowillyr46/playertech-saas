@@ -21,6 +21,6 @@ export function passwordPt(field: string, invalid: boolean) {
 }
 
 /** Pass-through para la casilla interna de `p-checkbox`. */
-export function checkboxPt(field: string, invalid: boolean) {
-    return { input: fieldA11y(field, invalid) };
+export function checkboxPt(field: string, invalid: boolean, labelledBy: string | null = null) {
+    return { input: { ...fieldA11y(field, invalid), 'aria-labelledby': labelledBy } };
 }

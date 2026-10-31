@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 import { AppError } from '../../../../core/errors/app-error';
 import { LegalDocumentsRepository } from '../../../../core/legal/data/legal-documents.repository';
+import { LegalTextRepository } from '../../../../core/legal/data/legal-text.repository';
 import { GuardianRepository } from '../../data/guardian.repository';
 import { PlayerRepository } from '../../data/player.repository';
 import { Guardian, PlayerSummary } from '../../models/player.models';
@@ -56,7 +57,11 @@ async function setup(options: { player?: Partial<Record<string, ReturnType<typeo
             { provide: PlayerRepository, useValue: players },
             noticesMock(),
             { provide: GuardianRepository, useValue: guardians },
-            { provide: LegalDocumentsRepository, useValue: { getCurrent: vi.fn().mockResolvedValue({ privacyPolicy: { url: 'https://legal/privacy', version: '1', type: 'privacy_policy' } }) } },
+            {
+                provide: LegalDocumentsRepository,
+                useValue: { getCurrent: vi.fn().mockResolvedValue({ privacyPolicy: { url: '/legal/privacy_policy/2026-10-v2.html', version: '2026-10-v2', type: 'privacy_policy', publishedAt: '2026-10-25T05:00:00Z' } }) }
+            },
+            { provide: LegalTextRepository, useValue: { getText: vi.fn().mockResolvedValue('<p>Texto de la política</p>') } },
             { provide: MessageService, useValue: messages },
             { provide: BreakpointObserver, useValue: { observe: () => of({ matches: true, breakpoints: {} }) } }
         ]
@@ -143,7 +148,11 @@ describe('PlayerPage', { timeout: 20_000 }, () => {
 
         await user.click(screen.getByRole('button', { name: 'Agregar acudiente' }));
         const dialog = await screen.findByRole('dialog', { name: 'Agregar acudiente de Samuel' });
-        expect(within(dialog).getByRole('link', { name: 'Política de Tratamiento de Datos' }).getAttribute('href')).toBe('https://legal/privacy');
+        await user.click(within(dialog).getByRole('button', { name: 'Política de Tratamiento de Datos' }));
+        expect(await screen.findByText('Texto de la política')).toBeTruthy();
+        const close = screen.getAllByRole('button', { name: 'Cerrar' });
+        await user.click(close[close.length - 1]);
+        expect((within(dialog).getByRole('checkbox', { name: /autoriza el tratamiento/ }) as HTMLInputElement).checked).toBe(false);
 
         await fillGuardian(user, dialog, '310 555 1234', 'Diana Gómez');
         await user.click(within(dialog).getByRole('button', { name: 'Agregar acudiente' }));

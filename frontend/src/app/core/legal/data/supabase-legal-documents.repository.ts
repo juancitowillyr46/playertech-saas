@@ -5,18 +5,25 @@ import { SUPABASE_CLIENT } from '../../supabase/supabase-client';
 import { CurrentLegalDocuments, LegalDocument, LegalDocumentType } from '../models/legal.models';
 import { LegalDocumentsRepository } from './legal-documents.repository';
 
+interface LegalDocumentRow {
+    type: LegalDocumentType;
+    version: string;
+    url: string;
+    published_at: string;
+}
+
 @Injectable()
 export class SupabaseLegalDocumentsRepository extends LegalDocumentsRepository {
     private readonly client = inject(SUPABASE_CLIENT);
 
     async getCurrent(): Promise<CurrentLegalDocuments> {
-        const { data, error } = await this.client.from('legal_documents').select('type, version, url').eq('is_current', true);
+        const { data, error } = await this.client.from('legal_documents').select('type, version, url, published_at').eq('is_current', true);
 
         if (error) {
             throw mapSupabaseError(error);
         }
 
-        const documents = (data ?? []) as LegalDocument[];
+        const documents = ((data ?? []) as LegalDocumentRow[]).map((row) => ({ type: row.type, version: row.version, url: row.url, publishedAt: row.published_at }));
         const terms = findByType(documents, 'terms');
         const privacyPolicy = findByType(documents, 'privacy_policy');
 
@@ -29,7 +36,5 @@ export class SupabaseLegalDocumentsRepository extends LegalDocumentsRepository {
 }
 
 function findByType(documents: LegalDocument[], type: LegalDocumentType): LegalDocument | undefined {
-    const document = documents.find((item) => item.type === type);
-
-    return document && { type: document.type, version: document.version, url: document.url };
+    return documents.find((item) => item.type === type);
 }

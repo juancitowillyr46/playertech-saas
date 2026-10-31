@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { LegalDocumentsRepository } from '../../../../core/legal/data/legal-documents.repository';
+import { LegalTextRepository } from '../../../../core/legal/data/legal-text.repository';
 import { DeviceKeyStore } from '../../data/device-key-store';
 import { PublicCallUpRepository } from '../../data/public-call-up.repository';
 import { MyPlayer, PublicCallUp, PublicCallUpError } from '../../models/public-call-up.models';
@@ -47,7 +48,11 @@ async function setup(loads: PublicCallUp[], keys: string[] = []) {
         providers: [
             { provide: PublicCallUpRepository, useValue: repository },
             { provide: DeviceKeyStore, useValue: store },
-            { provide: LegalDocumentsRepository, useValue: { getCurrent: vi.fn().mockResolvedValue({ privacyPolicy: { url: 'https://x/politica' }, terms: { url: 'https://x/terminos' } }) } }
+            {
+                provide: LegalDocumentsRepository,
+                useValue: { getCurrent: vi.fn().mockResolvedValue({ privacyPolicy: { type: 'privacy_policy', version: '2026-10-v2', url: '/legal/privacy_policy/2026-10-v2.html', publishedAt: '2026-10-25T05:00:00Z' } }) }
+            },
+            { provide: LegalTextRepository, useValue: { getText: vi.fn().mockResolvedValue('<p>Texto de la política</p>') } }
         ]
     });
 
@@ -92,6 +97,13 @@ describe('CallUpResponsePage', { timeout: 20_000 }, () => {
         await user.type(screen.getByLabelText('Tu celular'), '300 111 2233');
         await user.click(screen.getByRole('button', { name: 'Continuar' }));
         expect(screen.getByRole('alert').textContent).toContain('autorizar');
+
+        // Leer la política sin sesión no marca la casilla (CA-001 y CA-002 de HU-043).
+        await user.click(screen.getByRole('button', { name: 'Política de Tratamiento de Datos' }));
+        expect(await screen.findByText('Texto de la política')).toBeTruthy();
+        const close = screen.getAllByRole('button', { name: 'Cerrar' });
+        await user.click(close[close.length - 1]);
+        expect((screen.getByLabelText(/Autorizo el tratamiento/) as HTMLInputElement).checked).toBe(false);
 
         await user.click(screen.getByLabelText(/Autorizo el tratamiento/));
         await user.click(screen.getByRole('button', { name: 'Continuar' }));

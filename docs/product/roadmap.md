@@ -27,7 +27,7 @@ Requisitos de operación (ADR-014 y ADR-016) que no son funcionalidades, pero de
 - Prueba del registro en el celular con una persona que no conozca la aplicación (SC-006 de la spec 003: menos de 3 minutos, sin ayuda).
 - Copias de seguridad propias de la base de datos y procedimiento de restauración.
 - Alojamiento del frontend apto para uso comercial (Vercel Pro u otro): el entorno de pruebas usa Vercel Hobby, de uso no comercial (ADR-016).
-- Documentos legales definitivos (Términos y Condiciones y Política de Tratamiento de Datos) publicados en su URL final.
+- Documentos legales definitivos (Términos y Condiciones y Política de Tratamiento de Datos) publicados en su URL final. Avance (spec 016, DEC-49): borrador base `2026-10-v2` publicado con el frontend en `/legal/` y visible en un dialog; el responsable es la persona natural que opera la marca. Falta la revisión de un abogado; cuando exista la sociedad, una versión nueva con ella como responsable.
 
 ### Fase 2 — Negocio
 

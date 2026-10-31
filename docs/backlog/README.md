@@ -64,7 +64,7 @@ Cuatro specs en el orden del flujo (DEC-37); la cuarta se divide en las specs 01
 | 4a — Respuesta y seguimiento (spec 013) | [EP-06 Respuesta del acudiente](epics/EP-06-tutor-responses.md), [EP-07 Seguimiento](epics/EP-07-response-tracking.md), [EP-10 Acudientes](epics/EP-10-guardians.md) | HU-009, HU-010, HU-011, HU-040 | **Terminada** (entorno local; spec 013) |
 | 4b — Avisos en la aplicación (spec 014) | [EP-07 Seguimiento](epics/EP-07-response-tracking.md) | HU-041 | **Terminada** (entorno local; spec 014) |
 | 5 — Aviso de inasistencia (spec 015; DEC-48) | [EP-15 Aviso de inasistencia](epics/EP-15-absence-notice.md) | HU-042 | **Terminada** (entorno local; spec 015) |
-| 6 — Documentos legales en la aplicación (spec 016; DEC-49) | [EP-00 Alta de academia](epics/EP-00-academy-onboarding.md) | HU-043 | **Definida** |
+| 6 — Documentos legales en la aplicación (spec 016; DEC-49) | [EP-00 Alta de academia](epics/EP-00-academy-onboarding.md) | HU-043 | **Terminada** (entorno local; spec 016) |
 
 ### MVP+
 

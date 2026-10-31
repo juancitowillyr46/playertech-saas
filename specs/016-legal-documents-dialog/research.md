@@ -70,7 +70,7 @@ Decisiones técnicas de la spec 016. Las de producto están en DEC-49 (ADR-018).
   8. suspensión y terminación;
   9. cambios;
   10. ley aplicable.
-- **Marcadores:** `[NOMBRE O RAZÓN SOCIAL]`, `[NIT O CÉDULA]`, `[DIRECCIÓN]` y `[CIUDAD]`. El contacto es el correo de PlayerTech del piloto.
+- **Responsable** (ajuste del 2026-10-25): la persona natural que opera la marca, con nombre, domicilio, correo (`playertech.app@gmail.com`) y teléfono, como pide el artículo 13 del Decreto 1377 de 2013, sin número de cédula. Cuando exista la sociedad, una versión nueva.
 - **Aviso:** al inicio, «Borrador sujeto a revisión legal» (FR-010).
 - **Motivo**: HU-043 y DEC-49. No es asesoría legal: un abogado lo revisa antes de cargar datos reales.
 
